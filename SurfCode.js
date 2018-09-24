@@ -68,11 +68,11 @@ const SurfCodeMainScreenNavigator = createBottomTabNavigator({//createMaterialBo
 }, {
     tabBarOptions: {
         showLabel: false,
-        activeTintColor: '#F8F8F8',
-        inactiveTintColor: '#586589',
+        activeTintColor: '#000000',
+        inactiveTintColor: '#000000',
         order: ['Biometrics', 'Book', 'Adding', 'WeatherInfo', 'Setting'],//표시 순서
         style: {
-            backgroundColor: '#171F33'
+            backgroundColor: '#f9f9fa'
         },
         tabStyle: {},
     }

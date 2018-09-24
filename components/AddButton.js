@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { Animated, Easing, TouchableHighlight, TouchableOpacity, View, Modal, Text, StyleSheet, Platform, FlatList, PermissionsAndroid, Image, Alert } from "react-native";
+import { Animated, Easing, TouchableHighlight, TouchableOpacity, View, Modal, Text, TextInput, StyleSheet, Platform, FlatList, PermissionsAndroid, Image, Alert } from "react-native";
 import EasyBluetooth from 'easy-bluetooth-classic';
 import ActionBar from 'react-native-action-bar';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ActionSheet from 'react-native-actionsheet'
 
-const SIZE = 80;
+const SIZE = 65;
 const durationIn = 300;
 const durationOut = 200;
 var bluetoothDevices = [];
@@ -70,8 +70,10 @@ class FlatListItem extends Component {
 class AddButton extends Component {
     state = {
         modalVisible: false,
+        studentModalVisible: false,
         refreshing: false,
         deviceCount: 0,
+        studentCount: 0,
         scanning: false
     };
 
@@ -217,6 +219,10 @@ class AddButton extends Component {
         this.setState({ modalVisible: visible });
         this.scan();
     }
+    setStudentModalVisible(visible) {
+        this.setState({ studentModalVisible: visible });
+        this.scan();
+    }
 
     showActionSheet = () => {
         this.ActionSheet.show()
@@ -285,7 +291,7 @@ class AddButton extends Component {
                         onLeftPress={() => this.setModalVisible(!this.state.modalVisible)}
                         leftIconContainerStyle={styles.leftIconContainerStyle}
                     />
-                    <View style={{ marginTop: 24, marginLeft: 24 }}>
+                    <View style={{ paddingTop: 24, paddingLeft: 24, paddingRight: 24 }}>
                         <Text style={{ color: '#3b3e4c', fontSize: 16, fontWeight: 'bold' }}>디바이스로 수강생 등록</Text>
                         <Text style={{ marginTop: 24, color: '#82889c', fontSize: 16 }}>블루투스를 통해 주변에 있는 디바이스를 탐색합니다.</Text>
                         <Text style={{ marginTop: 8, color: '#82889c', fontSize: 16 }}>탐색된 디바이스는 아래 목록에 표시됩니다.</Text>
@@ -354,22 +360,111 @@ class AddButton extends Component {
                     </View>
                 </Modal>
                 {/*modal부분 end*/}
+                {/*수강생 검색 modal부분 start*/}
+                <Modal
+                    animationType="slide"
+                    transparent={false}
+                    visible={this.state.studentModalVisible}
+                    onRequestClose={() => {
+                        this.setStudentModalVisible(!this.state.studentModalVisible);
+                    }}>
+                    <ActionBar
+                        containerStyle={styles.bar}
+                        allowFontScaling={true}
+                        title={'수강생 검색'}
+                        backgroundColor={'#f9f9fa'}
+                        titleStyle={styles.titleStyle}
+                        titleContainerStyle={styles.titleContainerStyle}
+                        iconImageStyle={styles.iconImageStyle}
+                        leftIconName={'back'}
+                        onLeftPress={() => this.setStudentModalVisible(!this.state.studentModalVisible)}
+                        leftIconContainerStyle={styles.leftIconContainerStyle}
+                    />
+                    <View style={{ paddingTop: 24, paddingLeft: 24, paddingRight: 24 }}>
+                        <View style={{
+                            flexDirection: 'row', justifyContent: 'center',
+                            alignItems: 'center', borderRadius: 20,
+                            backgroundColor: '#f2f3f6', padding:5,paddingLeft:10,paddingRight:10                            
+                        }}>
+                            <Icon name="plus" size={24} color="#000000" />
+                            <TextInput style={styles.textInputStyle} />
+                        </View>
+                        <View style={{ marginTop: 25, flexDirection: 'row' }}>
+                            <Text style={{ flex: 0.25, color: '#3b3e4c', fontSize: 16 }}>검색 결과 </Text>
+                            <View style={{
+                                marginLeft: 8,
+                                marginBottom: 5,
+                                paddingTop: 1,
+                                paddingBottom: 1,
+                                paddingLeft: 7,
+                                paddingRight: 7,
+                                backgroundColor: '#d0d2da',
+                                borderRadius: 5,
+                                borderWidth: 1,
+                                borderColor: '#fff'
+                            }}>
+                                <Text style={{ color: '#3b3e4c', fontSize: 16 }}>{this.state.studentCount}</Text>
+                            </View>
+                            <View style={{
+                                flex: 0.75,
+                                marginRight: 24,
+                                marginTop: 1,
+                                justifyContent: "flex-end",
+                                flexDirection: 'row'
+                            }}>
+                            </View>
+                        </View>
+                        {/* 여긴 파이어베이스에서 불러올 예정 */}
+                        {/* <FlatList
+                            ref={"bluetoothList"}
+                            ItemSeparatorComponent={this.renderSeparator}
+                            style={styles.FlatList}
+                            data={bluetoothDevices}
+                            refreshing={this.state.refreshing}
+                            onRefresh={() => { }}
+                            renderItem={({ item, index }) => {
+                                //console.log(`Item = ${item}, index = ${index}`);
+                                return (
+                                    <FlatListItem item={item} index={index} parentFlatList={this}>
+                                    </FlatListItem>
+                                );
+                            }}
+                        /> */}
 
+                    </View>
+                </Modal>
+                {/*modal부분 end*/}
+                {/*ActionSheer 부분 Start*/}
                 <ActionSheet
                     ref={o => this.ActionSheet = o}
-                    title={'Which one do you like ?'}
-                    message={'In botany, a fruit is the seed-bearing structure in flowering plants (also known as angiosperms) formed from the ovary after flowering.'}
+                    //title={'Which one do you like ?'}
+                    // message={'In botany, a fruit is the seed-bearing structure in flowering plants (also known as angiosperms) formed from the ovary after flowering.'}
                     options={['Device 연결', '신청 수강생 조회', 'Cancel']}
                     cancelButtonIndex={2}
                     //destructiveButtonIndex={1}
                     styles={{
-                        messageBox: { height: 60, },
                         body: {
-                            margin: 10,
-                            
+                            margin: 20,
+                            borderRadius: 5,
                         },
                         titleBox: {
-                            borderRadius:100
+                            borderRadius: 50
+                        },
+                        buttonBox: {
+                            borderRadius: 5,
+                            marginBottom: 1,
+                            height: 50,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: '#fff'
+                        },
+                        cancelButtonBox: {
+                            borderRadius: 5,
+                            height: 50,
+                            marginTop: 1,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: '#fff'
                         }
                     }}
                     onPress={(index) => {
@@ -377,23 +472,24 @@ class AddButton extends Component {
                             this.setModalVisible(true);
                         }
                         else if (index == 1) {
-
+                            this.setStudentModalVisible(true);
                         }
                     }}
                 />
+                {/*ActionSheer 부분 End*/}
                 <TouchableHighlight
                     // onPress={() => {
                     //     this.setModalVisible(true);
                     // }}
                     onPress={this.showActionSheet}
-                    underlayColor="#2882D8"
+                    underlayColor="#2f52c4"
                     style={{
                         alignItems: 'center',
                         justifyContent: 'center',
                         width: SIZE,
                         height: SIZE,
-                        borderRadius: SIZE / 2,
-                        backgroundColor: '#48A2F8'
+                        borderRadius: 100,
+                        backgroundColor: '#2f52c4'
                     }}
                 >
                     <Animated.View style={{
@@ -451,6 +547,13 @@ const styles = StyleSheet.create({
         width: 14.5,
         height: 30,
         tintColor: '#82889c'
+    },
+    textInputStyle: {
+        marginLeft: 10,
+        backgroundColor: '#f2f3f6',
+        width: '90%',
+        height: 40,
+        overflow:"hidden"
     }
 });
 export { AddButton };
