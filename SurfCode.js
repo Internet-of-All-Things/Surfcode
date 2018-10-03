@@ -28,7 +28,7 @@ const SurfCodeMainScreenNavigator = createBottomTabNavigator(
     //createMaterialBottomTabNavigator({
 
     Biometrics: {
-      screen: FirstScreen,
+      screen: FirstScreen,      
       navigationOptions: ({ navigation }) => ({
         title: "생체정보",
         tabBarLabel: "Biometrics",
@@ -41,7 +41,7 @@ const SurfCodeMainScreenNavigator = createBottomTabNavigator(
           this.state.addingBtnVisable = true;
           console.log(`~~~~navigation = ${JSON.stringify(navigation)}`);  
           //Navigation.push(SurfCodeMainScreenNavigator, { component: { name: 'NEXT_PAGE', options: { bottomTabs: { visible: false, drawBehind: true, animate: true } } }, });                  
-          console.log(`~~~~navigation = ${(Navigation)}`);  
+          //console.log(`~~~~navigation = ${(Navigation)}`);  
           defaultHandler();
         }
       })
@@ -65,7 +65,7 @@ const SurfCodeMainScreenNavigator = createBottomTabNavigator(
       screen: () => null,
       navigationOptions: ({ navigation }) => ({
         //tabBarVisible: this.state.addingBtnVisable,
-        tabBarIcon: <AddButton />
+        tabBarIcon: <AddButton right='40%' bottom={50} />
       })
     },
     WeatherInfo: {

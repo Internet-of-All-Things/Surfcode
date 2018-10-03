@@ -9,11 +9,13 @@ import {
   Dimensions
 } from "react-native";
 import ActionBar from 'react-native-action-bar';
+import {AddButton} from '../components/AddButton'
 //import BoxLayout from "../BoxLayout";
 import Student_BasicFlatList from "../components/Student_BasicFlatList";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import flatListData from '../data/flatListData'
-import { CheckBox  } from "react-native-elements";
+import { CheckBox } from "react-native-elements";
 
 var screen = Dimensions.get('window');
 let listData = [];
@@ -23,43 +25,62 @@ export default class FirstScreen extends Component {
     userName: 'Tom',
     isListLongPressed: false
   };
-  
+
   constructor(props) {
     super(props);
   }
-
+  changePage = () =>{
+    //this.props.navigation.navigate('Adding');    
+    console.log("~~~~~~~~~~~~~~~~~~~~!!");
+  }
   setModalVisible(visible) {
     this.setState({ modalVisible: visible });
   }
   changeListLongPressedState = () => {
-     this.setState({
+    this.setState({
       isListLongPressed: !this.state.isListLongPressed
     });
-    if(this.state.isListLongPressed){
+    if (this.state.isListLongPressed) {
       listData = [];
     }
     console.log("isLong!! : " + this.state.isListLongPressed);
   }
-  changeListCheckBoxSelectState = (index, checked) =>{
+  changeListCheckBoxSelectState = (index, checked) => {
     console.log("changeListCheckBoxSelectState : " + index + " " + checked);
-    if(checked){
+    if (checked) {
       listData.push(index);
     }
-    else{
-      for(let i=0; i<listData.length; i++){
-        if(listData[i] == index){
-            listData.pop(i);
-            break;
+    else {
+      for (let i = 0; i < listData.length; i++) {
+        if (listData[i] == index) {
+          listData.splice(i, 1);
+          break;
         }
       }
     }
-  }
-  removeStudentData = () =>{
-    for(let i=0; i<listData.length; i++){
-        flatListData[listData[i]] = null;
+    for (let i = 0; i < listData.length; i++) {
+      console.log("★ listData[" + i + "] " + JSON.stringify(listData[i]));
     }
   }
- 
+  removeStudentData = () => {
+    for (let i = 0; i < flatListData.length; i++) {
+      console.log("before flatListData[" + i + "] " + JSON.stringify(flatListData[i]));
+
+    }
+    for (let i = 0; i < listData.length; i++) {
+      flatListData.splice(listData[i] - i, 1);
+      console.log("deleted[" + listData[i] + "] " + JSON.stringify(flatListData[i]));
+    }
+    for (let i = 0; i < flatListData.length; i++) {
+      console.log("after latListData[" + i + "] " + JSON.stringify(flatListData[i]));
+
+    }
+    this.setState({
+      isListLongPressed: !this.state.isListLongPressed
+    });
+    console.log(this.state.isListLongPressed + "!!!!");
+  }
+
   render() {
     return (
       <View colors={["#00C6FB", "#005BEA"]} style={styles.container}>
@@ -114,7 +135,7 @@ export default class FirstScreen extends Component {
             }}>
               <View style={{ flexDirection: 'row' }}>
                 <Icon name="heart" color={"#ff0000"} size={24} />
-                <Text style={styles.userText} ref='userName'>{this.state.userName='최용석'}</Text>
+                <Text style={styles.userText} ref='userName'>{this.state.userName = '최용석'}</Text>
               </View>
             </TouchableHighlight>
           </View>
@@ -140,10 +161,10 @@ export default class FirstScreen extends Component {
             </View>
             {this.state.isListLongPressed ? (
               /*delete부분 start*/
-              <TouchableHighlight style={[styles.titleRightStyle, { flex: 0.2 }] } onPress={() => {
+              <TouchableHighlight style={[styles.titleRightStyle, { flex: 0.2 }]} onPress={() => {
                 this.removeStudentData();
               }}>
-                <View style={{flexDirection:'row'}}>
+                <View style={{ flexDirection: 'row' }}>
                   <Icon name="heart" color={"#ff0000"} size={12} />
                   <Text style={styles.deleteStyle}>삭제</Text>
                 </View>
@@ -160,60 +181,89 @@ export default class FirstScreen extends Component {
           </View>
         </View>
         {/*title부분 end*/}
-            
+        {/* <View style={{
+          position: 'absolute',
+          backgroundColor: '',
+          zIndex: 100,
+          alignItems: 'center',
+          right: "40%", bottom: 50, height: 30, width: 30
 
-        {/*list부분 start*/}
-        <Student_BasicFlatList changeListLongPressedState={this.changeListLongPressedState} isListLongPressed={this.state.isListLongPressed} changeListCheckBoxSelectState={this.changeListCheckBoxSelectState}/>
-        {/*list부분 end*/}
+        }}></View> */}
 
-        
+          
+          {/*list부분 start*/}
+          <Student_BasicFlatList changeListLongPressedState={this.changeListLongPressedState} isListLongPressed={this.state.isListLongPressed} changeListCheckBoxSelectState={this.changeListCheckBoxSelectState} />
+          {/*list부분 end*/}
+          <AddButton right="48%" bottom={1}/>
+          {/* <TouchableHighlight
+            // onPress={() => {
+            //     this.setModalVisible(true);
+            // }}
+            onPress={this.changePage}
+            underlayColor="#2f52c4"
+            style={{
+              position: 'absolute',
+              backgroundColor: '',
+              zIndex: 100,
+              alignItems: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: 65,
+              height: 65,
+              borderRadius: 100,
+              right: 180, 
+              bottom: -35,
+              backgroundColor: '#2f52c4'
+            }}>
+            <FontAwesomeIcon name="plus" size={24} color="#F8F8F8" />
+          </TouchableHighlight> */}
 
-      </View>
-    );
-  }
-}
+        </View>
+        );
+      }
+    }
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  userText: {
-    fontSize: 14,
-    color: "#82889c",
-    marginLeft: 5
-  },
+      container: {
+        flex: 1
+      },
+      userText: {
+        fontSize: 14,
+        color: "#82889c",
+        marginLeft: 5
+      },
   titleStyle: {
-    fontSize: 21,
-    color: "#3b3e4c",
-    fontFamily: 'SpoqaHanSans-Bold'
-  },
+          fontSize: 21,
+        color: "#3b3e4c",
+        fontFamily: 'SpoqaHanSans-Bold'
+      },
   titleRightStyle: {
-    flexDirection: "row",
-    flex: 0.5,
-    justifyContent: "center"
-  },
+          flexDirection: "row",
+        flex: 0.5,
+        justifyContent: "center"
+      },
   bar: {
-    height: 55,
-    alignItems: 'center'
-  },
+          height: 55,
+        alignItems: 'center'
+      },
   deleteStyle: {
-    fontSize: 14,
-    color: '#f33c17'
-  },
+          fontSize: 14,
+        color: '#f33c17'
+      },
   subTitleStyle: {
-    fontSize: 14,
-    color: "#3b3e4c"
-  },
+          fontSize: 14,
+        color: "#3b3e4c"
+      },
   titleContainerStyle: {
-    alignItems: 'center',
-    paddingRight: 40
-  },
+          alignItems: 'center',
+        paddingRight: 40
+      },
   titleStyle: {
-    fontSize: 16,
-    color: '#3b3e4c'
-  },
+          fontSize: 16,
+        color: '#3b3e4c'
+      },
   iconImageStyle: {
-    width: 14.5,
-    height: 30,
-    tintColor: '#82889c'
-  }
-});
+          width: 14.5,
+        height: 30,
+        tintColor: '#82889c'
+      }
+    });

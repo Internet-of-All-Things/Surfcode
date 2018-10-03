@@ -13,13 +13,16 @@ export default class Student_FlatListItem extends Component {
         super(props);
         this._onLongPressButton = this._onLongPressButton.bind(this);
     }
-    _onLongPressButton() {                    
+    _onLongPressButton() {
         this.props.changeListLongPressedState();
     }
-    checkListItem() {        
-        this.setState({ checked: !this.state.checked });
-        this.props.changeListCheckBoxSelectState(this.props.index, this.state.checked);
-        console.log(this.props.index + " checked : " + this.state.checked);   
+    checkListItem() {
+        if (this.state.isListLongPressed) {
+            this.setState({ checked: !this.state.checked });//이건 체크박스의 this.state          
+            this.state.checked = !this.state.checked//이건 위의 this.state
+            this.props.changeListCheckBoxSelectState(this.props.index, this.state.checked);
+            console.log(this.props.index + " checked : " + this.state.checked);
+        }
     }
     componentWillReceiveProps(props) {
         this.setState({ checked: false });
@@ -29,7 +32,7 @@ export default class Student_FlatListItem extends Component {
     render() {
         return (
             <View>
-                <TouchableHighlight onLongPress={() => { this._onLongPressButton() }} underlayColor="#ff0000">
+                <TouchableHighlight onPress={() => { this.checkListItem() }} onLongPress={() => { this._onLongPressButton() }} underlayColor="#ff0000">
                     <View style={{
                         flex: 1,
                         flexDirection: "row",
@@ -66,17 +69,19 @@ export default class Student_FlatListItem extends Component {
                             //     size={20}
                             //     onPress={() => this.setState({ checked: !this.state.checked })}
                             // />
-                            <CheckBox
-                                checked={this.state.checked}
-                                onPress={() =>{this.checkListItem()}}
-                            />
-                            // <CheckBox
-                            //     value={checked}
-                            //     onChange = {() =>{this.checkListItem()}}
-                            //     // onChange={() => this.setState({ checked: !this.state.checked
-                            //     //  })}
-                            //     />
-
+                            <View style={{ width: 70, height: 50 }}>
+                                <CheckBox
+                                    title=''
+                                    containerStyle={
+                                        {
+                                            borderColor: '#ff000000',
+                                            backgroundColor: '#ff000000'
+                                        }
+                                    }
+                                    checked={this.state.checked}
+                                    onPress={() => { this.checkListItem() }}
+                                />
+                            </View>
                         ) : null}
 
                         <Icon style={{ marginLeft: 5, justifyContent: 'center' }} name="heart" color={'#ff0000'} size={40} />
