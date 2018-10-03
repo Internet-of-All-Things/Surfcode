@@ -1,5 +1,5 @@
 {
-  "name": "Surfcodeeeeee",
+  "name": "SurfCode",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -8,6 +8,8 @@
     "android-linux": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res && react-native run-android"
   },
   "dependencies": {
+    "chalk": "^2.4.1",
+    "each-async": "^1.1.1",
     "easy-bluetooth-classic": "^1.0.4",
     "prop-types": "^15.6.1",
     "random-string": "^0.2.0",

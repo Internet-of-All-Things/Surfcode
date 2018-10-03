@@ -45,12 +45,12 @@ android_library(
 
 android_build_config(
     name = "build_config",
-    package = "com.surfcodeeeeee",
+    package = "com.surfcode",
 )
 
 android_resource(
     name = "res",
-    package = "com.surfcodeeeeee",
+    package = "com.surfcode",
     res = "src/main/res",
 )
 
