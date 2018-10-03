@@ -3,22 +3,44 @@ import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 
 import SurfCodeMainScreenNavigator from "./SurfCode"
 import {AddButton} from "./components/AddButton";
+
+import LoginNaviagtor from "./navigators/LoginNavigator";
+import firebase from 'react-native-firebase';
+
 export default class App extends Component {
   state = {
-    isLoaded: true
+    isLoaded: false 
   }
+
+  constructor() {
+    super();
+    this.state = {
+      isAuthenticated: false,
+    };
+  }
+
+  componentDidMount() {
+    firebase.auth().signInAnonymously()
+      .then(() => {
+        this.setState({
+          isAuthenticated: true,
+        });
+      });
+  }
+
   render() {
     const { isLoaded } = this.state;
     return (
       <View style={styles.container}>
+      
         {isLoaded ? (
           <SafeAreaView style={{ flex: 1 }}>           
             <SurfCodeMainScreenNavigator />            
           </SafeAreaView>
         ) : (
-              <View style={styles.loading}>
-                <Text style={styles.loadingText}>SurfCode</Text>
-              </View>
+          <SafeAreaView style={{ flex: 1 }}>
+              <LoginNaviagtor />
+          </SafeAreaView>
           )}
       </View>
     );

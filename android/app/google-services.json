@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "987720725243",
+    "firebase_url": "https://surfcode-2d27a.firebaseio.com",
+    "project_id": "surfcode-2d27a",
+    "storage_bucket": "surfcode-2d27a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:987720725243:android:1fbf2cb1aa87f78f",
+        "android_client_info": {
+          "package_name": "com.surfcodeeeeee"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "987720725243-g61mlar8hcbfbks9j4gk6c07ja7hqcg7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNS9Z5KBZYDhSN_k-7a1pl9hWtpqQTpW4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
