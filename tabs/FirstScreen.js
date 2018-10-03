@@ -10,19 +10,20 @@ import {
 } from "react-native";
 import ActionBar from 'react-native-action-bar';
 //import BoxLayout from "../BoxLayout";
-import BasicFlatList from "../components/BasicFlatList";
+import Student_BasicFlatList from "../components/Student_BasicFlatList";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import flatListData from '../data/flatListData'
 import { CheckBox  } from "react-native-elements";
 
 var screen = Dimensions.get('window');
+let listData = [];
 export default class FirstScreen extends Component {
   state = {
     modalVisible: false,
     userName: 'Tom',
     isListLongPressed: false
   };
-
+  
   constructor(props) {
     super(props);
   }
@@ -34,7 +35,29 @@ export default class FirstScreen extends Component {
      this.setState({
       isListLongPressed: !this.state.isListLongPressed
     });
+    if(this.state.isListLongPressed){
+      listData = [];
+    }
     console.log("isLong!! : " + this.state.isListLongPressed);
+  }
+  changeListCheckBoxSelectState = (index, checked) =>{
+    console.log("changeListCheckBoxSelectState : " + index + " " + checked);
+    if(checked){
+      listData.push(index);
+    }
+    else{
+      for(let i=0; i<listData.length; i++){
+        if(listData[i] == index){
+            listData.pop(i);
+            break;
+        }
+      }
+    }
+  }
+  removeStudentData = () =>{
+    for(let i=0; i<listData.length; i++){
+        flatListData[listData[i]] = null;
+    }
   }
  
   render() {
@@ -117,7 +140,9 @@ export default class FirstScreen extends Component {
             </View>
             {this.state.isListLongPressed ? (
               /*delete부분 start*/
-              <TouchableHighlight style={[styles.titleRightStyle, { flex: 0.2 }]}>
+              <TouchableHighlight style={[styles.titleRightStyle, { flex: 0.2 }] } onPress={() => {
+                this.removeStudentData();
+              }}>
                 <View style={{flexDirection:'row'}}>
                   <Icon name="heart" color={"#ff0000"} size={12} />
                   <Text style={styles.deleteStyle}>삭제</Text>
@@ -138,7 +163,7 @@ export default class FirstScreen extends Component {
             
 
         {/*list부분 start*/}
-        <BasicFlatList changeListLongPressedState={this.changeListLongPressedState} isListLongPressed={this.state.isListLongPressed}/>
+        <Student_BasicFlatList changeListLongPressedState={this.changeListLongPressedState} isListLongPressed={this.state.isListLongPressed} changeListCheckBoxSelectState={this.changeListCheckBoxSelectState}/>
         {/*list부분 end*/}
 
         

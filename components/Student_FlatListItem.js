@@ -1,22 +1,30 @@
 import React, { Component } from "react";
-import { TouchableHighlight, FlatList, StyleSheet, Text, View, CheckBox } from "react-native";
+import { TouchableHighlight, FlatList, StyleSheet, Text, View } from "react-native";
+import { CheckBox } from 'react-native-elements'
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 
-export default class FlatListItem extends Component {
+export default class Student_FlatListItem extends Component {
     state = {
-        isListLongPressed: false
+        isListLongPressed: false,
+        checked: false
     }
     constructor(props) {
         super(props);
         this._onLongPressButton = this._onLongPressButton.bind(this);
     }
-    _onLongPressButton() {
+    _onLongPressButton() {                    
         this.props.changeListLongPressedState();
     }
+    checkListItem() {        
+        this.setState({ checked: !this.state.checked });
+        this.props.changeListCheckBoxSelectState(this.props.index, this.state.checked);
+        console.log(this.props.index + " checked : " + this.state.checked);   
+    }
     componentWillReceiveProps(props) {
+        this.setState({ checked: false });
         this.setState({ isListLongPressed: this.props.isListLongPressed });
-        console.log("item! : " + this.state.isListLongPressed + " " + this.props.index);
+        //console.log("item! : " + this.state.isListLongPressed + " " + this.props.index);
     }
     render() {
         return (
@@ -59,9 +67,15 @@ export default class FlatListItem extends Component {
                             //     onPress={() => this.setState({ checked: !this.state.checked })}
                             // />
                             <CheckBox
-                                value={this.state.checked}
-                                onChange={() => this.setState({ checked: !this.state.checked })}
-                                />
+                                checked={this.state.checked}
+                                onPress={() =>{this.checkListItem()}}
+                            />
+                            // <CheckBox
+                            //     value={checked}
+                            //     onChange = {() =>{this.checkListItem()}}
+                            //     // onChange={() => this.setState({ checked: !this.state.checked
+                            //     //  })}
+                            //     />
 
                         ) : null}
 
