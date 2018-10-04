@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TextInput, Image, TouchableHighlight, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Image, TouchableHighlight } from 'react-native';
 import Login from './Login';
+import Loader from './Loader';
 
 import firebase from 'react-native-firebase';
 
@@ -8,7 +9,8 @@ export default class SignInStudent extends Component {
     state = {
         id: "",
         pw: "",
-        autoColor: 1
+        autoColor: 1,
+        loading: false,
     }
 
     static navigationOptions = {
@@ -28,27 +30,39 @@ export default class SignInStudent extends Component {
     }
 
     componentDidMount() {
-        
+
         firebase.auth().onAuthStateChanged(user => {
-            if(!user){
+            if (!user) {
                 console.log("user null!")
-            }else{
+            } else {
                 console.log(user);
-                this.props.navigation.navigate('Login');
+                //this.props.navigation.navigate('Login');
             }
         });
     }
 
-    login(){
+    login() {
+        this.setState({
+            loading: true
+        });
         firebase.auth().signInWithEmailAndPassword(this.state.id, this.state.pw).then((data) => {
-            console.log("!@#!@ signInWith: "+data);
-          }).catch((error) => console.log(error.message));
+            this.setState({
+                loading: false
+            });
+            console.log("!@#!@ signInWith: " + data);
+        }).catch((error) => {
+        this.setState({
+            loading: false
+        });
+        console.log(error.message);});
     }
 
     render() {
 
         return (
             <View style={styles.container}>
+                <Loader
+                    loading={this.state.loading} />
                 <View style={[styles.info, { marginTop: 21 }]}>
                     <Image
                         style={{ height: 32, width: 32, marginRight: 10 }}
@@ -141,7 +155,7 @@ export default class SignInStudent extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#FFFFFF"
+        backgroundColor: "#FFFFFF",
     },
     info: {
         flexDirection: 'row',

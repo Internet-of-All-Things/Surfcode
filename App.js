@@ -2,46 +2,28 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 
 import SurfCodeMainScreenNavigator from "./SurfCode"
-import {AddButton} from "./components/AddButton";
 
 import LoginNaviagtor from "./navigators/LoginNavigator";
-import firebase from 'react-native-firebase';
 
 export default class App extends Component {
   state = {
-    isLoaded: false 
-  }
-
-  constructor() {
-    super();
-    this.state = {
-      isAuthenticated: false,
-    };
-  }
-
-  componentDidMount() {
-    firebase.auth().signInAnonymously()
-      .then(() => {
-        this.setState({
-          isAuthenticated: true,
-        });
-      });
+    isAuth: false 
   }
 
   render() {
-    const { isLoaded } = this.state;
+    const { isAuth } = this.state;
     return (
       <View style={styles.container}>
-      
+   
         {isLoaded ? (
-          <SafeAreaView style={{ flex: 1 }}>           
-            <SurfCodeMainScreenNavigator />            
-          </SafeAreaView>
-        ) : (
           <SafeAreaView style={{ flex: 1 }}>
-              <LoginNaviagtor />
-          </SafeAreaView>
-          )}
+          <LoginNaviagtor />
+      </SafeAreaView>
+        ) : (
+          <SafeAreaView style={{ flex: 1 }}>           
+          <SurfCodeMainScreenNavigator />            
+        </SafeAreaView>)
+      }
       </View>
     );
   }
