@@ -7,7 +7,7 @@ import LoginNaviagtor from "./navigators/LoginNavigator";
 
 export default class App extends Component {
   state = {
-    isAuth: false 
+    isAuth: true 
   }
 
   render() {
@@ -15,7 +15,7 @@ export default class App extends Component {
     return (
       <View style={styles.container}>
    
-        {isLoaded ? (
+        {isAuth ? (
           <SafeAreaView style={{ flex: 1 }}>
           <LoginNaviagtor />
       </SafeAreaView>
