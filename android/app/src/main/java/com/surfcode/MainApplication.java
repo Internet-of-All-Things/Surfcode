@@ -1,16 +1,16 @@
-package com.surfcodeeeeee;
+package com.surfcode;
 
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
 import com.oblador.vectoricons.VectorIconsPackage;
 import io.invertase.firebase.RNFirebasePackage;
-import io.invertase.firebase.auth.RNFirebaseAuthPackage;
 import io.github.douglasjunior.ReactNativeEasyBluetooth.classic.ClassicPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+import io.invertase.firebase.auth.RNFirebaseAuthPackage; // <-- Add this line
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,8 +29,8 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
             new VectorIconsPackage(),
             new RNFirebasePackage(),
-            new ClassicPackage(),
-            new RNFirebaseAuthPackage()
+            new RNFirebaseAuthPackage(), // <-- Add this line
+            new ClassicPackage()
       );
     }
 
