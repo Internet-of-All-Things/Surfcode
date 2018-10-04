@@ -11,7 +11,7 @@ const LoginNavigator = createStackNavigator({
     Login: { screen: Login },
     SignUp: { screen: SignUp },
     SignInTeacher: { screen: SignInTeacher},
-    SignInStudent: { screen: SignInStudent},
+    SignInStudent: { screen: SignInStudent},    
 },{ 
     initialRouteName: 'Login',
 });

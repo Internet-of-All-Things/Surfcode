@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 
-import SurfCodeMainScreenNavigator from "./SurfCode"
+import SurfCodeMainScreenNavigator from "./App/navigators/SurfCodeTabnNavigator"
 
-import LoginNaviagtor from "./navigators/LoginNavigator";
+import LoginNaviagtor from "./App/navigators/LoginNavigator";
 
 export default class App extends Component {
   state = {
-    isAuth: true 
+    isAuth: false 
   }
 
   render() {

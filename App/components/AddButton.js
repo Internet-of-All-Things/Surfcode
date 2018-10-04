@@ -4,6 +4,7 @@ import EasyBluetooth from 'easy-bluetooth-classic';
 import ActionBar from 'react-native-action-bar';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ActionSheet from 'react-native-actionsheet'
+import PropTypes from 'prop-types'
 
 const SIZE = 65;
 const durationIn = 300;
@@ -67,6 +68,7 @@ class FlatListItem extends Component {
         );
     }
 }
+
 class AddButton extends Component {
     state = {
         modalVisible: false,
@@ -263,15 +265,16 @@ class AddButton extends Component {
             inputRange: [0, 1],
             outputRange: ['0deg', '45deg']
         });
-
+        const { right, bottom} = this.props;        
         return (
+            
             <View style={{
                 position: 'absolute',
                 alignItems: 'center',
-                right: "40%", bottom: 50, height: 30, width: 30
+                right: right, bottom: bottom, height: 30, width: 30
 
             }}>
-                {/*modal부분 start*/}
+                {/*bluetooth modal부분 start*/}
                 <Modal
                     animationType="slide"
                     transparent={false}
@@ -434,7 +437,7 @@ class AddButton extends Component {
                     </View>
                 </Modal>
                 {/*modal부분 end*/}
-                {/*ActionSheer 부분 Start*/}
+                {/*ActionSheet 부분 Start*/}
                 <ActionSheet
                     ref={o => this.ActionSheet = o}
                     //title={'Which one do you like ?'}
@@ -442,6 +445,7 @@ class AddButton extends Component {
                     options={['Device 연결', '신청 수강생 조회', 'Cancel']}
                     cancelButtonIndex={2}
                     //destructiveButtonIndex={1}
+                    
                     styles={{
                         body: {
                             margin: 20,
@@ -504,6 +508,14 @@ class AddButton extends Component {
         );
     }
 }
+AddButton.propTypes = {
+    right: PropTypes.string,
+    bottom: PropTypes.number,
+  }
+AddButton.defaultProps = {
+    right: "40%",
+    bottom: 50,    
+};
 
 const styles = StyleSheet.create({
     container: {
