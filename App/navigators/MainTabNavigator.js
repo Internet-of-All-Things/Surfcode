@@ -19,7 +19,7 @@ this.state = {
   addingBtnVisable: false
 };
 
-const SurfCodeTabnNavigator = createBottomTabNavigator(
+const MainTabNavigator = createBottomTabNavigator(
   {
     Biometrics: {
       screen: FirstScreen,
@@ -95,4 +95,4 @@ const SurfCodeTabnNavigator = createBottomTabNavigator(
   }
 );
 
-export default SurfCodeTabnNavigator;
+export default MainTabNavigator;

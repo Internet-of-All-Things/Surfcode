@@ -33,7 +33,7 @@ export default class SignInStudent extends Component {
 
         firebase.auth().onAuthStateChanged(user => {
             if (!user) {
-                console.log("user null!")
+                
             } else {
                 console.log(user);
                 //this.props.navigation.navigate('Login');
@@ -49,6 +49,7 @@ export default class SignInStudent extends Component {
             this.setState({
                 loading: false
             });
+            this.props.navigation.navigate('MainTabNavigator');
             console.log("!@#!@ signInWith: " + data);
         }).catch((error) => {
         this.setState({
