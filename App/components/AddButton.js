@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { Animated, Easing, TouchableHighlight, TouchableOpacity, View, Modal, Text, TextInput, StyleSheet, Platform, FlatList, PermissionsAndroid, Image, Alert } from "react-native";
+import { Animated, Easing, TouchableHighlight, TouchableOpacity, View, Modal, Text, TextInput, StyleSheet, Platform, FlatList, Image, Alert } from "react-native";
 import EasyBluetooth from 'easy-bluetooth-classic';
 import ActionBar from 'react-native-action-bar';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ActionSheet from 'react-native-actionsheet'
 import PropTypes from 'prop-types';
-import PermissionManager from '../utils/PermissionManager';
+
+import NavigationService from '../utils/NavigationService';
 
 const SIZE = 65;
 const durationIn = 300;
@@ -80,29 +81,6 @@ class AddButton extends Component {
         scanning: false
     };
 
-    constructor(props) {
-        super(props);
-        var config = {
-            "uuid": "00001101-0000-1000-8000-00805F9B34FB",
-            "deviceName": "Bluetooth Example Project",
-            "bufferSize": 1024,
-            "characterDelimiter": "\n"
-        };
-
-        if (Platform.OS === 'android' && Platform.Version >= 23) {
-            PermissionManager.getInstance().getPermissions(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION);
-        }
-        
-        console.log('call constructor');
-        EasyBluetooth.init(config)
-            .then(function (config) {
-                console.log("config done!");
-            })
-            .catch(function (ex) {
-                console.warn(ex);
-            });
-        //this.handleRefresh = 
-    }
     mode = new Animated.Value(0);
 
     toggleView = () => {
@@ -111,110 +89,10 @@ class AddButton extends Component {
             duration: 300
         }).start();
     };
-    setModalVisible(visible) {
-        this.setState({ modalVisible: visible });
-        this.scan();
-    };
-    generateKey = (numberOfCharacters) => {
-        return require('random-string')({ length: numberOfCharacters });
-    }
-    componentWillMount() {
-        this.onDeviceFoundEvent = EasyBluetooth.addOnDeviceFoundListener(this.onDeviceFound.bind(this));
-        this.onStatusChangeEvent = EasyBluetooth.addOnStatusChangeListener(this.onStatusChange.bind(this));
-        this.onDataReadEvent = EasyBluetooth.addOnDataReadListener(this.onDataRead.bind(this));
-        this.onDeviceNameEvent = EasyBluetooth.addOnDeviceNameListener(this.onDeviceName.bind(this));
-        this.handleRefreshEnd = this.handleRefreshEnd.bind(this);
-    }
-
-    onDeviceFound(device) {
-        console.log("onDeviceFound");
-        console.log(device);
-        bluetoothDevices.push({
-            'key': this.generateKey(24),
-            'device': device
-        });
-        this.setState({
-            deviceCount: this.state.deviceCount + 1,
-            refreshing: false
-        });
-        this.setState({
-            refreshing: true
-        });
-    }
-
-    onStatusChange(status) {
-        console.log("onStatusChange");
-        console.log(status);
-    }
-
-    onDataRead(data) {
-        console.log("onDataRead");
-        console.log(data);
-    }
-
-    onDeviceName(name) {
-        console.log("onDeviceName");
-        console.log(name);
-    }
-
-    scan() {
-        this.setState({
-            deviceCount: 0,
-            refreshing: true
-        });
-        bluetoothDevices = []
-        EasyBluetooth.startScan()
-            .then((devices) => {
-                console.log("all devices found:");
-                //console.log(devices);//172.30.15.160
-                console.log(bluetoothDevices[0]);
-
-                this.setState({ refreshing: false, scanning: false });
-                //BluetoothDialog.callfunc();
-            })
-            .catch(function (ex) {
-                console.warn(ex);
-            });
-    }
-
-    componentWillUnmount() {
-        this.onDeviceFoundEvent.remove();
-        this.onStatusChangeEvent.remove();
-        this.onDataReadEvent.remove();
-        this.onDeviceNameEvent.remove();
-
-    }
 
 
-
-    renderSeparator = () => (
-        <View
-            style={{
-                backgroundColor: '#d0d2da',
-                height: 1,
-            }}
-        />
-    );
-
-    handleRefresh = () => {
-        this.setState({
-            //refreshing: true
-        })
-    }
-
-    handleRefreshEnd = () => {
-        this.setState({
-            refreshing: false
-        })
-    }
-
-    setModalVisible(visible) {
-        this.setState({ modalVisible: visible });
-        this.scan();
-    }
     setStudentModalVisible(visible) {
         this.setState({ studentModalVisible: visible });
-        this.scan();
     }
 
     showActionSheet = () => {
@@ -265,95 +143,6 @@ class AddButton extends Component {
                 right: right, bottom: bottom, height: 30, width: 30
 
             }}>
-                {/*bluetooth modal부분 start*/}
-                <Modal
-                    animationType="slide"
-                    transparent={false}
-                    visible={this.state.modalVisible}
-                    onRequestClose={() => {
-                        this.setModalVisible(!this.state.modalVisible);
-                    }}>
-                    <ActionBar
-                        containerStyle={styles.bar}
-                        allowFontScaling={true}
-                        title={'디바이스 연결'}
-                        backgroundColor={'#f9f9fa'}
-                        titleStyle={styles.titleStyle}
-                        titleContainerStyle={styles.titleContainerStyle}
-                        iconImageStyle={styles.iconImageStyle}
-                        leftIconName={'back'}
-                        onLeftPress={() => this.setModalVisible(!this.state.modalVisible)}
-                        leftIconContainerStyle={styles.leftIconContainerStyle}
-                    />
-                    <View style={{ paddingTop: 24, paddingLeft: 24, paddingRight: 24 }}>
-                        <Text style={{ color: '#3b3e4c', fontSize: 16, fontWeight: 'bold' }}>디바이스로 수강생 등록</Text>
-                        <Text style={{ marginTop: 24, color: '#82889c', fontSize: 16 }}>블루투스를 통해 주변에 있는 디바이스를 탐색합니다.</Text>
-                        <Text style={{ marginTop: 8, color: '#82889c', fontSize: 16 }}>탐색된 디바이스는 아래 목록에 표시됩니다.</Text>
-                        <View style={{ marginTop: 45, flexDirection: 'row' }}>
-                            <Text style={{ flex: 0.35, color: '#3b3e4c', fontSize: 16 }}>디바이스 목록 </Text>
-                            <View style={{
-                                marginLeft: 8,
-                                marginBottom: 5,
-                                paddingTop: 1,
-                                paddingBottom: 1,
-                                paddingLeft: 7,
-                                paddingRight: 7,
-                                backgroundColor: '#d0d2da',
-                                borderRadius: 5,
-                                borderWidth: 1,
-                                borderColor: '#fff'
-                            }}>
-                                <Text style={{ color: '#3b3e4c', fontSize: 16 }}>{this.state.deviceCount}</Text>
-                            </View>
-                            <View style={{
-                                flex: 0.65,
-                                marginRight: 24,
-                                marginTop: 1,
-                                justifyContent: "flex-end",
-                                flexDirection: 'row'
-                            }}>
-                                <TouchableHighlight
-                                    underlayColor="#d0d2da"
-                                    onPress={() => {
-                                        if (!this.state.scanning) {
-                                            this.setState({ scanning: true })
-                                            this.scan();
-                                        }
-                                    }}>
-                                    <View
-                                        style={{
-                                            justifyContent: "flex-end",
-                                            flexDirection: 'row'
-                                        }}>
-                                        {/* <Image
-                                            style={{ width: 20, height: 20, marginRight: 5 }}
-                                            source={require('./images/project.png')}
-                                        /> */}
-                                        <Text style={{ color: '#82889c', fontSize: 16 }}>목록 새로고침</Text>
-                                    </View>
-                                </TouchableHighlight>
-                            </View>
-                        </View>
-
-                        <FlatList
-                            ref={"bluetoothList"}
-                            ItemSeparatorComponent={this.renderSeparator}
-                            style={styles.FlatList}
-                            data={bluetoothDevices}
-                            refreshing={this.state.refreshing}
-                            onRefresh={() => { }}
-                            renderItem={({ item, index }) => {
-                                //console.log(`Item = ${item}, index = ${index}`);
-                                return (
-                                    <FlatListItem item={item} index={index} parentFlatList={this}>
-                                    </FlatListItem>
-                                );
-                            }}
-                        />
-
-                    </View>
-                </Modal>
-                {/*modal부분 end*/}
                 {/*수강생 검색 modal부분 start*/}
                 <Modal
                     animationType="slide"
@@ -461,7 +250,7 @@ class AddButton extends Component {
                     }}
                     onPress={(index) => {
                         if (index == 0) {
-                            this.setModalVisible(true);
+                            NavigationService.navigate('FindDevice', { });
                         }
                         else if (index == 1) {
                             this.setStudentModalVisible(true);

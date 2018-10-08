@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 
 import Naviagtor from "./App/navigators/Navigator";
+import NavigationService from './App/utils/NavigationService';
 
 export default class App extends Component {
 
@@ -9,7 +10,10 @@ export default class App extends Component {
     return (
       <View style={styles.container}>
         <SafeAreaView style={{ flex: 1 }}>
-          <Naviagtor />
+          <Naviagtor 
+          ref={navigatorRef => {
+          NavigationService.setTopLevelNavigator(navigatorRef);
+        }}/>
         </SafeAreaView>
       </View>
     );
