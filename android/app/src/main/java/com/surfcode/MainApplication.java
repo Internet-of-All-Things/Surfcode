@@ -3,6 +3,9 @@ package com.surfcode;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.beefe.picker.PickerViewPackage;
+import com.oblador.vectoricons.VectorIconsPackage;
+import com.BV.LinearGradient.LinearGradientPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import io.invertase.firebase.RNFirebasePackage;
 import io.github.douglasjunior.ReactNativeEasyBluetooth.classic.ClassicPackage;
@@ -28,7 +31,9 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new PickerViewPackage(),
             new VectorIconsPackage(),
+            new LinearGradientPackage(),
             new RNFirebasePackage(),
             new RNFirebaseAuthPackage(), // <-- Add this line
             new ClassicPackage(),
@@ -52,4 +57,5 @@ public class MainApplication extends Application implements ReactApplication {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
   }
+  
 }

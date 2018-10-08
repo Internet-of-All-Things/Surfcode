@@ -19,7 +19,7 @@ import { CheckBox } from "react-native-elements";
 
 var screen = Dimensions.get("window");
 let listData = [];
-export default class FirstScreen extends Component {
+export default class FirstTab extends Component {
   state = {
     modalVisible: false,
     userName: "Tom",
@@ -27,7 +27,7 @@ export default class FirstScreen extends Component {
   };
 
   constructor(props) {
-    super(props);
+    super(props);    
   }
   changePage = () => {
     console.log("~~~~~~~~~~~~~~~~~~~~!!");

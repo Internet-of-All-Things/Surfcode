@@ -5,12 +5,17 @@ import {
     Text,
     ScrollView,
     View,
-    TouchableHighlight
+    TouchableHighlight,
+    TouchableOpacity
 } from "react-native";
+
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Calendar, CalendarList, Agenda } from "react-native-calendars";
 
 import { LocaleConfig } from "react-native-calendars";
+
+import Picker from 'react-native-picker';
+import moment from 'moment'
 
 // LocaleConfig.locales['kr'] = {
 //   monthNames: ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
@@ -21,78 +26,99 @@ import { LocaleConfig } from "react-native-calendars";
 
 // LocaleConfig.defaultLocale = 'kr';
 
-const programmingLanguages = [
-    {
-      label: '1월',
-      value: '1월',
-    },
-    {
-      label: '2월',
-      value: '2월',
-    },
-    {
-      label: '3월',
-      value: '3월',
-    },
-    {
-      label: '4월',
-      value: '4월',
-    },
-    {
-      label: '5월',
-      value: '5월',
-    },
-    {
-      label: '6월',
-      value: '6월',
-    },
-    {
-      label: '7월',
-      value: '7월',
-    },
-    {
-      label: '8월',
-      value: '8월',
-    },
-    {
-      label: '9월',
-      value: '9월',
-    },
-    {
-      label: '10월',
-      value: '10월',
-    },
-    {
-      label: '11월',
-      value: '11월',
-    },
-    {
-      label: '12월',
-      value: '12월',
-    }
-  ];
-  
 
 export default class SecondScreen extends Component {
     onDayPress(day) {
-        if (day.dateString == this.state.selected) {
+        console.log("!!" + day.dateString + " " + this.state.selected);
+        if (this.state.selected == undefined || this.state.selected == null) {
+            //console.log(this.state.selected + " : " + day.dateString + "!!!!!!!");
             this.setState({
-                selected: null
+                selected: day.dateString
+            });
+        }
+        else if (day.dateString == this.state.selected) {
+            //console.log(day.dateString + "!!!!!!!");
+            this.setState({
+                selected: undefined
             });
         }
         else {
+            //console.log(this.state.selected + " : " + day.dateString + "!!!!!!!");
             this.setState({
                 selected: day.dateString
             });
         }
     }
+
     constructor(props) {
         super(props);
-        this.state = {};
+        let dateObj = new Date();
+        var month = dateObj.getMonth() + 1;
+        var value;
+        if (month < 10) {
+            value = "0" + month;
+        }
+        else {
+            value = month;
+        }
+        console.log("ttttttttt " + dateObj.getFullYear() + " " + value);
+        this.state = {
+            maxdate: dateObj,
+            pickedDate: moment(dateObj).format('YYYY-MM-DD'),
+            selectedYear: dateObj.getFullYear(),
+            selectedMonth: dateObj.getMonth(),
+            displayDate: dateObj.getFullYear() + "년 " + value + "월"
+        };
         this.onDayPress = this.onDayPress.bind(this);
     }
-
+    _showDatePicker() {
+        let date = new Date();
+        let year = date.getFullYear();
+        let years = new Array(2).fill().map((item, id) => {
+            return year - id;
+        });
+        let months = [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Spr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec'];
+        Picker.init({
+            pickerData: [years, months],
+            pickerFontColor: [255, 0, 0, 1],
+            selectedValue: [this.state.selectedYear, months[this.state.selectedMonth - 1]],
+            pickerTitleText: 'Select year and month',
+            onPickerConfirm: (pickedValue, pickedIndex) => {
+                var month = (parseInt(pickedIndex[1]) + 1);
+                var value;
+                if (month < 10)
+                    value = "0" + month;
+                else
+                    value = month;
+                this.setState({
+                    pickedDate: pickedValue[0] + "-" + value + "-01",
+                    selectedYear: parseInt(pickedValue[0]),
+                    selectedMonth: parseInt(value),
+                    displayDate: pickedValue[0] + "년 " + value + "월"
+                });
+                console.log("gggg",this.state);
+            },
+            onPickerCancel: (pickedValue, pickedIndex) => {
+            },
+            onPickerSelect: (pickedValue, pickedIndex) => {
+            }
+        });
+        Picker.show();
+    }
     render() {
+
         return (
             <View style={styles.container}>
                 {/*title부분 start*/}
@@ -110,15 +136,24 @@ export default class SecondScreen extends Component {
                             </View>
                         </TouchableHighlight>
                     </View>
-                 
+                    <View
+                        style={{ flex: 0.4, flexDirection: "row", alignItems: "center" }}
+                    >
+                        {/*Month Picker 부분 start*/}
+                        <TouchableOpacity onPress={this._showDatePicker.bind(this)}>
+                            <Text>{this.state.displayDate}</Text>
+                        </TouchableOpacity>
+                        {/*Month Picker 부분 end*/}
+                    </View>
                 </View>
                 {/*title부분 end*/}
 
                 {/*Callendar부분 start*/}
                 <ScrollView style={styles.container}>
-                    <CalendarList
+                    <Calendar
                         style={styles.calendarStyle}
-                        maxDate={new Date()}
+                        current={this.state.pickedDate}
+                        maxDate={this.state.maxdate}
                         onDayPress={this.onDayPress}
                         onDayLongPress={(day) => { console.log('selected day', day) }}
                         markedDates={{
@@ -128,8 +163,25 @@ export default class SecondScreen extends Component {
                                 color: '#2f52c4'
                             }
                         }}
-                        //monthFormat={'yyyy년 MM월'}
-                        onMonthChange={(month) => { console.log('month changed', month) }}
+                        monthFormat={'yyyy년 MM월'}
+                        onMonthChange={(months) => {
+                            var month = months.month;
+                            var value;
+                            if (month < 10) {
+                                value = "0" + month;
+                            }
+                            else {
+                                value = month;
+                            }
+
+                            this.setState({
+                                pickedDate:months.year + "-" + value + "-01",
+                                selectedYear: months.year,
+                                selectedMonth: months.month,
+                                displayDate: months.year + "년 " + value + "월"
+                            });
+                            console.log("fff", this.state);
+                        }}
                         onPressArrowLeft={substractMonth => substractMonth()}
                         onPressArrowRight={addMonth => addMonth()}
                         theme={{
@@ -137,36 +189,6 @@ export default class SecondScreen extends Component {
                             calendarBackground: '#f9f9fa',
                             selectedDayBackgroundColor: '#2f52c4',
                         }}
-
-                        horizontal
-                        pagingEnabled
-                        hideArrows={false}
-                    />
-                    <Text style={styles.text}>Calendar with marked dates and hidden arrows</Text>
-                    <Calendar
-                        style={styles.calendar}
-                        current={'2012-05-16'}
-                        minDate={'2012-05-10'}
-                        maxDate={'2012-05-29'}
-                        firstDay={1}
-                        markedDates={{
-                            '2012-05-23': { selected: true, marked: true },
-                            '2012-05-24': { selected: true, marked: true, dotColor: 'green' },
-                            '2012-05-25': { marked: true, dotColor: 'red' },
-                            '2012-05-26': { marked: true },
-                            '2012-05-27': { disabled: true, activeOpacity: 0 }
-                        }}
-                        // disabledByDefault={true}
-                        hideArrows={true}
-                    />
-                    <CalendarList
-                        current={'2012-05-16'}
-                        pastScrollRange={24}
-                        futureScrollRange={24}
-                        horizontal
-                        pagingEnabled
-                        hideArrows={false}
-                        style={{ borderBottomWidth: 1, borderBottomColor: 'black' }}
                     />
                 </ScrollView>
                 {/*Callendar부분 end*/}
@@ -176,32 +198,32 @@ export default class SecondScreen extends Component {
 }
 const titleStyles = StyleSheet.create({
     container: {
-      height: 107, flexDirection: "column", paddingLeft: 16, paddingRight: 16, backgroundColor: '#f9f9fa'
+        height: 107, flexDirection: "column", paddingLeft: 16, paddingRight: 16, backgroundColor: '#f9f9fa'
     },
     titleStyle: {
-      fontSize: 21,
-      color: "#3b3e4c",
-      fontFamily: 'SpoqaHanSans-Bold'
+        fontSize: 21,
+        color: "#3b3e4c",
+        fontFamily: 'SpoqaHanSans-Bold'
     },
     titleRightStyle: {
-      flexDirection: "row",
-      flex: 0.2,
-      justifyContent: "center"
+        flexDirection: "row",
+        flex: 0.2,
+        justifyContent: "center"
     },
     subTitleStyle: {
-      fontSize: 14,
-      color: "#3b3e4c"
+        fontSize: 14,
+        color: "#3b3e4c"
     },
     titleUserText: {
-      fontSize: 14,
-      color: "#82889c",
-      paddingLeft: 5
+        fontSize: 14,
+        color: "#82889c",
+        paddingLeft: 5
     },
     titleDeleteStyle: {
-      fontSize: 14,
-      color: '#f33c17'
+        fontSize: 14,
+        color: '#f33c17'
     }
-  });
+});
 
 const styles = StyleSheet.create({
     container: {
@@ -215,6 +237,6 @@ const styles = StyleSheet.create({
         height: 350,
         flex: 1,
         backgroundColor: "#f9f9fa",
-        borderWidth : 0        
+        borderWidth: 0
     },
 });

@@ -1,6 +1,14 @@
 package com.surfcode;
 
 import com.facebook.react.ReactActivity;
+import com.oblador.vectoricons.VectorIconsPackage;
+import com.BV.LinearGradient.LinearGradientPackage;
+import io.invertase.firebase.RNFirebasePackage;
+import io.github.douglasjunior.ReactNativeEasyBluetooth.classic.ClassicPackage;
+import com.oblador.vectoricons.VectorIconsPackage;
+import com.BV.LinearGradient.LinearGradientPackage;
+import io.invertase.firebase.RNFirebasePackage;
+import io.github.douglasjunior.ReactNativeEasyBluetooth.classic.ClassicPackage;
 
 public class MainActivity extends ReactActivity {
 
