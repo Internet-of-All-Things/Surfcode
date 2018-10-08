@@ -440,12 +440,9 @@ class AddButton extends Component {
                 {/*ActionSheet 부분 Start*/}
                 <ActionSheet
                     ref={o => this.ActionSheet = o}
-                    //title={'Which one do you like ?'}
-                    // message={'In botany, a fruit is the seed-bearing structure in flowering plants (also known as angiosperms) formed from the ovary after flowering.'}
                     options={['Device 연결', '신청 수강생 조회', 'Cancel']}
                     cancelButtonIndex={2}
-                    //destructiveButtonIndex={1}
-                    
+                    //destructiveButtonIndex={1}                    
                     styles={{
                         body: {
                             margin: 20,
@@ -482,9 +479,6 @@ class AddButton extends Component {
                 />
                 {/*ActionSheer 부분 End*/}
                 <TouchableHighlight
-                    // onPress={() => {
-                    //     this.setModalVisible(true);
-                    // }}
                     onPress={this.showActionSheet}
                     underlayColor="#2f52c4"
                     style={{

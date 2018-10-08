@@ -1,8 +1,16 @@
 import React, { Component } from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
-import { Calendar, CalendarList, Agenda } from 'react-native-calendars';
+import {
+    Platform,
+    StyleSheet,
+    Text,
+    ScrollView,
+    View,
+    TouchableHighlight
+} from "react-native";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { Calendar, CalendarList, Agenda } from "react-native-calendars";
 
-import { LocaleConfig } from 'react-native-calendars';
+import { LocaleConfig } from "react-native-calendars";
 
 // LocaleConfig.locales['kr'] = {
 //   monthNames: ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
@@ -13,292 +21,187 @@ import { LocaleConfig } from 'react-native-calendars';
 
 // LocaleConfig.defaultLocale = 'kr';
 
+const programmingLanguages = [
+    {
+      label: '1월',
+      value: '1월',
+    },
+    {
+      label: '2월',
+      value: '2월',
+    },
+    {
+      label: '3월',
+      value: '3월',
+    },
+    {
+      label: '4월',
+      value: '4월',
+    },
+    {
+      label: '5월',
+      value: '5월',
+    },
+    {
+      label: '6월',
+      value: '6월',
+    },
+    {
+      label: '7월',
+      value: '7월',
+    },
+    {
+      label: '8월',
+      value: '8월',
+    },
+    {
+      label: '9월',
+      value: '9월',
+    },
+    {
+      label: '10월',
+      value: '10월',
+    },
+    {
+      label: '11월',
+      value: '11월',
+    },
+    {
+      label: '12월',
+      value: '12월',
+    }
+  ];
+  
 
 export default class SecondScreen extends Component {
     onDayPress(day) {
-        this.setState({
-          selected: day.dateString
-        });
-      }
+        if (day.dateString == this.state.selected) {
+            this.setState({
+                selected: null
+            });
+        }
+        else {
+            this.setState({
+                selected: day.dateString
+            });
+        }
+    }
+    constructor(props) {
+        super(props);
+        this.state = {};
+        this.onDayPress = this.onDayPress.bind(this);
+    }
+
     render() {
         return (
+            <View style={styles.container}>
+                {/*title부분 start*/}
+                <View style={titleStyles.container}>
+                    <View
+                        style={{ flex: 0.6, flexDirection: "row", alignItems: "center" }}
+                    >
+                        <Text style={[titleStyles.titleStyle, { flex: 0.8 }]}>사용 기록</Text>
+                        <TouchableHighlight underlayColor="#ffffff" style={titleStyles.titleRightStyle} onPress={() => {
+                            this.setModalVisible(true);
+                        }}>
+                            <View style={{ flexDirection: 'row' }}>
+                                <Icon name="heart" color={"#ff0000"} size={24} />
+                                <Text style={titleStyles.titleUserText} ref='userName'>{this.state.userName = '최용석'}</Text>
+                            </View>
+                        </TouchableHighlight>
+                    </View>
+                 
+                </View>
+                {/*title부분 end*/}
 
-            <ScrollView style={styles.container}>
-            <Text style={styles.text}>Calendar with selectable date and arrows</Text>
-            <Calendar
-              onDayPress={this.onDayPress}
-              style={styles.calendar}
-              hideExtraDays
-              markedDates={{[this.state.selected]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}}}
-            />
-            <Text style={styles.text}>Calendar with marked dates and hidden arrows</Text>
-            <Calendar
-              style={styles.calendar}
-              current={'2012-05-16'}
-              minDate={'2012-05-10'}
-              maxDate={'2012-05-29'}
-              firstDay={1}
-              markedDates={{
-                '2012-05-23': {selected: true, marked: true},
-                '2012-05-24': {selected: true, marked: true, dotColor: 'green'},
-                '2012-05-25': {marked: true, dotColor: 'red'},
-                '2012-05-26': {marked: true},
-                '2012-05-27': {disabled: true, activeOpacity: 0}
-              }}
-              // disabledByDefault={true}
-              hideArrows={true}
-            />
-            <Text style={styles.text}>Calendar with custom day component</Text>
-            <Calendar
-              style={[styles.calendar, {height: 300}]}
-              dayComponent={({date, state}) => {
-                return (<View><Text style={{textAlign: 'center', color: state === 'disabled' ? 'gray' : 'black'}}>{date.day}</Text></View>);
-              }}
-            />
-            <Text style={styles.text}>Calendar with period marking and spinner</Text>
-            <Calendar
-              style={styles.calendar}
-              current={'2012-05-16'}
-              minDate={'2012-05-10'}
-              displayLoadingIndicator
-              markingType={'period'}
-              theme={{
-                calendarBackground: '#333248',
-                textSectionTitleColor: 'white',
-                dayTextColor: 'red',
-                todayTextColor: 'white',
-                selectedDayTextColor: 'white',
-                monthTextColor: 'white',
-                selectedDayBackgroundColor: '#333248',
-                arrowColor: 'white',
-                // textDisabledColor: 'red',
-                'stylesheet.calendar.header': {
-                  week: {
-                    marginTop: 5,
-                    flexDirection: 'row',
-                    justifyContent: 'space-between'
-                  }
-                }
-              }}
-              markedDates={{
-                '2012-05-17': {disabled: true},
-                '2012-05-08': {textColor: '#666'},
-                '2012-05-09': {textColor: '#666'},
-                '2012-05-14': {startingDay: true, color: 'blue', endingDay: true},
-                '2012-05-21': {startingDay: true, color: 'blue'},
-                '2012-05-22': {endingDay: true, color: 'gray'},
-                '2012-05-24': {startingDay: true, color: 'gray'},
-                '2012-05-25': {color: 'gray'},
-                '2012-05-26': {endingDay: true, color: 'gray'}}}
-              hideArrows={false}
-            />
-            <Text style={styles.text}>Calendar with multi-dot marking</Text>
-            <Calendar
-              style={styles.calendar}
-              current={'2012-05-16'}
-              markingType={'multi-dot'}
-              markedDates={{
-                '2012-05-08': {dots: [{key: 'vacation', color: 'blue', selectedDotColor: 'white'}, {key: 'massage', color: 'red', selectedDotColor: 'white'}], selected: true},
-                '2012-05-09': {dots: [{key: 'vacation', color: 'blue', selectedDotColor: 'red'}, {key: 'massage', color: 'red', selectedDotColor: 'blue'}], disabled: true}
-              }}
-              hideArrows={false}
-            />
-            <Text style={styles.text}>Calendar with multi-period marking</Text>
-            <Calendar
-              style={styles.calendar}
-              current={'2012-05-16'}
-              markingType={'multi-period'}
-              markedDates={{  
-                '2012-05-16': {  
-                  periods: [  
-                    { startingDay: true, endingDay: false, color: '#5f9ea0' },
-                    { startingDay: true, endingDay: false, color: '#ffa500' },
-                  ]
-                },
-                '2012-05-17': {  
-                  periods: [  
-                    { startingDay: false, endingDay: true, color: '#5f9ea0' },
-                    { startingDay: false, endingDay: true, color: '#ffa500' },
-                    { startingDay: true, endingDay: false, color: '#f0e68c' },
-                  ]
-                },
-                '2012-05-18': {  
-                  periods: [  
-                    { startingDay: true, endingDay: true, color: '#ffa500' },
-                    { color: 'transparent' },
-                    { startingDay: false, endingDay: false, color: '#f0e68c' },
-                  ]
-                },
-              }}
-              hideArrows={false}
-            />
-            <Text style={styles.text}>Calendar with week numbers</Text>
-            <Calendar
-              onDayPress={this.onDayPress}
-              style={styles.calendar}
-              hideExtraDays
-              showWeekNumbers
-              markedDates={{[this.state.selected]: {selected: true}}}
-            />
-            <Text style={styles.text}>Custom calendar with custom marking type</Text>
-            <Calendar
-              style={styles.calendar}
-              onDayLongPress={this.onDayLongPress}
-              hideExtraDays
-              current={'2018-03-01'}
-              minDate={'2018-03-01'}
-              markingType={'custom'}
-              markedDates={{
-                '2018-03-01': {
-                  customStyles: {
-                    container: {
-                      backgroundColor: 'white',
-                      elevation: 2
-                    },
-                    text: {
-                      color: 'blue',
-                    },
-                  }
-                },
-                '2018-03-08': {selected: true},
-                '2018-03-09': {
-                  customStyles: {
-                    container: {
-                      backgroundColor: 'red',
-                      elevation: 4,
-                    },
-                    text: {
-                      color: 'white',
-                    },
-                  }
-                },
-                '2018-03-10': {disabled: true},
-                '2018-03-14': {
-                  customStyles: {
-                    container: {
-                      backgroundColor: 'green',
-                    },
-                    text: {
-                      color: 'white',
-                    },
-                  },
-                },
-                '2018-03-15': {
-                  customStyles: {
-                    container: {
-                      backgroundColor: 'black',
-                      elevation: 2
-                    },
-                    text: {
-                      color: 'yellow',
-                    },
-                  }
-                },
-                '2018-03-20': {
-                  customStyles: {
-                    container: {
-                      backgroundColor: 'pink',
-                      elevation: 4,
-                    },
-                    text: {
-                      color: 'blue',
-                    },
-                  }
-                },
-                '2018-03-21': {disabled: true},
-                '2018-03-28': {
-                  customStyles: {
-                    container: {
-                      backgroundColor: 'green',
-                    },
-                    text: {
-                      color: 'black',
-                      fontWeight: 'bold'
-                    },
-                  },
-                },
-                '2018-03-29': {
-                  customStyles: {
-                    container: {
-                      backgroundColor: 'white',
-                      elevation: 2
-                    },
-                    text: {
-                      color: 'blue',
-                    },
-                  }
-                },
-                '2018-03-30': {
-                  customStyles: {
-                    container: {
-                      backgroundColor: 'violet',
-                      elevation: 4,
-                      borderColor: 'red',
-                      borderWidth: 5,
-                    },
-                    text: {
-                      marginTop: 3,
-                      fontSize: 11,
-                      color: 'yellow',
-                    },
-                  }
-                },
-                '2018-03-31': {
-                  customStyles: {
-                    container: {
-                      backgroundColor: 'green',
-                      borderRadius: 0,
-                    },
-                    text: {
-                      color: 'white',
-                    },
-                  },
-                }}}
-              hideArrows={false}
-            />
-          </ScrollView>
+                {/*Callendar부분 start*/}
+                <ScrollView style={styles.container}>
+                    <CalendarList
+                        style={styles.calendarStyle}
+                        maxDate={new Date()}
+                        onDayPress={this.onDayPress}
+                        onDayLongPress={(day) => { console.log('selected day', day) }}
+                        markedDates={{
+                            [this.state.selected]: {
+                                selected: true,
+                                //disableTouchEvent: true,                            
+                                color: '#2f52c4'
+                            }
+                        }}
+                        //monthFormat={'yyyy년 MM월'}
+                        onMonthChange={(month) => { console.log('month changed', month) }}
+                        onPressArrowLeft={substractMonth => substractMonth()}
+                        onPressArrowRight={addMonth => addMonth()}
+                        theme={{
+                            backgroundColor: '#f9f9fa',
+                            calendarBackground: '#f9f9fa',
+                            selectedDayBackgroundColor: '#2f52c4',
+                        }}
 
-
-
-
-            
-            // <View style={styles.container}>
-            //     <Calendar
-            //         style={styles.calendarStyle}
-            //         maxDate={new Date()}
-            //         onDayPress={(day) => { console.log('selected day', day) }}
-            //         onDayLongPress={(day) => { console.log('selected day', day) }}
-            //         monthFormat={'yyyy년 MM월'}
-            //         onMonthChange={(month) => { console.log('month changed', month) }}
-            //         onPressArrowLeft={substractMonth => substractMonth()}
-            //         onPressArrowRight={addMonth => addMonth()}
-            //         theme={{
-            //             backgroundColor: '#ffffff',
-            //             calendarBackground: '#ffffff',
-            //             textSectionTitleColor: '#b6c1cd',
-            //             selectedDayBackgroundColor: '#00adf5',
-            //             selectedDayTextColor: '#ffffff',
-            //             todayTextColor: '#00adf5',
-            //             dayTextColor: '#2d4150',
-            //             textDisabledColor: '#d9e1e8',
-            //             dotColor: '#00adf5',
-            //             selectedDotColor: '#ffffff',
-            //             arrowColor: 'orange',
-            //             textDayFontFamily: 'monospace',
-            //             textMonthFontFamily: 'monospace',
-            //             textDayHeaderFontFamily: 'monospace',
-            //             textMonthFontWeight: 'bold',
-            //             textDayFontSize: 16,
-            //             textMonthFontSize: 16,
-            //             textDayHeaderFontSize: 16
-            //           }}
-            //     />
-            // </View>
+                        horizontal
+                        pagingEnabled
+                        hideArrows={false}
+                    />
+                    <Text style={styles.text}>Calendar with marked dates and hidden arrows</Text>
+                    <Calendar
+                        style={styles.calendar}
+                        current={'2012-05-16'}
+                        minDate={'2012-05-10'}
+                        maxDate={'2012-05-29'}
+                        firstDay={1}
+                        markedDates={{
+                            '2012-05-23': { selected: true, marked: true },
+                            '2012-05-24': { selected: true, marked: true, dotColor: 'green' },
+                            '2012-05-25': { marked: true, dotColor: 'red' },
+                            '2012-05-26': { marked: true },
+                            '2012-05-27': { disabled: true, activeOpacity: 0 }
+                        }}
+                        // disabledByDefault={true}
+                        hideArrows={true}
+                    />
+                    <CalendarList
+                        current={'2012-05-16'}
+                        pastScrollRange={24}
+                        futureScrollRange={24}
+                        horizontal
+                        pagingEnabled
+                        hideArrows={false}
+                        style={{ borderBottomWidth: 1, borderBottomColor: 'black' }}
+                    />
+                </ScrollView>
+                {/*Callendar부분 end*/}
+            </View>
         );
     }
-  
 }
-
+const titleStyles = StyleSheet.create({
+    container: {
+      height: 107, flexDirection: "column", paddingLeft: 16, paddingRight: 16, backgroundColor: '#f9f9fa'
+    },
+    titleStyle: {
+      fontSize: 21,
+      color: "#3b3e4c",
+      fontFamily: 'SpoqaHanSans-Bold'
+    },
+    titleRightStyle: {
+      flexDirection: "row",
+      flex: 0.2,
+      justifyContent: "center"
+    },
+    subTitleStyle: {
+      fontSize: 14,
+      color: "#3b3e4c"
+    },
+    titleUserText: {
+      fontSize: 14,
+      color: "#82889c",
+      paddingLeft: 5
+    },
+    titleDeleteStyle: {
+      fontSize: 14,
+      color: '#f33c17'
+    }
+  });
 
 const styles = StyleSheet.create({
     container: {
@@ -308,28 +211,10 @@ const styles = StyleSheet.create({
     },
     calendarStyle: {
         borderWidth: 1,
-        borderColor: 'gray',
+        borderColor: "gray",
         height: 350,
         flex: 1,
         backgroundColor: "#f9f9fa",
-    }
-
-    ,
-    calendar: {
-        borderTopWidth: 1,
-        paddingTop: 5,
-        borderBottomWidth: 1,
-        borderColor: '#eee',
-        height: 350
-      },
-      text: {
-        textAlign: 'center',
-        borderColor: '#bbb',
-        padding: 10,
-        backgroundColor: '#eee'
-      },
-      container: {
-        flex: 1,
-        backgroundColor: 'gray'
-      }
+        borderWidth : 0        
+    },
 });

@@ -56,7 +56,6 @@ const MainTabNavigator = createBottomTabNavigator(
     Adding: {
       screen: () => null,
       navigationOptions: ({ navigation }) => ({
-        //tabBarVisible: this.state.addingBtnVisable,
         tabBarIcon: <AddButton />
       })
     },
@@ -88,7 +87,6 @@ const MainTabNavigator = createBottomTabNavigator(
       showLabel: false,
       activeTintColor: "#000000",
       inactiveTintColor: "#000000",
-      //order: ["Biometrics", "Book", "Adding", "WeatherInfo", "Setting"], //표시 순서
       style: {
         backgroundColor: "#f9f9fa"
       },
