@@ -17,6 +17,7 @@ import FourthTab from "../tabs/FourthTab";
 
 import { createBottomTabNavigator } from "react-navigation";
 import { AddButton } from "../components/AddButton";
+
 this.state = {
   addingBtnVisable: false
 };

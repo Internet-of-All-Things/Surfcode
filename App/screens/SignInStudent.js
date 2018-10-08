@@ -15,8 +15,6 @@ export default class SignInStudent extends Component {
 
     constructor(props) {
         super(props);
-        console.log("constructor~!@~!@~!@~!@");
-        this._bootstrapAsync();
     }
 
     static navigationOptions = {
@@ -32,42 +30,27 @@ export default class SignInStudent extends Component {
         }
     };
 
-    _bootstrapAsync = async () => {
-        const userToken = await AsyncStorage.getItem('userToken');
-
-        this.props.navigation.navigate(userToken ? 'App' : 'Auth');
-    };
-
-    componentWillMount() {
-        //console.log("call call~!~! componentWillMount");
-        //firebase.auth().signOut();
-    }
-
-    componentDidMount() {
-        /*console.log("call call~!~! componentDidMount");
-        firebase.auth().onAuthStateChanged(user => {
-            if (!user) {
-
-            } else {
-                console.log(user);
-                //this.props.navigation.navigate('Login');
-            }
-        });*/
-    }
+    _storeData = async (data) => {
+        try {
+          await AsyncStorage.setItem('Auth', data);
+        } catch (error) {
+            console.log(error);
+        }
+      }
 
     login() {
-        if (this.state.id != null && this.state.pw != null && this.state.id != "" && this.state.pw != "") {
+        if (this.state.id != "" && this.state.pw != "") {
             this.setState({
                 loading: true
             });
 
             firebase.auth().signInWithEmailAndPassword(this.state.id, this.state.pw).then((data) => {
+                this._storeData(this.state.id);
+                console.log(data);
                 this.setState({
                     loading: false
                 });
-                AsyncStorage.setItem('userToken', 'abc');
-                this.props.navigation.navigate('MainTabNavigator');
-                console.log("!@#!@ signInWith: " + data);
+                this.props.navigation.navigate('Main');
             }).catch((error) => {
                 this.setState({
                     loading: false

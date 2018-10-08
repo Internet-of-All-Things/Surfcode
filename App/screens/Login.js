@@ -1,10 +1,34 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, TouchableHighlight, Text, Image, ImageBackground, Dimensions } from 'react-native';
-import { createStackNavigator } from 'react-navigation';
+import { StyleSheet, View, TouchableHighlight, Text, Image, ImageBackground, Dimensions, AsyncStorage } from 'react-native';
+
 
 export default class Login extends Component {
+    state = {
+        auth: 0,
+    }
     static navigationOptions = {
         header: null
+    }
+
+    constructor(props) {
+        super(props);
+        this._retrieveData();
+    }
+
+    _retrieveData = async () => {
+        try {
+            const value = await AsyncStorage.getItem('Auth');
+            if (value !== null) {
+                console.log(value);
+                this.props.navigation.navigate('Main');
+            } else {
+                console.log("value is null");
+                this.setState({ auth: 1 });
+            }
+        } catch (error) {
+            console.log(error);
+            this.setState({ auth: 1 });
+        }
     }
 
     render() {
@@ -22,35 +46,38 @@ export default class Login extends Component {
                             source={require('../images/logo.png')}
                         />
                     </View>
-                    <View style={styles.buttonContainer}>
-                        <TouchableHighlight
-                            onPress={() => this.props.navigation.navigate('SignInTeacher')}
-                            underlayColor="#rgba(255,255,255,0.5)"
-                            style={[styles.FirstButton, styles.boxContainer]}
-                        >
-                            <Text
-                                style={{ color: '#2f52c4' }}
-                            >강사로 로그인하기</Text>
-                        </TouchableHighlight>
-                        <TouchableHighlight
-                            onPress={() => this.props.navigation.navigate('SignInStudent')}
-                            underlayColor="#rgba(255,255,255,0.5)"
-                            style={[styles.SecondButton, styles.boxContainer]}
-                        >
-                            <Text
-                                style={{ color: '#f9f9fa' }}
-                            >수강생으로 로그인하기</Text>
-                        </TouchableHighlight>
-                        <TouchableHighlight
-                            onPress={() => this.props.navigation.navigate('SignUp')}
-                            underlayColor="#rgba(255,255,255,0.5)"
-                            style={[styles.ThirdButton, styles.boxContainer]}
-                        >
-                            <Text
-                                style={{ color: '#b7c3ea' }}
-                            >회원가입하기</Text>
-                        </TouchableHighlight>
-                    </View>
+                    {this.state.auth ? (
+
+                        <View style={styles.buttonContainer}>
+                            <TouchableHighlight
+                                onPress={() => this.props.navigation.navigate('SignInTeacher')}
+                                underlayColor="#rgba(255,255,255,0.5)"
+                                style={[styles.FirstButton, styles.boxContainer]}
+                            >
+                                <Text
+                                    style={{ color: '#2f52c4' }}
+                                >강사로 로그인하기</Text>
+                            </TouchableHighlight>
+                            <TouchableHighlight
+                                onPress={() => this.props.navigation.navigate('SignInStudent')}
+                                underlayColor="#rgba(255,255,255,0.5)"
+                                style={[styles.SecondButton, styles.boxContainer]}
+                            >
+                                <Text
+                                    style={{ color: '#f9f9fa' }}
+                                >수강생으로 로그인하기</Text>
+                            </TouchableHighlight>
+                            <TouchableHighlight
+                                onPress={() => this.props.navigation.navigate('SignUp')}
+                                underlayColor="#rgba(255,255,255,0.5)"
+                                style={[styles.ThirdButton, styles.boxContainer]}
+                            >
+                                <Text
+                                    style={{ color: '#b7c3ea' }}
+                                >회원가입하기</Text>
+                            </TouchableHighlight>
+                        </View>
+                    ) : (<View></View>)}
                 </View>
             </ImageBackground>
         )

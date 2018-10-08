@@ -23,7 +23,7 @@ export default class SignInStudent extends Component {
     constructor(props) {
         super(props);
         //this._bootstrapAsync();
-    }
+    }    
 
     static navigationOptions = {
         title: '회원가입',
@@ -37,6 +37,14 @@ export default class SignInStudent extends Component {
             paddingRight: 30,
         }
     };
+
+    _storeData = async (data) => {
+        try {
+          await AsyncStorage.setItem('Auth', data);
+        } catch (error) {
+          // Error saving data
+        }
+      }
 
     _bootstrapAsync = async () => {
         //const userToken = await AsyncStorage.getItem('userToken');
@@ -55,6 +63,7 @@ export default class SignInStudent extends Component {
                 firebase.auth()
                 .signInWithEmailAndPassword(this.state.id, this.state.pw)
                 .then((data) => {
+                    this._storeData(data);
                     this.setState({
                         loading: false
                     });
@@ -77,8 +86,7 @@ export default class SignInStudent extends Component {
                     }).catch((error) => {
                         console.log(error);
                     });
-                    AsyncStorage.setItem('userToken', 'abc');
-                    this.props.navigation.navigate('MainTabNavigator');
+                    this.props.navigation.navigate('Main');
                 }).catch((error) => {
                     this.setState({
                         loading: false
