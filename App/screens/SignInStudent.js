@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TextInput, Image, TouchableHighlight } from 'react-native';
-import Login from './Login';
+import { StyleSheet, View, Text, TextInput, Image, TouchableHighlight, AsyncStorage } from 'react-native';
+
 import Loader from './Loader';
 
 import firebase from 'react-native-firebase';
@@ -11,6 +11,12 @@ export default class SignInStudent extends Component {
         pw: "",
         autoColor: 1,
         loading: false,
+    }
+
+    constructor(props) {
+        super(props);
+        console.log("constructor~!@~!@~!@~!@");
+        this._bootstrapAsync();
     }
 
     static navigationOptions = {
@@ -25,37 +31,50 @@ export default class SignInStudent extends Component {
             paddingRight: 30,
         }
     };
-    omponentWillMount() {
-        firebase.auth().signOut();
+
+    _bootstrapAsync = async () => {
+        const userToken = await AsyncStorage.getItem('userToken');
+
+        this.props.navigation.navigate(userToken ? 'App' : 'Auth');
+    };
+
+    componentWillMount() {
+        //console.log("call call~!~! componentWillMount");
+        //firebase.auth().signOut();
     }
 
     componentDidMount() {
-
+        /*console.log("call call~!~! componentDidMount");
         firebase.auth().onAuthStateChanged(user => {
             if (!user) {
-                
+
             } else {
                 console.log(user);
                 //this.props.navigation.navigate('Login');
             }
-        });
+        });*/
     }
 
     login() {
-        this.setState({
-            loading: true
-        });
-        firebase.auth().signInWithEmailAndPassword(this.state.id, this.state.pw).then((data) => {
+        if (this.state.id != null && this.state.pw != null && this.state.id != "" && this.state.pw != "") {
             this.setState({
-                loading: false
+                loading: true
             });
-            this.props.navigation.navigate('MainTabNavigator');
-            console.log("!@#!@ signInWith: " + data);
-        }).catch((error) => {
-        this.setState({
-            loading: false
-        });
-        console.log(error.message);});
+
+            firebase.auth().signInWithEmailAndPassword(this.state.id, this.state.pw).then((data) => {
+                this.setState({
+                    loading: false
+                });
+                AsyncStorage.setItem('userToken', 'abc');
+                this.props.navigation.navigate('MainTabNavigator');
+                console.log("!@#!@ signInWith: " + data);
+            }).catch((error) => {
+                this.setState({
+                    loading: false
+                });
+                console.log(error.message);
+            });
+        }
     }
 
     render() {
@@ -70,7 +89,7 @@ export default class SignInStudent extends Component {
                         source={require('../images/id.png')}
                     />
                     <TextInput
-                        style={{ flex: 0.8, height: 40, borderColor: '#d0d2da', borderWidth: 1 }}
+                        style={[styles.textInput, { flex: 0.8, height: 40, borderColor: '#d0d2da', borderWidth: 1 }]}
                         placeholder="email@surfcode.com"
                         placeholderTextColor="rgba(0,0,0,0.6)"
                         onChangeText={(id) => this.setState({ id })}
@@ -83,7 +102,7 @@ export default class SignInStudent extends Component {
                         source={require('../images/pw.png')}
                     />
                     <TextInput
-                        style={{ flex: 0.8, height: 40, borderColor: '#d0d2da', borderWidth: 1 }}
+                        style={[styles.textInput, { flex: 0.8, height: 40, borderColor: '#d0d2da', borderWidth: 1 }]}
                         placeholder="●●●●●●"
                         placeholderTextColor="rgba(0,0,0,0.6)"
                         secureTextEntry
@@ -93,17 +112,41 @@ export default class SignInStudent extends Component {
                 </View>
                 <View style={styles.autologin}>
                     <TouchableHighlight
-                        onPress={() => console.log("????")}
-                        underlayColor="#FFFFFF"
-                    >
-                        <Text
-                            onPress={() => this.state.autoColor ? this.setState({ autoColor: 0 }) : this.setState({ autoColor: 1 })}
-                            style={{ color: this.state.autoColor ? '#82889c' : '#AA5577' }}
-                        > 자동 로그인</Text>
+                        onPress={() => this.state.autoColor ? this.setState({ autoColor: 0 }) : this.setState({ autoColor: 1 })}
+                        style={{
+                            height: '100%',
+                            alignItems: 'flex-start',
+                            justifyContent: 'center',
+                        }}
+                        underlayColor="#f9f9fa"
+                    ><View style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}>
+                            <Image
+                                style={{
+                                    height: 15,
+                                    width: 15,
+                                    marginRight: 5,
+                                    tintColor: this.state.autoColor ? '#82889c' : '#f33c17',
+                                }}
+                                source={require('../images/success.png')}
+
+                            />
+                            <Text
+                                style={{
+                                    fontSize: 15,
+                                    color: this.state.autoColor ? '#82889c' : '#f33c17',
+                                }}
+                            >자동 로그인</Text>
+                        </View>
+
                     </TouchableHighlight>
                 </View>
                 <TouchableHighlight
                     onPress={() => this.login()}
+                    underlayColor="rgba(47,82,196,0.7)"
                     style={[styles.boxContainer, { backgroundColor: "#2f52c4" }]}
                 >
                     <Text
@@ -113,6 +156,7 @@ export default class SignInStudent extends Component {
 
                 <TouchableHighlight
                     onPress={() => console.log("test")}
+                    underlayColor="rgba(47,82,196,0.2)"
                     style={[styles.boxContainer]}
                 >
                     <Text
@@ -125,6 +169,7 @@ export default class SignInStudent extends Component {
 
                 <TouchableHighlight
                     onPress={() => console.log("test")}
+                    underlayColor="rgba(60,90,154,0.7)"
                     style={[styles.boxContainer, { backgroundColor: "#3c5a9a" }]}
                 >
                     <Text
@@ -134,6 +179,7 @@ export default class SignInStudent extends Component {
 
                 <TouchableHighlight
                     onPress={() => console.log("test")}
+                    underlayColor="rgba(208,210,218,0.7)"
                     style={[styles.boxContainer, { borderWidth: 1, borderColor: '#d0d2da' }]}
                 >
                     <Text
@@ -143,6 +189,7 @@ export default class SignInStudent extends Component {
 
                 <TouchableHighlight
                     onPress={() => console.log("test")}
+                    underlayColor="rgba(250,225,0,0.4)"
                     style={[styles.boxContainer, { backgroundColor: "#fae100" }]}
                 >
                     <Text
@@ -156,7 +203,7 @@ export default class SignInStudent extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#f9f9fa",
     },
     info: {
         flexDirection: 'row',
@@ -167,13 +214,13 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
         marginLeft: 24,
         marginRight: 24,
-        marginBottom: 32,
-        marginTop: 16,
+        marginBottom: 16,
+        height: 40,
     },
     orLine: {
         marginLeft: 24,
         marginRight: 24,
-        marginBottom: 12,
+        marginBottom: 24,
         marginTop: 0,
         alignItems: 'center',
         justifyContent: 'center',
@@ -187,4 +234,13 @@ const styles = StyleSheet.create({
         alignItems: 'center', // 가운데 맞춤
         justifyContent: 'center', // 위 아래로 중앙정렬
     },
+    textInput: {
+        width: "100%",
+        height: "100%",
+        borderRadius: 4,
+        borderColor: '#d0d2da',
+        borderWidth: 1,
+        paddingLeft: 12,
+        paddingRight: 12,
+    }
 });
