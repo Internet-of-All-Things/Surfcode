@@ -15,6 +15,11 @@ import { LocaleConfig } from 'react-native-calendars';
 
 
 export default class SecondScreen extends Component {
+    onDayPress(day) {
+        this.setState({
+          selected: day.dateString
+        });
+      }
     render() {
         return (
 
@@ -291,13 +296,10 @@ export default class SecondScreen extends Component {
             // </View>
         );
     }
+  
 }
 
-onDayPress(day) {
-    this.setState({
-      selected: day.dateString
-    });
-  }
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
