@@ -4,7 +4,8 @@ import EasyBluetooth from 'easy-bluetooth-classic';
 import ActionBar from 'react-native-action-bar';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ActionSheet from 'react-native-actionsheet'
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
+import PermissionManager from '../utils/PermissionManager';
 
 const SIZE = 65;
 const durationIn = 300;
@@ -87,21 +88,11 @@ class AddButton extends Component {
             "bufferSize": 1024,
             "characterDelimiter": "\n"
         };
+
         if (Platform.OS === 'android' && Platform.Version >= 23) {
-            PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then((result) => {
-                if (result) {
-                    console.log("Permission is OK");
-                } else {
-                    PermissionsAndroid.requestPermission(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION).then((result) => {
-                        if (result) {
-                            console.log("User accept");
-                        } else {
-                            console.log("User refuse");
-                        }
-                    });
-                }
-            });
+            PermissionManager.getInstance().getPermissions(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION);
         }
+        
         console.log('call constructor');
         EasyBluetooth.init(config)
             .then(function (config) {
