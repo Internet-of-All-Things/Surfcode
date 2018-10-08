@@ -22,8 +22,7 @@ export default class SignInStudent extends Component {
 
     constructor(props) {
         super(props);
-        console.log("constructor~!@~!@~!@~!@");
-        this._bootstrapAsync();
+        //this._bootstrapAsync();
     }
 
     static navigationOptions = {
@@ -40,9 +39,9 @@ export default class SignInStudent extends Component {
     };
 
     _bootstrapAsync = async () => {
-        const userToken = await AsyncStorage.getItem('userToken');
+        //const userToken = await AsyncStorage.getItem('userToken');
 
-        this.props.navigation.navigate(userToken ? 'App' : 'Auth');
+        //this.props.navigation.navigate(userToken ? 'App' : 'Auth');
     }
 
     createAccount() {
@@ -59,6 +58,25 @@ export default class SignInStudent extends Component {
                     this.setState({
                         loading: false
                     });
+                    firebase.database().ref('member/teacher/'+this.state.id
+                    .replace(".","").replace("#","").replace("$",'').replace("@","").replace("!","").replace("%","")
+                    .replace("^","").replace("&","").replace("*","").replace("(","").replace(")","").replace("-","")
+                    .replace("/","").replace("\\","").replace("[","").replace("]","").replace("{","").replace("}","")
+                    .replace("`","").replace("~","").replace("?","").replace(",","").replace("<","").replace(">",""))
+                    .set(
+                        {
+                            email: this.state.id,
+                            name: this.state.name,
+                            nickname: this.state.nickname,
+                            phone : this.state.phone,
+                            school: this.state.school,
+                            career: this.state.career,
+                        }
+                    ).then(() => {
+                        console.log("INSERTED !");
+                    }).catch((error) => {
+                        console.log(error);
+                    });
                     AsyncStorage.setItem('userToken', 'abc');
                     this.props.navigation.navigate('MainTabNavigator');
                 }).catch((error) => {
@@ -68,7 +86,18 @@ export default class SignInStudent extends Component {
                     console.log(error.message);
                 });
             })
-            .catch(error => this.setState({ errorMessage: error.message }))
+            .catch((error) => {
+                this.setState({
+                    loading: false
+                });
+                console.log(error.code);
+                if(error.code == "auth/email-already-in-use"){
+                    console.log("이미 존재하는 이메일 아이디입니다.");
+                }else if(error.code =="auth/invalid-password"){
+                    console.log("비밀번호는 6자리 이상이어야합니다.");
+                }
+
+            })
     }
 
     signUp() {
