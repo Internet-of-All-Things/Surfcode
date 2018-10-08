@@ -1,19 +1,384 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text} from 'react-native';
+import { StyleSheet, View, Text, TextInput, Image, TouchableHighlight, AsyncStorage, ScrollView } from 'react-native';
 
-export default class SignUp extends Component {
+import Loader from './Loader';
+
+import firebase from 'react-native-firebase';
+
+export default class SignInStudent extends Component {
+    state = {
+        id: "",
+        pw: "",
+        cpw: "",
+        name: "",
+        nickname: "",
+        phone: "",
+        school: "",
+        career: "",
+        autoColor: 1,
+        toggleColor: 1,
+        loading: false,
+    }
+
+    constructor(props) {
+        super(props);
+        console.log("constructor~!@~!@~!@~!@");
+        this._bootstrapAsync();
+    }
+
+    static navigationOptions = {
+        title: '회원가입',
+        headerStyle: {
+            elevation: 0,
+        },
+        headerTitleContainerStyle: {
+            justifyContent: "center",
+        },
+        headerTitleStyle: {
+            paddingRight: 30,
+        }
+    };
+
+    _bootstrapAsync = async () => {
+        const userToken = await AsyncStorage.getItem('userToken');
+
+        this.props.navigation.navigate(userToken ? 'App' : 'Auth');
+    }
+
+    createAccount() {
+        this.setState({
+            loading: true
+        });
+
+        firebase.auth()
+            .createUserWithEmailAndPassword(this.state.id, this.state.pw)
+            .then(() => {
+                firebase.auth()
+                .signInWithEmailAndPassword(this.state.id, this.state.pw)
+                .then((data) => {
+                    this.setState({
+                        loading: false
+                    });
+                    AsyncStorage.setItem('userToken', 'abc');
+                    this.props.navigation.navigate('MainTabNavigator');
+                }).catch((error) => {
+                    this.setState({
+                        loading: false
+                    });
+                    console.log(error.message);
+                });
+            })
+            .catch(error => this.setState({ errorMessage: error.message }))
+    }
+
+    signUp() {
+        if (this.state.id != "" &&
+            this.state.pw != "" &&
+            this.state.cpw != "" &&
+            this.state.name != "" &&
+            this.state.nickname != "" &&
+            this.state.phone != "" &&
+            this.state.autoColor != 1 
+        ) {
+            if (this.state.toggleColor != 1) {
+                if (this.state.career != "" &&
+                    this.state.school != "") {
+                    this.createAccount();
+                }
+            } else {
+                this.createAccount();
+            }
+        }
+    }
 
     render() {
 
         return (
-            <View style={styles.container}>
-                <Text>hey!</Text>
-            </View>
+            <ScrollView style={styles.container}>
+                <Loader
+                    loading={this.state.loading} />
+
+                <View style={styles.account}><Text style={styles.indexText}>계정 정보</Text></View>
+                <View style={styles.info}>
+                    <Image
+                        style={{ height: 32, width: 32, marginRight: 10 }}
+                        source={require('../images/id.png')}
+                    />
+                    <TextInput
+                        style={[{ flex: 0.8 }, styles.textInput]}
+                        placeholder="아이디(이메일)"
+                        placeholderTextColor="rgba(0,0,0,0.4)"
+                        onChangeText={(id) => this.setState({ id })}
+                        value={this.state.id}
+                    />
+                </View>
+                <View style={[styles.info, { marginTop: 14 }]}>
+                    <Image
+                        style={{ height: 32, width: 32, marginRight: 10 }}
+                        source={require('../images/pw.png')}
+                    />
+                    <TextInput
+                        style={[{ flex: 0.8 }, styles.textInput]}
+                        placeholder="비밀번호"
+                        placeholderTextColor="rgba(0,0,0,0.4)"
+                        secureTextEntry
+                        onChangeText={(pw) => this.setState({ pw })}
+                        value={this.state.pw}
+                    />
+                </View>
+                <View style={[styles.info, { marginTop: 14 }]}>
+                    <Image
+                        style={{ height: 32, width: 32, marginRight: 10 }}
+                        source={require('../images/pw.png')}
+                    />
+                    <TextInput
+                        style={[{ flex: 0.8 }, styles.textInput]}
+                        placeholder="비밀번호 확인"
+                        placeholderTextColor="rgba(0,0,0,0.4)"
+                        secureTextEntry
+                        onChangeText={(cpw) => this.setState({ cpw })}
+                        value={this.state.cpw}
+                    />
+                </View>
+                <View style={styles.account}><Text style={styles.indexText}>회원 정보</Text></View>
+                <View style={[styles.boxContainer, { borderColor: "#2f52c4", borderWidth: 1, flexDirection: 'row' }]}>
+                    <TouchableHighlight
+                        onPress={() => this.setState({ toggleColor: 1, autoColor: 1, })}
+                        underlayColor="#rgba(47,82,196,0.7)"
+                        style={[styles.toggle,
+                        {
+                            borderTopLeftRadius: 3,
+                            borderBottomLeftRadius: 3,
+                            backgroundColor: this.state.toggleColor ? '#2f52c4' : '#f9f9fa'
+                        }]}>
+                        <Text style={{
+                            fontSize: 15,
+                            fontWeight: 'bold',
+                            color: this.state.toggleColor ? '#f9f9fa' : '#2f52c4'
+                        }}>수강생</Text>
+                    </TouchableHighlight>
+                    <TouchableHighlight
+                        onPress={() => this.setState({ toggleColor: 0, autoColor: 1, })}
+                        underlayColor="#rgba(47,82,196,0.7)"
+                        style={[styles.toggle,
+                        {
+                            borderTopRightRadius: 3,
+                            borderBottomRightRadius: 3,
+                            backgroundColor: this.state.toggleColor ? '#f9f9fa' : '#2f52c4'
+                        }]}>
+                        <Text style={{
+                            fontSize: 15,
+                            fontWeight: 'bold',
+                            color: this.state.toggleColor ? '#2f52c4' : '#f9f9fa'
+                        }}>강사</Text>
+                    </TouchableHighlight>
+                </View>
+
+                <View style={[styles.boxContainer, { flexDirection: 'row' }]}>
+                    <TextInput
+                        style={[{ flex: 1, marginRight: 6 }, styles.textInput]}
+                        placeholder="이름"
+                        placeholderTextColor="rgba(0,0,0,0.4)"
+                        onChangeText={(name) => this.setState({ name })}
+                        value={this.state.name}
+                    />
+                    <TextInput
+                        style={[{ flex: 1, marginLeft: 6 }, styles.textInput]}
+                        placeholder="닉네임"
+                        placeholderTextColor="rgba(0,0,0,0.4)"
+                        onChangeText={(nickname) => this.setState({ nickname })}
+                        value={this.state.nickname}
+                    />
+                </View>
+
+                <View style={styles.boxContainer}>
+                    <TextInput
+                        style={[styles.textInput]}
+                        placeholder={this.state.toggleColor ? "전화번호" : "긴급 연락용 전화번호"}
+                        placeholderTextColor="rgba(0,0,0,0.4)"
+                        onChangeText={(phone) => this.setState({ phone })}
+                        value={this.state.phone}
+                    />
+                </View>
+
+                {!this.state.toggleColor ? (
+                    <View style={styles.boxContainer}>
+                        <TextInput
+                            style={[styles.textInput]}
+                            placeholder="소속 서핑 스쿨"
+                            placeholderTextColor="rgba(0,0,0,0.4)"
+                            onChangeText={(school) => this.setState({ school })}
+                            value={this.state.school}
+                        />
+                    </View>
+                ) : (<View></View>)}
+                {!this.state.toggleColor ? (
+                    <View style={[styles.boxContainer, { flexDirection: 'row', marginBottom: 0, }]}>
+                        <TextInput
+                            style={[{
+                                flex: 0.8,
+                                borderTopLeftRadius: 3,
+                                borderBottomLeftRadius: 3,
+                                height: "100%",
+                                borderColor: '#d0d2da',
+                                borderWidth: 1,
+                                paddingLeft: 12,
+                                paddingRight: 12,
+                                borderRightWidth: 0,
+                            }]}
+                            placeholder="경력 추가"
+                            placeholderTextColor="rgba(0,0,0,0.4)"
+                            onChangeText={(career) => this.setState({ career })}
+                            value={this.state.career}
+                        />
+                        <TouchableHighlight
+                            onPress={() => { }}
+                            underlayColor="#rgba(47,82,196,0.2)"
+                            style={{
+                                flex: 0.2,
+                                backgroundColor: "#f9f9fa",
+                                borderColor: "#2f52c4",
+                                borderWidth: 1,
+                                height: '100%',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                borderTopRightRadius: 3,
+                                borderBottomRightRadius: 3,
+                            }}
+                        >
+                            <Text
+                                style={{ color: '#2f52c4', fontSize: 25 }}
+                            >+</Text>
+                        </TouchableHighlight>
+                    </View>
+                ) : (<View></View>)}
+
+
+                <View style={styles.autologin}>
+                    <View style={{ flex: 0.8 }}>
+                        <TouchableHighlight
+                            onPress={() => this.state.autoColor ? this.setState({ autoColor: 0 }) : this.setState({ autoColor: 1 })}
+                            style={{
+                                height: '100%',
+                                alignItems: 'flex-start',
+                                justifyContent: 'center',
+                            }}
+                            underlayColor="#f9f9fa"
+                        ><View style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}>
+                                <Image
+                                    style={{
+                                        height: 15,
+                                        width: 15,
+                                        marginRight: 5,
+                                        tintColor: this.state.autoColor ? '#82889c' : '#f33c17',
+                                    }}
+                                    source={require('../images/success.png')}
+
+                                />
+                                <Text
+                                    style={{
+                                        fontSize: 15,
+                                        color: this.state.autoColor ? '#82889c' : '#f33c17',
+                                    }}
+                                >개인정보 수집 및 이용 동의</Text>
+                            </View>
+
+                        </TouchableHighlight>
+                    </View>
+                    <View style={{ flex: 0.2, alignItems: 'flex-end', }}>
+                        <TouchableHighlight
+                            onPress={() => console.log("????")}
+                            underlayColor="#FFFFFF"
+                        >
+                            <Text
+                                onPress={() => { }}
+                                style={{ color: '#82889c' }}
+                            >내용 읽기</Text>
+                        </TouchableHighlight>
+                    </View>
+                </View>
+
+                <TouchableHighlight
+                    onPress={() => this.signUp() }
+                    underlayColor="#rgba(47,82,196,0.7)"
+                    style={[styles.boxContainer, { backgroundColor: "#2f52c4", height: 44 }]}
+                >
+                    <Text
+                        style={{ color: '#f9f9fa', fontSize: 15, }}
+                    >회원가입하기</Text>
+                </TouchableHighlight>
+
+            </ScrollView>
         )
     }
 }
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: "#f9f9fa",
     },
+    indexText: {
+        color: '#3b3e4c',
+        fontWeight: 'bold',
+        fontSize: 17,
+    },
+    toggle: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        height: '100%',
+    },
+    autologin: {
+        alignItems: 'flex-end',
+        marginLeft: 24,
+        marginRight: 24,
+        marginBottom: 6,
+        flexDirection: 'row',
+        height: 40,
+        alignItems: 'center', // 가운데 맞춤
+        justifyContent: 'center', // 위 아래로 중앙정렬
+    },
+    account: {
+        marginTop: 18,
+        marginLeft: 24,
+        marginRight: 24,
+        marginBottom: 18,
+        alignItems: 'flex-start', // 가운데 맞춤
+    },
+    info: {
+        height: 40,
+        flexDirection: 'row',
+        alignItems: 'center', // 가운데 맞춤
+        justifyContent: 'center', // 위 아래로 중앙정렬
+    },
+    orLine: {
+        marginLeft: 24,
+        marginRight: 24,
+        marginBottom: 12,
+        marginTop: 0,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    boxContainer: {
+        height: 40,
+        marginLeft: 24,
+        marginRight: 24,
+        marginBottom: 18,
+        borderRadius: 4,
+        alignItems: 'center', // 가운데 맞춤
+        justifyContent: 'center', // 위 아래로 중앙정렬
+    },
+    textInput: {
+        width: "100%",
+        height: "100%",
+        borderRadius: 4,
+        borderColor: '#d0d2da',
+        borderWidth: 1,
+        paddingLeft: 12,
+        paddingRight: 12,
+    }
 });

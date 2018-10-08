@@ -25,6 +25,7 @@ export default class Login extends Component {
                     <View style={styles.buttonContainer}>
                         <TouchableHighlight
                             onPress={() => this.props.navigation.navigate('SignInTeacher')}
+                            underlayColor="#rgba(255,255,255,0.5)"
                             style={[styles.FirstButton, styles.boxContainer]}
                         >
                             <Text
@@ -33,6 +34,7 @@ export default class Login extends Component {
                         </TouchableHighlight>
                         <TouchableHighlight
                             onPress={() => this.props.navigation.navigate('SignInStudent')}
+                            underlayColor="#rgba(255,255,255,0.5)"
                             style={[styles.SecondButton, styles.boxContainer]}
                         >
                             <Text
@@ -41,6 +43,7 @@ export default class Login extends Component {
                         </TouchableHighlight>
                         <TouchableHighlight
                             onPress={() => this.props.navigation.navigate('SignUp')}
+                            underlayColor="#rgba(255,255,255,0.5)"
                             style={[styles.ThirdButton, styles.boxContainer]}
                         >
                             <Text

@@ -18,10 +18,10 @@ const Loader = props => {
       transparent={true}
       animationType={'none'}
       visible={loading}
-      onRequestClose={() => { console.log('close modal') }}>
+      onRequestClose={() => {console.log('close modal')}}>
       <View style={styles.modalBackground}>
-        <ActivityIndicator
-          animating={loading} />
+          <ActivityIndicator
+            animating={loading} />
       </View>
     </Modal>
   )
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'space-around',
     backgroundColor: '#00000040'
-  }
+  },
 });
 
 export default Loader;
