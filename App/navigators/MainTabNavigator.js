@@ -10,8 +10,10 @@ import {
 
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-import FirstScreen from "../tabs/FirstScreen";
-import SecondScreen from "../tabs/SecondScreen";
+import FirstTab from "../tabs/FirstTab";
+import SecondTab from "../tabs/SecondTab";
+import ThirdTab from "../tabs/ThirdTab";
+import FourthTab from "../tabs/FourthTab";
 
 import { createBottomTabNavigator } from "react-navigation";
 import { AddButton } from "../components/AddButton";
@@ -22,7 +24,7 @@ this.state = {
 const MainTabNavigator = createBottomTabNavigator(
   {
     Biometrics: {
-      screen: FirstScreen,
+      screen: FirstTab,
       navigationOptions: ({ navigation }) => ({
         title: "생체정보",
         tabBarLabel: "Biometrics",
@@ -37,7 +39,7 @@ const MainTabNavigator = createBottomTabNavigator(
       })
     },
     Book: {
-      screen: SecondScreen,
+      screen: SecondTab,
       navigationOptions: ({ navigation }) => ({
         title: "파도정보",
         tabBarLabel: "WeatherInfo",
@@ -59,7 +61,7 @@ const MainTabNavigator = createBottomTabNavigator(
       })
     },
     WeatherInfo: {
-      screen: SecondScreen,      
+      screen: ThirdTab,      
       navigationOptions: ({ navigation }) => ({
         title: "파도정보",
         tabBarLabel: "WeatherInfo",
@@ -70,7 +72,7 @@ const MainTabNavigator = createBottomTabNavigator(
       })
     },
     Setting: {
-      screen: SecondScreen,
+      screen: FourthTab,
       navigationOptions: ({ navigation }) => ({
         title: "파도정보",
         tabBarLabel: "Setting",        
