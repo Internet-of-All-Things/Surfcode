@@ -3,11 +3,10 @@ import { TouchableHighlight, FlatList, StyleSheet, Text, View } from "react-nati
 import { CheckBox } from 'react-native-elements'
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-
 export default class Student_FlatListItem extends Component {
     state = {
         isListLongPressed: false,
-        checked: false
+        checked: false,
     }
     constructor(props) {
         super(props);

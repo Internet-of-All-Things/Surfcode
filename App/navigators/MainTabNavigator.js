@@ -34,6 +34,7 @@ const MainTabNavigator = createBottomTabNavigator(
         ),
         tabBarColor: "#f2f2f2",      
         tabBarOnPress: ({ navigation, defaultHandler }) => {
+          console.log("!@#!$!@$!@$!@#!@$dddddddddddddddddddddd");
           this.state.addingBtnVisable = true;
           defaultHandler();
         }

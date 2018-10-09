@@ -84,6 +84,7 @@ export default class FirstScreen extends Component {
   };
 
   render() {
+    console.log("FirstTab.js render() called!!")
     return (
       <View colors={["#00C6FB", "#005BEA"]} style={styles.container}>
         {/*modal부분 start*/}
