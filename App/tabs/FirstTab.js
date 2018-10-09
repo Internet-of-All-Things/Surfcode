@@ -27,7 +27,7 @@ export default class FirstTab extends Component {
   };
 
   constructor(props) {
-    super(props);    
+    super(props);
   }
   changePage = () => {
     console.log("~~~~~~~~~~~~~~~~~~~~!!");
@@ -82,6 +82,11 @@ export default class FirstTab extends Component {
     });
     console.log(this.state.isListLongPressed + "!!!!");
   };
+  deleteCancel = () =>{
+    this.setState({
+      isListLongPressed: !this.state.isListLongPressed
+    });
+  }
 
   render() {
     console.log("FirstTab.js render() called!!")
@@ -151,7 +156,7 @@ export default class FirstTab extends Component {
           <View
             style={{ flex: 0.4, flexDirection: "row", alignItems: "center" }}
           >
-            <View style={{ flex: 0.8, flexDirection: "row" }}>
+            <View style={{ flex: 0.6, flexDirection: "row" }}>
               <Text style={titleStyles.subTitleStyle}> 수강생 목록</Text>
               <View
                 style={{
@@ -174,25 +179,38 @@ export default class FirstTab extends Component {
             </View>
             {this.state.isListLongPressed ? (
               /*delete부분 start*/
-              <TouchableHighlight
-                style={titleStyles.titleRightStyle}
-                onPress={() => {
-                  this.removeStudentData();
-                }}
-              >
-                <View style={{ flexDirection: "row" }}>
-                  <Icon name="heart" color={"#ff0000"} size={12} />
-                  <Text style={titleStyles.titleDeleteStyle}>삭제</Text>
-                </View>
-              </TouchableHighlight>
-            ) : (
-              /*delete부분 end*/
-
               <View style={titleStyles.titleRightStyle}>
-                <Icon name="heart" color={"#ff0000"} size={12} />
-                <Icon name="heart" color={"#ff0000"} size={12} />
+                <TouchableHighlight
+                  style={[titleStyles.titleRightStyle,{flex:0.4,justifyContent:'center'}]}
+                  onPress={() => {
+                    this.deleteCancel();
+                  }}
+                >
+                  <View style={{ flexDirection: "row" }}>
+                    <Icon name="heart" color={"#ff0000"} size={12} />
+                    <Text style={titleStyles.titleDeleteStyle}>취소</Text>
+                  </View>
+                </TouchableHighlight>
+                <TouchableHighlight
+                  style={[titleStyles.titleRightStyle,{flex:0.4,justifyContent:'center'}]}
+                  onPress={() => {
+                    this.removeStudentData();
+                  }}
+                >
+                  <View style={{ flexDirection: "row" }}>
+                    <Icon name="heart" color={"#ff0000"} size={12} />
+                    <Text style={titleStyles.titleDeleteStyle}>삭제</Text>
+                  </View>
+                </TouchableHighlight>
               </View>
-            )}
+            ) : (
+                /*delete부분 end*/
+
+                <View style={[titleStyles.titleRightStyle,{flex:0.4, paddingRight:15}]}>
+                  <Icon name="heart" color={"#ff0000"} size={12} />
+                  <Icon name="heart" color={"#ff0000"} size={12} />
+                </View>
+              )}
           </View>
         </View>
         {/*title부분 end*/}
@@ -225,8 +243,8 @@ const titleStyles = StyleSheet.create({
   },
   titleRightStyle: {
     flexDirection: "row",
-    flex: 0.2,
-    justifyContent: "center"
+    flex: 0.4,    
+    justifyContent: "flex-end"
   },
   subTitleStyle: {
     fontSize: 14,

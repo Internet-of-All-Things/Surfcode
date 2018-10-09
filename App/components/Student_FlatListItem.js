@@ -6,7 +6,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 export default class Student_FlatListItem extends Component {
     state = {
         isListLongPressed: false,
-        checked: false,
+        itemChecked: false,
     }
     constructor(props) {
         super(props);
@@ -16,19 +16,24 @@ export default class Student_FlatListItem extends Component {
         this.props.changeListLongPressedState();
     }
     checkListItem() {        
-        this.setState({ checked: !this.state.checked });
-        this.props.changeListCheckBoxSelectState(this.props.index, this.state.checked);
-        console.log(this.props.index + " checked : " + this.state.checked);   
+        if (this.state.isListLongPressed) { 
+            console.log("dddd",this.state);
+            var itemstate = this.state.itemChecked = !this.state.itemChecked;
+            this.setState({ itemChecked: itemstate });
+            //this.state.checked = !this.state.checked//이건 위의 this.state
+            this.props.changeListCheckBoxSelectState(this.props.index, itemstate);
+            console.log(this.props.index + " checked : " + itemstate);
+        }
     }
     componentWillReceiveProps(props) {
-        this.setState({ checked: false });
+        this.setState({ itemChecked: false });
         this.setState({ isListLongPressed: this.props.isListLongPressed });
         //console.log("item! : " + this.state.isListLongPressed + " " + this.props.index);
     }
     render() {
         return (
             <View>
-                <TouchableHighlight onLongPress={() => { this._onLongPressButton() }} underlayColor="#ff0000">
+                <TouchableHighlight onPress={() => { this.checkListItem() }} onLongPress={() => { this._onLongPressButton() }} underlayColor="#ff0000">
                     <View style={{
                         flex: 1,
                         flexDirection: "row",
@@ -37,54 +42,31 @@ export default class Student_FlatListItem extends Component {
                             '#f9f9fa'
                         //this.props.index % 2 == 0 ? "#ffffff" : "#65edea"
                     }}>
-                        {this.state.isListLongPressed ? (
-                            // <CheckBox
-                            //     containerStyle={
-                            //         {
-                            //             width: 30,
-                            //             height: 30,
-                            //             padding: 0,
-                            //             paddingRight: -10,
-                            //             margin: 0,
-                            //             borderColor: '#ff000000'
-                            //         }
-                            //     }
-                            //     textStyle={
-                            //         {
-                            //             width: 0,
-                            //             innerHeight: 0,
-                            //             padding: 0,
-                            //             margin: 0,
-                            //         }
-                            //     }
-
-                            //     checkedIcon='dot-circle-o'
-                            //     uncheckedIcon='circle-o'
-                            //     checked={this.state.checked}
-                            //     checkedColor='#84dcf4'
-                            //     size={20}
-                            //     onPress={() => this.setState({ checked: !this.state.checked })}
-                            // />
+                        {this.state.isListLongPressed ? (                         
+                            <View style={{flex:0.18,marginLeft:0, width: 62, height: 40,paddingTop:5,paddingLeft:0,paddingRight:0,paddingBottom:0 }}>
                             <CheckBox
-                                checked={this.state.checked}
-                                onPress={() =>{this.checkListItem()}}
+                                title=''
+                                containerStyle={
+                                    {                       
+                                        padding:0,                 
+                                        borderColor: '#ff000000',
+                                        backgroundColor: '#ff000000'
+                                    }
+                                }
+                                checked={this.state.itemChecked}
+                                onPress={() => { this.checkListItem() }}
                             />
-                            // <CheckBox
-                            //     value={checked}
-                            //     onChange = {() =>{this.checkListItem()}}
-                            //     // onChange={() => this.setState({ checked: !this.state.checked
-                            //     //  })}
-                            //     />
+                        </View>
 
                         ) : null}
 
-                        <Icon style={{ marginLeft: 5, justifyContent: 'center' }} name="heart" color={'#ff0000'} size={40} />
+                        <Icon style={{marginLeft: 5, justifyContent: 'center' }} name="heart" color={'#ff0000'} size={40} />
 
-                        <View style={{ flex: 0.5, flexDirection: "column", marginLeft: 25 }}>
+                        <View style={{ flex: 0.45, flexDirection: "column", marginLeft: 25 }}>
                             <Text style={[styles.textStyle, { fontSize: 24 }]}>{this.props.item.name}</Text>
                             <Text style={styles.smallText}>{this.props.item.state}</Text>
                         </View>
-                        <View style={{ flex: 0.5, flexDirection: "row", paddingTop: 5 }}>
+                        <View style={{ flex: 0.55, flexDirection: "row", paddingTop: 5 }}>
                             <View style={{ flex: 0.5, alignItems: 'center' }}>
                                 <Text style={[styles.textStyle, { flex: 0.5 }]}>{this.props.item.bpm} BPM</Text>
                                 <View style={{ flexDirection: 'row', flex: 0.5 }}>

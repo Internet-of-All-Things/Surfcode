@@ -13,6 +13,7 @@ function updateState(refresh) {
 export { updateState }
 
 export default class Student_BasicFlatList extends Component {
+   
     state = {
         isListLongPressed: false,
         refresh : false,
@@ -29,7 +30,7 @@ export default class Student_BasicFlatList extends Component {
     }
     changeListLongPressedState = () => {
         this.setState({
-            isListLongPressed: !this.state.isListLongPressed
+            isListLongPressed: !this.props.isListLongPressed
         });
         this.props.changeListLongPressedState();
         console.log("list! : " + this.state.isListLongPressed);

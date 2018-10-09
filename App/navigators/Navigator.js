@@ -16,10 +16,10 @@ const Navigator = createStackNavigator({
     SignInTeacher: { screen: SignInTeacher},
     SignInStudent: { screen: SignInStudent},  
     FindDevice: {screen: FindDevice},
-    _: {screen: MainTabNavigator},  
+    MainTabNavigator: {screen: MainTabNavigator},  
     Main: { screen: Main },
 },{ 
-    initialRouteName: 'MainTabNavigator',
+    initialRouteName: 'Main',
 });
 
 export default Navigator;

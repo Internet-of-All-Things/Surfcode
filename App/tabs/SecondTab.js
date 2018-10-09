@@ -28,6 +28,7 @@ import moment from 'moment'
 
 
 export default class SecondScreen extends Component {
+
     onDayPress(day) {
         console.log("!!" + day.dateString + " " + this.state.selected);
         if (this.state.selected == undefined || this.state.selected == null) {
@@ -63,7 +64,7 @@ export default class SecondScreen extends Component {
         }
         console.log("ttttttttt " + dateObj.getFullYear() + " " + value);
         this.state = {
-            maxdate: dateObj,
+            maxdate: moment(dateObj).format('YYYY-MM-DD'),
             pickedDate: moment(dateObj).format('YYYY-MM-DD'),
             selectedYear: dateObj.getFullYear(),
             selectedMonth: dateObj.getMonth(),
@@ -172,8 +173,7 @@ export default class SecondScreen extends Component {
                             }
                             else {
                                 value = month;
-                            }
-
+                            }                            
                             this.setState({
                                 pickedDate:months.year + "-" + value + "-01",
                                 selectedYear: months.year,
