@@ -11,8 +11,11 @@ import {
 } from 'react-native';
 
 import Loader from './Loader';
+import flatListData from "../data/flatListData";
 import EasyBluetooth from 'easy-bluetooth-classic';
 import NavigationService from '../utils/NavigationService';
+
+import { updateState } from '../components/Student_BasicFlatList';
 
 var config = {
     "uuid": "00001101-0000-1000-8000-00805F9B34FB",
@@ -49,6 +52,7 @@ export default class FindDevice extends Component {
 
     constructor(props) {
         super(props);
+
         EasyBluetooth.init(config)
             .then(function (config) {
                 console.log("config done!");
@@ -99,8 +103,15 @@ export default class FindDevice extends Component {
     }
 
     onDataRead(data) {
-        console.log("onDataRead");
+        const values = data.split(' ');
+        if (flatListData[0] != null) {
+            flatListData[0]["bpm"] = values[0];
+            flatListData[0]["brethe"] = values[1];
+
+            updateState({ refresh: true });
+        }
         console.log(data);
+
     }
 
     onDeviceName(name) {
@@ -120,12 +131,12 @@ export default class FindDevice extends Component {
                 //console.log(devices);//172.30.15.160
                 console.log(bluetoothDevices[0]);
 
-                this.setState({ 
+                this.setState({
                     scanning: false,
-                    loading: false, 
+                    loading: false,
                     refreshing: true,
                 });
-                
+
             })
             .catch(function (ex) {
                 console.warn(ex);
@@ -141,8 +152,8 @@ export default class FindDevice extends Component {
         />
     );
 
-    goBack = async () =>{
-        NavigationService.navigate("Main",{});
+    goBack = async () => {
+        NavigationService.navigate("Main", {});
     }
 
     render() {
@@ -297,6 +308,16 @@ class FlatListItem extends Component {
                                 .catch((ex) => {
                                     console.warn(ex);
                                 })
+                            flatListData.push({
+                                "key": "abc1",
+                                "name": this.props.item.device.name,
+                                "state": "양호한 상태",
+                                "bpm": "미측정",
+                                "brethe": "미측정",
+                                "selected": false
+                            })
+                            NavigationService.navigate("Main", { changed: true });
+
                         })
                         .catch((ex) => {
                             console.warn(ex);

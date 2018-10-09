@@ -9,11 +9,16 @@ import {
 
 import MainTabNavigator from '../navigators/MainTabNavigator';
 import PermissionManager from '../utils/PermissionManager';
+import {updateState} from '../components/Student_BasicFlatList';
 
 export default class Main extends Component {
 
+    state = {
+        first : true,
+    }
+
     static navigationOptions = {
-        header: null
+        header: null,
     }
 
     constructor(props) {
@@ -27,6 +32,9 @@ export default class Main extends Component {
         BackHandler.exitApp();
     }
 
+    componentWillMount(){
+        console.log("componentWillMount!!!!!!!!!!!!!!!!!!!!~~~~~~");
+    }
     componentDidMount() {
         this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
             this.goBack();
@@ -38,7 +46,24 @@ export default class Main extends Component {
         this.backHandler.remove();
     }
 
+    componentDidUpdate(){
+        console.log("Main.js componentDidUpdate")
+        //if(!this.state.first)
+            //updateState({ refresh : false });
+        //else
+            //this.setState({first : false});
+    }
+
+    componentWillReceiveProps(){
+        console.log("componentWillReceiveProps");
+        //if(!this.state.first)
+           // updateState({ refresh : this.props.navigation.getParam('changed', false) });
+        
+    }
+
     render() {
+        console.log("!@#!@#??? 랜더 함수가 불렸다!~!")
+    
         return (
             <View style={styles.containers}>
                 <MainTabNavigator />
