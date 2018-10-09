@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { TouchableHighlight, FlatList, StyleSheet, Text, View } from "react-native";
+import { TouchableHighlight, TouchableOpacity, FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { CheckBox } from 'react-native-elements'
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
@@ -12,12 +12,12 @@ export default class Student_FlatListItem extends Component {
         super(props);
         this._onLongPressButton = this._onLongPressButton.bind(this);
     }
-    _onLongPressButton() {                    
+    _onLongPressButton() {
         this.props.changeListLongPressedState();
     }
-    checkListItem() {        
-        if (this.state.isListLongPressed) { 
-            console.log("dddd",this.state);
+    checkListItem() {
+        if (this.state.isListLongPressed) {
+            console.log("dddd", this.state);
             var itemstate = this.state.itemChecked = !this.state.itemChecked;
             this.setState({ itemChecked: itemstate });
             //this.state.checked = !this.state.checked//이건 위의 this.state
@@ -42,25 +42,37 @@ export default class Student_FlatListItem extends Component {
                             '#f9f9fa'
                         //this.props.index % 2 == 0 ? "#ffffff" : "#65edea"
                     }}>
-                        {this.state.isListLongPressed ? (                         
-                            <View style={{flex:0.18,marginLeft:0, width: 62, height: 40,paddingTop:5,paddingLeft:0,paddingRight:0,paddingBottom:0 }}>
-                            <CheckBox
-                                title=''
-                                containerStyle={
-                                    {                       
-                                        padding:0,                 
-                                        borderColor: '#ff000000',
-                                        backgroundColor: '#ff000000'
+                        {this.state.isListLongPressed ? (
+                            <View style={{ flex: 0.18, marginLeft: 0, width: 62, height: 40, paddingTop: 5, paddingLeft: 0, paddingRight: 0, paddingBottom: 0 }}>
+                                <CheckBox
+                                    title=''
+                                    containerStyle={
+                                        {
+                                            padding: 0,
+                                            borderColor: '#ff000000',
+                                            backgroundColor: '#ff000000'
+                                        }
                                     }
-                                }
-                                checked={this.state.itemChecked}
-                                onPress={() => { this.checkListItem() }}
-                            />
-                        </View>
+                                    checked={this.state.itemChecked}
+                                    onPress={() => { this.checkListItem() }}
+                                />
+                            </View>
 
                         ) : null}
 
-                        <Icon style={{marginLeft: 5, justifyContent: 'center' }} name="heart" color={'#ff0000'} size={40} />
+                        
+                        <View style={{
+                            flexDirection: 'row',
+                            justifyContent: 'center'
+                        }}>
+                            <Image source={require('../images/id.png')} style={{
+                                width: 45,
+                                height: 45,
+                                borderWidth: 1,
+                                borderColor: '#82889c',
+                                borderRadius: 100,
+                            }} />
+                        </View>
 
                         <View style={{ flex: 0.45, flexDirection: "column", marginLeft: 25 }}>
                             <Text style={[styles.textStyle, { fontSize: 24 }]}>{this.props.item.name}</Text>
@@ -86,7 +98,7 @@ export default class Student_FlatListItem extends Component {
                         </View>
                     </View>
                 </TouchableHighlight>
-            </View>
+            </View >
         );
     }
 }
