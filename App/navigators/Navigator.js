@@ -19,7 +19,7 @@ const Navigator = createStackNavigator({
     _: {screen: MainTabNavigator},  
     Main: { screen: Main },
 },{ 
-    initialRouteName: 'Login',
+    initialRouteName: 'MainTabNavigator',
 });
 
 export default Navigator;

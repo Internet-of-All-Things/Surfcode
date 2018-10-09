@@ -89,6 +89,7 @@ const MainTabNavigator = createBottomTabNavigator(
       showLabel: false,
       activeTintColor: "#000000",
       inactiveTintColor: "#000000",
+      lazy: false,
       style: {
         backgroundColor: "#f9f9fa"
       },

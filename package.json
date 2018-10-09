@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "easy-bluetooth-classic": "^1.0.4",
+    "moment": "^2.22.2",
     "prop-types": "^15.6.1",
     "random-string": "^0.2.0",
     "react": "16.3.1",
@@ -19,7 +20,10 @@
     "react-native-calendars": "^1.21.0",
     "react-native-elements": "^0.19.1",
     "react-native-firebase": "^5.0.0",
+    "react-native-linear-gradient": "~2.4.2",
     "react-native-modalbox": "^1.6.0",
+    "react-native-multiple-picker": "0.0.21",
+    "react-native-picker": "^4.3.7",
     "react-native-vector-icons": "^5.0.0",
     "react-navigation": "^2.0.1",
     "react-navigation-tabs": "^0.8.2",
