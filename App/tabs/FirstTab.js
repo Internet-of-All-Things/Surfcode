@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Modal,
   Text,
+  Image,
   View,
   Dimensions
 } from "react-native";
@@ -82,7 +83,7 @@ export default class FirstTab extends Component {
     });
     console.log(this.state.isListLongPressed + "!!!!");
   };
-  deleteCancel = () =>{
+  deleteCancel = () => {
     this.setState({
       isListLongPressed: !this.state.isListLongPressed
     });
@@ -146,7 +147,18 @@ export default class FirstTab extends Component {
               }}
             >
               <View style={{ flexDirection: "row" }}>
-                <Icon name="heart" color={"#ff0000"} size={24} />
+                <View style={{
+                  flexDirection: 'row',
+                  justifyContent: 'center'
+                }}>
+                  <Image source={require('../images/personxhdpi.png')} style={{
+                    width: 24,
+                    height: 24,
+                    borderWidth: 1,
+                    borderColor: '#82889c',
+                    borderRadius: 100,
+                  }} />
+                </View>
                 <Text style={titleStyles.titleUserText} ref="userName">
                   {(this.state.userName = "최용석")}
                 </Text>
@@ -181,32 +193,32 @@ export default class FirstTab extends Component {
               /*delete부분 start*/
               <View style={titleStyles.titleRightStyle}>
                 <TouchableHighlight
-                  style={[titleStyles.titleRightStyle,{flex:0.4,justifyContent:'center'}]}
+                  style={[titleStyles.titleRightStyle, { flex: 0.4, justifyContent: 'center' }]}
                   onPress={() => {
                     this.deleteCancel();
                   }}
                 >
                   <View style={{ flexDirection: "row" }}>
-                    <Icon name="heart" color={"#ff0000"} size={12} />
-                    <Text style={titleStyles.titleDeleteStyle}>취소</Text>
+                    <Image style={{ marginRight: 5, marginTop: 4, width: 12, height: 12, tintColor: "#000000", resizeMode: 'contain' }} source={require('../images/crossmdpi.png')} />
+                    <Text style={[titleStyles.titleDeleteStyle, { color: '#000000' }]}>취소</Text>
                   </View>
                 </TouchableHighlight>
                 <TouchableHighlight
-                  style={[titleStyles.titleRightStyle,{flex:0.4,justifyContent:'center'}]}
+                  style={[titleStyles.titleRightStyle, { flex: 0.4, justifyContent: 'center' }]}
                   onPress={() => {
                     this.removeStudentData();
                   }}
                 >
                   <View style={{ flexDirection: "row" }}>
-                    <Icon name="heart" color={"#ff0000"} size={12} />
-                    <Text style={titleStyles.titleDeleteStyle}>삭제</Text>
+                    <Image style={{ marginRight: 5, marginTop: 4, width: 12, height: 12, tintColor: "#f33c17", resizeMode: 'contain' }} source={require('../images/trashmdpi.png')} />
+                    <Text style={[titleStyles.titleDeleteStyle, { color: '#f33c17' }]}>삭제</Text>
                   </View>
                 </TouchableHighlight>
               </View>
             ) : (
                 /*delete부분 end*/
 
-                <View style={[titleStyles.titleRightStyle,{flex:0.4, paddingRight:15}]}>
+                <View style={[titleStyles.titleRightStyle, { flex: 0.4, paddingRight: 15 }]}>
                   <Icon name="heart" color={"#ff0000"} size={12} />
                   <Icon name="heart" color={"#ff0000"} size={12} />
                 </View>
@@ -243,7 +255,7 @@ const titleStyles = StyleSheet.create({
   },
   titleRightStyle: {
     flexDirection: "row",
-    flex: 0.4,    
+    flex: 0.4,
     justifyContent: "flex-end"
   },
   subTitleStyle: {

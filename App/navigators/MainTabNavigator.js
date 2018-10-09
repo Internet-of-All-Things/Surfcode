@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Image,
   ViewPagerAndroid,
   TouchableHighlight
 } from "react-native";
@@ -29,10 +30,10 @@ const MainTabNavigator = createBottomTabNavigator(
       navigationOptions: ({ navigation }) => ({
         title: "생체정보",
         tabBarLabel: "Biometrics",
-        tabBarIcon: ({ tintColor }) => (
-          <Icon name="heart" color={tintColor} size={24} />
-        ),
-        tabBarColor: "#f2f2f2",      
+        tabBarIcon: ({ tintColor, focused }) => (
+          <Image style={{ idth: 24, height: 24, resizeMode: 'contain' }} source={focused?(require('../images/tab/Asset-53xxxhdpi.png')):(require('../images/tab/heart-beatxxxhdpi.png'))} />
+          ),
+        tabBarColor: "#f2f2f2",
         tabBarOnPress: ({ navigation, defaultHandler }) => {
           console.log("!@#!$!@$!@$!@#!@$dddddddddddddddddddddd");
           this.state.addingBtnVisable = true;
@@ -45,11 +46,11 @@ const MainTabNavigator = createBottomTabNavigator(
       navigationOptions: ({ navigation }) => ({
         title: "파도정보",
         tabBarLabel: "WeatherInfo",
-        tabBarIcon: ({ tintColor }) => (
-          <Icon name="weather-lightning-rainy" color={tintColor} size={24} />
+        tabBarIcon: ({ tintColor, focused }) => (
+          <Image style={{ idth: 24, height: 24, resizeMode: 'contain' }} source={focused?(require('../images/tab/calendar-colorxxxhdpi.png')):(require('../images/tab/calendar-monoxxxhdpi.png'))} />          
         ),
         tabBarColor: "#ff0000",
-        tabBarOnPress: ({ navigation, defaultHandler }) => {         
+        tabBarOnPress: ({ navigation, defaultHandler }) => {
           this.state.addingBtnVisable = false;
           defaultHandler();
         }
@@ -62,25 +63,33 @@ const MainTabNavigator = createBottomTabNavigator(
       })
     },
     WeatherInfo: {
-      screen: ThirdTab,      
+      screen: ThirdTab,
       navigationOptions: ({ navigation }) => ({
         title: "파도정보",
         tabBarLabel: "WeatherInfo",
-        tabBarIcon: ({ tintColor }) => (
-          <Icon name="weather-lightning-rainy" color={tintColor} size={24} />
+        tabBarIcon: ({ tintColor, focused }) => (
+          <Image style={{ idth: 24, height: 24, resizeMode: 'contain' }} source={focused?(require('../images/tab/wave-lv3xxxhdpi.png')):(require('../images/tab/wave-monoxxxhdpi.png'))} />      
         ),
-        tabBarColor: "#ff0000"
+        tabBarColor: "#ff0000",
+        tabBarOnPress: ({ navigation, defaultHandler }) => {
+          this.state.addingBtnVisable = false;
+          defaultHandler();
+        }
       })
     },
     Setting: {
       screen: FourthTab,
       navigationOptions: ({ navigation }) => ({
         title: "파도정보",
-        tabBarLabel: "Setting",        
-        tabBarIcon: ({ tintColor }) => (
-          <Icon name="weather-lightning-rainy" color={tintColor} size={24} />
+        tabBarLabel: "Setting",
+        tabBarIcon: ({ tintColor, focused }) => (
+          <Image style={{ idth: 24, height: 24, resizeMode: 'contain' }} source={focused?(require('../images/tab/setting-colorxxxhdpi.png')):(require('../images/tab/setting-monoxxxhdpi.png'))} />      
         ),
-        tabBarColor: "#ff0000"
+        tabBarColor: "#ff0000",
+        tabBarOnPress: ({ navigation, defaultHandler }) => {
+          this.state.addingBtnVisable = false;
+          defaultHandler();
+        }
       })
     }
   },
@@ -88,13 +97,13 @@ const MainTabNavigator = createBottomTabNavigator(
     tabBarOptions: {
       showLabel: false,
       activeTintColor: "#000000",
-      inactiveTintColor: "#000000",
-      lazy: false,
+      inactiveTintColor: "#000000",     
       style: {
         backgroundColor: "#f9f9fa"
       },
       tabStyle: {}
-    }
+    },
+    lazy:false
   }
 );
 

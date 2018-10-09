@@ -5,6 +5,7 @@ import {
     Text,
     ScrollView,
     View,
+    Image,
     TouchableHighlight,
     TouchableOpacity
 } from "react-native";
@@ -109,7 +110,7 @@ export default class SecondScreen extends Component {
                     selectedMonth: parseInt(value),
                     displayDate: pickedValue[0] + "년 " + value + "월"
                 });
-                console.log("gggg",this.state);
+                console.log("gggg", this.state);
             },
             onPickerCancel: (pickedValue, pickedIndex) => {
             },
@@ -132,7 +133,18 @@ export default class SecondScreen extends Component {
                             this.setModalVisible(true);
                         }}>
                             <View style={{ flexDirection: 'row' }}>
-                                <Icon name="heart" color={"#ff0000"} size={24} />
+                                <View style={{
+                                    flexDirection: 'row',
+                                    justifyContent: 'center'
+                                }}>
+                                    <Image source={require('../images/personxhdpi.png')} style={{
+                                        width: 24,
+                                        height: 24,
+                                        borderWidth: 1,
+                                        borderColor: '#82889c',
+                                        borderRadius: 100,
+                                    }} />
+                                </View>
                                 <Text style={titleStyles.titleUserText} ref='userName'>{this.state.userName = '최용석'}</Text>
                             </View>
                         </TouchableHighlight>
@@ -140,9 +152,35 @@ export default class SecondScreen extends Component {
                     <View
                         style={{ flex: 0.4, flexDirection: "row", alignItems: "center" }}
                     >
+                        {/* <View style={{ flex: 0.6, flexDirection: "row" }}>
+                            <Text style={titleStyles.subTitleStyle}> 수강생 목록</Text>
+                            <View
+                                style={{
+                                    marginLeft: 8,
+                                    marginBottom: 5,
+                                    paddingTop: 1,
+                                    paddingBottom: 1,
+                                    paddingLeft: 7,
+                                    paddingRight: 7,
+                                    backgroundColor: "#d0d2da",
+                                    borderRadius: 5,
+                                    borderWidth: 1,
+                                    borderColor: "#fff"
+                                }}
+                            >
+                                <Text style={{ color: "#3b3e4c", fontSize: 12 }}>
+                                    44
+                                </Text>
+                            </View>
+                        </View> */}
+
                         {/*Month Picker 부분 start*/}
-                        <TouchableOpacity onPress={this._showDatePicker.bind(this)}>
-                            <Text>{this.state.displayDate}</Text>
+                        <TouchableOpacity style={{ flexDirection: "row"}} onPress={this._showDatePicker.bind(this)}>
+                            <View style={{ flexDirection: "row"}}>
+                                <Image style={{ marginRight: 5, marginTop: 4, width: 15, height: 15, tintColor: "#82889c", resizeMode: 'contain' }} source={require('../images/clockmdpi.png')} />
+                                <Text style={{ color: '#82889c', fontSize: 14 }}>{this.state.displayDate}</Text>
+                                <Image style={{ marginLeft: 8, marginTop: 6, width: 10, height: 10, tintColor: "#82889c", resizeMode: 'contain' }} source={require('../images/tiny-arrow-downmdpi.png')} />
+                            </View>
                         </TouchableOpacity>
                         {/*Month Picker 부분 end*/}
                     </View>
@@ -173,9 +211,9 @@ export default class SecondScreen extends Component {
                             }
                             else {
                                 value = month;
-                            }                            
+                            }
                             this.setState({
-                                pickedDate:months.year + "-" + value + "-01",
+                                pickedDate: months.year + "-" + value + "-01",
                                 selectedYear: months.year,
                                 selectedMonth: months.month,
                                 displayDate: months.year + "년 " + value + "월"
@@ -192,7 +230,7 @@ export default class SecondScreen extends Component {
                     />
                 </ScrollView>
                 {/*Callendar부분 end*/}
-            </View>
+            </View >
         );
     }
 }
@@ -207,8 +245,8 @@ const titleStyles = StyleSheet.create({
     },
     titleRightStyle: {
         flexDirection: "row",
-        flex: 0.2,
-        justifyContent: "center"
+        flex: 0.4,
+        justifyContent: "flex-end"
     },
     subTitleStyle: {
         fontSize: 14,
