@@ -27,7 +27,7 @@ export default class Student_FlatListItem extends Component {
     componentWillReceiveProps(props) {
         this.setState({ itemChecked: false });
         this.setState({ isListLongPressed: this.props.isListLongPressed });
-        //console.log("item! : " + this.state.isListLongPressed + " " + this.props.index);
+        //console.log("item! : " + this.state.isListLongPressed + " " + this.props.index + " "+ this.state.itemChecked );
     }
     render() {
         return (

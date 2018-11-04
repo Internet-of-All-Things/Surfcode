@@ -24,7 +24,8 @@ export default class FirstTab extends Component {
   state = {
     modalVisible: false,
     userName: "Tom",
-    isListLongPressed: false
+    isListLongPressed: false,
+    isFirstTabPage : true
   };
 
   constructor(props) {
@@ -35,9 +36,16 @@ export default class FirstTab extends Component {
   };
   setModalVisible(visible) {
     this.setState({ modalVisible: visible });
+    if(visible){
+      this.setState({
+        isFirstTabPage : true,
+        isListLongPressed: false
+      })
+    }
   }
   changeListLongPressedState = () => {
     this.setState({
+      isFirstTabPage : true,
       isListLongPressed: !this.state.isListLongPressed
     });
     if (this.state.isListLongPressed) {
@@ -79,18 +87,22 @@ export default class FirstTab extends Component {
       );
     }
     this.setState({
-      isListLongPressed: !this.state.isListLongPressed
+      isFirstTabPage : true
+    });
+    this.setState({
+      isListLongPressed: false
     });
     console.log(this.state.isListLongPressed + "!!!!");
   };
   deleteCancel = () => {
     this.setState({
-      isListLongPressed: !this.state.isListLongPressed
+      isFirstTabPage : true,
+      isListLongPressed: false
     });
   }
 
   render() {
-    console.log("FirstTab.js render() called!!")
+    console.log("FirstTab.js render() called!!");   
     return (
       <View colors={["#00C6FB", "#005BEA"]} style={styles.container}>
         {/*modal부분 start*/}
@@ -100,7 +112,7 @@ export default class FirstTab extends Component {
           visible={this.state.modalVisible}
           onRequestClose={() => {
             //alert('Modal has been closed.');
-            this.setModalVisible(!this.state.modalVisible);
+            this.setModalVisible(!this.state.modalVisible);                    
           }}
         >
           <View>
@@ -229,6 +241,7 @@ export default class FirstTab extends Component {
 
         {/*list부분 start*/}
         <Student_BasicFlatList
+          isFirstTabPage = {this.state.isFirstTabPage}
           changeListLongPressedState={this.changeListLongPressedState}
           isListLongPressed={this.state.isListLongPressed}
           changeListCheckBoxSelectState={this.changeListCheckBoxSelectState}
