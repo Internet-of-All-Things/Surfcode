@@ -31,7 +31,7 @@ const MainTabNavigator = createBottomTabNavigator(
         title: "생체정보",
         tabBarLabel: "Biometrics",
         tabBarIcon: ({ tintColor, focused }) => (
-          <Image style={{ idth: 24, height: 24, resizeMode: 'contain' }} source={focused?(require('../images/tab/Asset-53xxxhdpi.png')):(require('../images/tab/heart-beatxxxhdpi.png'))} />
+          <Image style={[{ idth: 24, height: 24, resizeMode: 'contain'},focused?{}:{tintColor:'#d0d2da'}]} source={focused?(require('../images/tab/Asset-53xxxhdpi.png')):(require('../images/tab/heart-beatxxxhdpi.png'))} />
           ),
         tabBarColor: "#f2f2f2",
         tabBarOnPress: ({ navigation, defaultHandler }) => {
@@ -47,7 +47,7 @@ const MainTabNavigator = createBottomTabNavigator(
         title: "파도정보",
         tabBarLabel: "WeatherInfo",
         tabBarIcon: ({ tintColor, focused }) => (
-          <Image style={{ idth: 24, height: 24, resizeMode: 'contain' }} source={focused?(require('../images/tab/calendar-colorxxxhdpi.png')):(require('../images/tab/calendar-monoxxxhdpi.png'))} />          
+          <Image style={[{ idth: 24, height: 24, resizeMode: 'contain' },focused?{}:{tintColor:'#d0d2da'}]} source={focused?(require('../images/tab/calendar-colorxxxhdpi.png')):(require('../images/tab/calendar-monoxxxhdpi.png'))} />          
         ),
         tabBarColor: "#ff0000",
         tabBarOnPress: ({ navigation, defaultHandler }) => {
@@ -68,7 +68,7 @@ const MainTabNavigator = createBottomTabNavigator(
         title: "파도정보",
         tabBarLabel: "WeatherInfo",
         tabBarIcon: ({ tintColor, focused }) => (
-          <Image style={{ idth: 24, height: 24, resizeMode: 'contain' }} source={focused?(require('../images/tab/wave-lv3xxxhdpi.png')):(require('../images/tab/wave-monoxxxhdpi.png'))} />      
+          <Image style={[{ idth: 24, height: 24, resizeMode: 'contain'  },focused?{}:{tintColor:'#d0d2da'}]} source={focused?(require('../images/tab/wave-lv3xxxhdpi.png')):(require('../images/tab/wave-monoxxxhdpi.png'))} />      
         ),
         tabBarColor: "#ff0000",
         tabBarOnPress: ({ navigation, defaultHandler }) => {
@@ -83,7 +83,7 @@ const MainTabNavigator = createBottomTabNavigator(
         title: "파도정보",
         tabBarLabel: "Setting",
         tabBarIcon: ({ tintColor, focused }) => (
-          <Image style={{ idth: 24, height: 24, resizeMode: 'contain' }} source={focused?(require('../images/tab/setting-colorxxxhdpi.png')):(require('../images/tab/setting-monoxxxhdpi.png'))} />      
+          <Image style={[{ idth: 24, height: 24, resizeMode: 'contain' },focused?{}:{tintColor:'#d0d2da'}]} source={focused?(require('../images/tab/setting-colorxxxhdpi.png')):(require('../images/tab/setting-monoxxxhdpi.png'))} />      
         ),
         tabBarColor: "#ff0000",
         tabBarOnPress: ({ navigation, defaultHandler }) => {
