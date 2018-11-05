@@ -14,7 +14,8 @@ import {
 import Loader from './Loader';
 import flatListData from "../data/flatListData";
 import NavigationService from '../utils/NavigationService';
-import { BleManager } from 'react-native-ble-plx';
+import BluetoothManager from '../utils/BluetoothManager';
+import { updateState } from '../components/Student_BasicFlatList';
 
 export default class FindDevice extends Component {
     state = {
@@ -44,30 +45,7 @@ export default class FindDevice extends Component {
 
     constructor(props) {
         super(props);
-        this.manager = new BleManager()
-        //this.state = { info: "", values: {} }
-        this.prefixUUID = "f000aa"
-        this.suffixUUID = "-0451-4000-b000-000000000000"
-        this.sensors = {
-            0: "Temperature",
-            1: "Accelerometer",
-            2: "Humidity",
-            3: "Magnetometer",
-            4: "Barometer",
-            5: "Gyroscope"
-        }
-    }
-
-    serviceUUID(num) {
-        return this.prefixUUID + num + "0" + this.suffixUUID
-    }
-
-    notifyUUID(num) {
-        return this.prefixUUID + num + "1" + this.suffixUUID
-    }
-
-    writeUUID(num) {
-        return this.prefixUUID + num + "2" + this.suffixUUID
+        this.manager = BluetoothManager.getBluetoothManager();
     }
 
     componentWillMount() {
@@ -88,32 +66,12 @@ export default class FindDevice extends Component {
         });
     }
 
-    async setupNotifications(device) {
-        for (const id in this.sensors) {
-            const service = this.serviceUUID(id)
-            const characteristicW = this.writeUUID(id)
-            const characteristicN = this.notifyUUID(id)
-
-            const characteristic = await device.writeCharacteristicWithResponseForService(
-                service, characteristicW, "AQ==" /* 0x01 in hex */
-            )
-
-            device.monitorCharacteristicForService(service, characteristicN, (error, characteristic) => {
-                if (error) {
-                    this.error(error.message)
-                    return
-                }
-                this.updateValue(characteristic.uuid, characteristic.value)
-            })
-        }
-    }
-
     scan() {
         this.setState({ scanning: true })
-        this.manager.startDeviceScan(null,
+        BluetoothManager.getBluetoothManager().startDeviceScan(null,
             null, (error, device) => {
                 console.log("Scanning...")
-                console.log(bluetoothDevices.length);
+                //console.log(device);
                 if (device != null && device.id != null) {
                     for (var i = 0; i < bluetoothDevices.length; i++) {
                         console.log(bluetoothDevices[i].device.id + " bluetooth");
@@ -137,7 +95,7 @@ export default class FindDevice extends Component {
                     }
                 }
             });
-        setTimeout(() => { this.manager.stopDeviceScan(); this.setState({ scanning: false }) }, 3000)
+        setTimeout(() => { BluetoothManager.getBluetoothManager().stopDeviceScan(); this.setState({ scanning: false }) }, 3000)
 
     }
 
@@ -193,7 +151,7 @@ export default class FindDevice extends Component {
                                 onPress={() => {
                                     if (!this.state.scanning) {
                                         console.log("gogo~");
-                                        this.manager.stopDeviceScan()
+                                        BluetoothManager.getBluetoothManager().stopDeviceScan()
                                         this.scan()
                                     }
                                 }}>
@@ -287,13 +245,21 @@ class FlatListItem extends Component {
         return (
             <View>
                 <TouchableHighlight onPress={() => {
-                    EasyBluetooth.connect(this.props.item.device)
+
+                    console.log("Connecting to " + this.props.item.device.name);
+                    BluetoothManager.getBluetoothManager().stopDeviceScan()
+                    this.props.item.device.connect()
+                        .then((device) => {
+                            console.log("Discovering services and characteristics")
+                            //console.log(device)
+                            return device.discoverAllServicesAndCharacteristics()
+                        })
+                        .then((device) => {
+                            console.log("Setting notifications")
+                            return BluetoothManager.setupNotifications(device)
+                        })
                         .then(() => {
-                            console.log("Connected");
-                            connBluetoothDevices.push({
-                                name: this.props.item.device.name,
-                                address: this.props.item.device.address
-                            });
+                            console.log("Listening...")
                             Alert.alert(
                                 '',
                                 `${this.props.item.device.name}과 연결되었습니다.`,
@@ -302,26 +268,21 @@ class FlatListItem extends Component {
                                 ],
                                 { cancelable: false }
                             )
-                            EasyBluetooth.write("a")
-                                .then(() => {
-                                    console.log("Writing~")
-                                })
-                                .catch((ex) => {
-                                    console.warn(ex);
-                                })
+
                             flatListData.push({
-                                "key": "abc1",
+                                "key": this.props.item.device.id,
                                 "name": this.props.item.device.name,
                                 "state": "양호한 상태",
                                 "bpm": "미측정",
                                 "brethe": "미측정",
+                                "user_icon_url":"../images/user/ch.png",
                                 "selected": false
                             })
+                            updateState({ refresh: true });
+                            updateState({ refresh: false });
                             NavigationService.navigate("Main", { changed: true });
-
-                        })
-                        .catch((ex) => {
-                            console.warn(ex);
+                        }, (error) => {
+                            console.log(error.message)
                         })
                 }}
                     underlayColor="#b7c3ea"
