@@ -8,21 +8,13 @@ import {
     Image,
     Alert,
     BackHandler,
+    Platform,
 } from 'react-native';
 
 import Loader from './Loader';
 import flatListData from "../data/flatListData";
-import EasyBluetooth from 'easy-bluetooth-classic';
 import NavigationService from '../utils/NavigationService';
-
-import { updateState } from '../components/Student_BasicFlatList';
-
-var config = {
-    "uuid": "00001101-0000-1000-8000-00805F9B34FB",
-    "deviceName": "Bluetooth Example Project",
-    "bufferSize": 1024,
-    "characterDelimiter": "\n"
-}
+import { BleManager } from 'react-native-ble-plx';
 
 export default class FindDevice extends Component {
     state = {
@@ -52,96 +44,103 @@ export default class FindDevice extends Component {
 
     constructor(props) {
         super(props);
+        this.manager = new BleManager()
+        //this.state = { info: "", values: {} }
+        this.prefixUUID = "f000aa"
+        this.suffixUUID = "-0451-4000-b000-000000000000"
+        this.sensors = {
+            0: "Temperature",
+            1: "Accelerometer",
+            2: "Humidity",
+            3: "Magnetometer",
+            4: "Barometer",
+            5: "Gyroscope"
+        }
+    }
 
-        EasyBluetooth.init(config)
-            .then(function (config) {
-                console.log("config done!");
-            })
-            .catch(function (ex) {
-                console.warn(ex);
-            });
+    serviceUUID(num) {
+        return this.prefixUUID + num + "0" + this.suffixUUID
+    }
+
+    notifyUUID(num) {
+        return this.prefixUUID + num + "1" + this.suffixUUID
+    }
+
+    writeUUID(num) {
+        return this.prefixUUID + num + "2" + this.suffixUUID
     }
 
     componentWillMount() {
-        this.onDeviceFoundEvent = EasyBluetooth.addOnDeviceFoundListener(this.onDeviceFound.bind(this));
-        this.onStatusChangeEvent = EasyBluetooth.addOnStatusChangeListener(this.onStatusChange.bind(this));
-        this.onDataReadEvent = EasyBluetooth.addOnDataReadListener(this.onDataRead.bind(this));
-        this.onDeviceNameEvent = EasyBluetooth.addOnDeviceNameListener(this.onDeviceName.bind(this));
+        if (Platform.OS === 'ios') {
+            this.manager.onStateChange((state) => {
+                if (state === 'PoweredOn') this.scan()
+            })
+        } else {
+            this.scan()
+        }
     }
 
     componentDidMount() {
-        this.scan();
+        //this.scan();
         this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
             this.goBack();
             return true;
         });
     }
 
-    componentWillUnmount() {
-        this.onDeviceFoundEvent.remove();
-        this.onStatusChangeEvent.remove();
-        //this.onDataReadEvent.remove();
-        this.onDeviceNameEvent.remove();
-        this.backHandler.remove();
-    }
+    async setupNotifications(device) {
+        for (const id in this.sensors) {
+            const service = this.serviceUUID(id)
+            const characteristicW = this.writeUUID(id)
+            const characteristicN = this.notifyUUID(id)
 
-    onDeviceFound(device) {
-        console.log("onDeviceFound");
-        console.log(device);
-        bluetoothDevices.push({
-            'key': this.generateKey(24),
-            'device': device
-        });
-        this.setState({
-            deviceCount: this.state.deviceCount + 1,
-        });
-    }
+            const characteristic = await device.writeCharacteristicWithResponseForService(
+                service, characteristicW, "AQ==" /* 0x01 in hex */
+            )
 
-    onStatusChange(status) {
-        console.log("onStatusChange");
-        console.log(status);
-    }
-
-    onDataRead(data) {
-        const values = data.split(' ');
-        if (flatListData[0] != null) {
-            flatListData[0]["bpm"] = values[0];
-            flatListData[0]["brethe"] = values[1];
-
-            updateState({ refresh: true });
+            device.monitorCharacteristicForService(service, characteristicN, (error, characteristic) => {
+                if (error) {
+                    this.error(error.message)
+                    return
+                }
+                this.updateValue(characteristic.uuid, characteristic.value)
+            })
         }
-        console.log(data);
-
-    }
-
-    onDeviceName(name) {
-        console.log("onDeviceName");
-        console.log(name);
     }
 
     scan() {
-        this.setState({
-            deviceCount: 0,
-            loading: true,
-        });
-        bluetoothDevices = []
-        EasyBluetooth.startScan()
-            .then((devices) => {
-                console.log("all devices found:");
-                //console.log(devices);//172.30.15.160
-                console.log(bluetoothDevices[0]);
+        this.setState({ scanning: true })
+        this.manager.startDeviceScan(null,
+            null, (error, device) => {
+                console.log("Scanning...")
+                console.log(bluetoothDevices.length);
+                if (device != null && device.id != null) {
+                    for (var i = 0; i < bluetoothDevices.length; i++) {
+                        console.log(bluetoothDevices[i].device.id + " bluetooth");
+                        console.log(device.id + "??!@#")
+                        if (bluetoothDevices[i].device.id === device.id)
+                            return
+                    }
 
-                this.setState({
-                    scanning: false,
-                    loading: false,
-                    refreshing: true,
-                });
+                    bluetoothDevices.push({
+                        'key': this.generateKey(24),
+                        'device': device
+                    });
 
-            })
-            .catch(function (ex) {
-                console.warn(ex);
+                    this.setState({
+                        deviceCount: this.state.deviceCount + 1,
+                    });
+
+                    if (error) {
+                        this.error(error.message)
+                        return
+                    }
+                }
             });
+        setTimeout(() => { this.manager.stopDeviceScan(); this.setState({ scanning: false }) }, 3000)
+
     }
+
 
     renderSeparator = () => (
         <View
@@ -153,6 +152,7 @@ export default class FindDevice extends Component {
     );
 
     goBack = async () => {
+        this.manager.stopDeviceScan();
         NavigationService.navigate("Main", {});
     }
 
@@ -192,8 +192,9 @@ export default class FindDevice extends Component {
                                 underlayColor="#d0d2da"
                                 onPress={() => {
                                     if (!this.state.scanning) {
-                                        this.setState({ scanning: true })
-                                        this.scan();
+                                        console.log("gogo~");
+                                        this.manager.stopDeviceScan()
+                                        this.scan()
                                     }
                                 }}>
                                 <View
@@ -333,12 +334,23 @@ class FlatListItem extends Component {
                             padding: 5,
                             fontSize: 19
                         }}>{this.props.item.device.name}</Text>
-                        <Text style={{
+                        <View style={{
                             color: '#82889c',
                             padding: 5,
-                            fontSize: 14,
-                            marginBottom: 10
-                        }}>{this.props.item.device.address}</Text>
+                            marginBottom: 10,
+                            flexDirection: 'row'
+                        }}>
+                            <Text style={{
+                                color: '#82889c',
+                                fontSize: 14,
+                            }}>{this.props.item.device.id}</Text>
+                            <Text style={{
+                                color: '#82889c',
+                                justifyContent: "flex-end",
+                                fontSize: 14,
+                            }}>연결강도 : {this.props.item.device.rssi}</Text>
+                        </View>
+
                     </View>
                 </TouchableHighlight >
             </View>
