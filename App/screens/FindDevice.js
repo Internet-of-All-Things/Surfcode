@@ -246,12 +246,11 @@ class FlatListItem extends Component {
             <View>
                 <TouchableHighlight onPress={() => {
 
-                    console.log("Connecting to " + this.props.item.device.name);
+                    //console.log(this.props.item.device._manager);
                     BluetoothManager.getBluetoothManager().stopDeviceScan()
                     this.props.item.device.connect()
                         .then((device) => {
                             console.log("Discovering services and characteristics")
-                            //console.log(device)
                             return device.discoverAllServicesAndCharacteristics()
                         })
                         .then((device) => {
@@ -284,6 +283,9 @@ class FlatListItem extends Component {
                         }, (error) => {
                             console.log(error.message)
                         })
+                    console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ");
+                    console.log(this.props.item.device);
+                    console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ");
                 }}
                     underlayColor="#b7c3ea"
                     style={{
