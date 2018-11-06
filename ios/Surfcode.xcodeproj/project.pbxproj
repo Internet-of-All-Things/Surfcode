@@ -60,6 +60,7 @@
 		52B8C66E8B82479AB48F7624 /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3F869FA3CD23490884A7E2A3 /* libBVLinearGradient.a */; };
 		3949FB5A785A472AA4FD8448 /* libRCTBEEPickerManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A8AB9F0B99DE45BCAC38B9AE /* libRCTBEEPickerManager.a */; };
 		BC6D9C560AB14D179FF31ED1 /* libBleClient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EB101460D1043899DCD089B /* libBleClient.a */; };
+		DD9E104F3C154636A676337F /* libRNImagePicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16488BC153144A7A93C4F444 /* libRNImagePicker.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -393,6 +394,8 @@
 		A8AB9F0B99DE45BCAC38B9AE /* libRCTBEEPickerManager.a */ = {isa = PBXFileReference; name = "libRCTBEEPickerManager.a"; path = "libRCTBEEPickerManager.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		BEF306B8169349ADB6FAC85B /* BleClient.xcodeproj */ = {isa = PBXFileReference; name = "BleClient.xcodeproj"; path = "../node_modules/react-native-ble-plx/ios/BleClient.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		3EB101460D1043899DCD089B /* libBleClient.a */ = {isa = PBXFileReference; name = "libBleClient.a"; path = "libBleClient.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		CF195E6C72854EA3AE2CE4EF /* RNImagePicker.xcodeproj */ = {isa = PBXFileReference; name = "RNImagePicker.xcodeproj"; path = "../node_modules/react-native-image-picker/ios/RNImagePicker.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		16488BC153144A7A93C4F444 /* libRNImagePicker.a */ = {isa = PBXFileReference; name = "libRNImagePicker.a"; path = "libRNImagePicker.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -425,6 +428,7 @@
 				52B8C66E8B82479AB48F7624 /* libBVLinearGradient.a in Frameworks */,
 				3949FB5A785A472AA4FD8448 /* libRCTBEEPickerManager.a in Frameworks */,
 				BC6D9C560AB14D179FF31ED1 /* libBleClient.a in Frameworks */,
+				DD9E104F3C154636A676337F /* libRNImagePicker.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -616,6 +620,7 @@
 				D673DEE21F5343FE93F33CF7 /* BVLinearGradient.xcodeproj */,
 				C808C298CCDF4CCC8F1698E1 /* RCTBEEPickerManager.xcodeproj */,
 				BEF306B8169349ADB6FAC85B /* BleClient.xcodeproj */,
+				CF195E6C72854EA3AE2CE4EF /* RNImagePicker.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1293,6 +1298,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1301,6 +1307,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-linear-gradient\BVLinearGradient",
 					"$(SRCROOT)\..\node_modules\react-native-picker\ios\RCTBEEPickerManager",
 					"$(SRCROOT)\..\node_modules\react-native-ble-plx\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
 				);
 			};
 			name = Debug;
@@ -1327,6 +1334,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1335,6 +1343,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-linear-gradient\BVLinearGradient",
 					"$(SRCROOT)\..\node_modules\react-native-picker\ios\RCTBEEPickerManager",
 					"$(SRCROOT)\..\node_modules\react-native-ble-plx\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
 				);
 			};
 			name = Release;
@@ -1362,6 +1371,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-linear-gradient\BVLinearGradient",
 					"$(SRCROOT)\..\node_modules\react-native-picker\ios\RCTBEEPickerManager",
 					"$(SRCROOT)\..\node_modules\react-native-ble-plx\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
 				);
 			};
 			name = Debug;
@@ -1388,6 +1398,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-linear-gradient\BVLinearGradient",
 					"$(SRCROOT)\..\node_modules\react-native-picker\ios\RCTBEEPickerManager",
 					"$(SRCROOT)\..\node_modules\react-native-ble-plx\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
 				);
 			};
 			name = Release;
@@ -1422,6 +1433,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1430,6 +1442,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-linear-gradient\BVLinearGradient",
 					"$(SRCROOT)\..\node_modules\react-native-picker\ios\RCTBEEPickerManager",
 					"$(SRCROOT)\..\node_modules\react-native-ble-plx\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
 				);
 			};
 			name = Debug;
@@ -1464,6 +1477,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1472,6 +1486,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-linear-gradient\BVLinearGradient",
 					"$(SRCROOT)\..\node_modules\react-native-picker\ios\RCTBEEPickerManager",
 					"$(SRCROOT)\..\node_modules\react-native-ble-plx\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
 				);
 			};
 			name = Release;
@@ -1505,6 +1520,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1513,6 +1529,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-linear-gradient\BVLinearGradient",
 					"$(SRCROOT)\..\node_modules\react-native-picker\ios\RCTBEEPickerManager",
 					"$(SRCROOT)\..\node_modules\react-native-ble-plx\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
 				);
 			};
 			name = Debug;
@@ -1546,6 +1563,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1554,6 +1572,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-linear-gradient\BVLinearGradient",
 					"$(SRCROOT)\..\node_modules\react-native-picker\ios\RCTBEEPickerManager",
 					"$(SRCROOT)\..\node_modules\react-native-ble-plx\ios/**",
+					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
 				);
 			};
 			name = Release;

@@ -25,19 +25,19 @@ export default class Student_BasicFlatList extends Component {
     }
 
     componentWillReceiveProps(props) {
+        console.log("component Will Receive Props1", JSON.stringify(props),props.isListLongPressed);
         if(this.props.isFirstTabPage){
             //this.setState({ isListLongPressed: !props.isListLongPressed });
-            this.setState({ isListLongPressed: props.isListLongPressed });
-            console.log("component Will Receive Props1", this.state.isListLongPressed);
+            this.setState({ isListLongPressed: props.isListLongPressed });         
         }
     }
-    changeListLongPressedState = () => {
-        this.setState({
-            isListLongPressed: !this.props.isListLongPressed
-        });
-        this.props.changeListLongPressedState();
-        console.log("list! : " + this.state.isListLongPressed);
-    }
+    // changeListLongPressedState = () => {
+    //     this.setState({
+    //         isListLongPressed: !this.props.isListLongPressed
+    //     });
+    //     this.props.changeListLongPressedState();
+    //     console.log("list! : " + this.state.isListLongPressed);
+    // }
 
     renderFooter = () =>{
         return(
@@ -63,7 +63,7 @@ export default class Student_BasicFlatList extends Component {
                     extraData={this.state}
                     renderItem={({ item, index }) => {
                         //console.log(`Item = ${JSON.stringify(item)}, index = ${index}`);                                              
-                        return <Student_FlatListItem item={item} index={index} changeListLongPressedState={this.changeListLongPressedState} isListLongPressed={this.state.isListLongPressed} changeListCheckBoxSelectState={this.props.changeListCheckBoxSelectState}/>;
+                        return <Student_FlatListItem item={item} index={index} changeListLongPressedState={this.props.changeListLongPressedState} isListLongPressed={this.state.isListLongPressed} changeListCheckBoxSelectState={this.props.changeListCheckBoxSelectState}/>;
                     }}
                 />
             </View>

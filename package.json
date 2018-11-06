@@ -21,6 +21,7 @@
     "react-native-calendars": "^1.21.0",
     "react-native-elements": "^0.19.1",
     "react-native-firebase": "^5.0.0",
+    "react-native-image-picker": "^0.27.1",
     "react-native-linear-gradient": "~2.4.2",
     "react-native-modalbox": "^1.6.0",
     "react-native-multiple-picker": "0.0.21",

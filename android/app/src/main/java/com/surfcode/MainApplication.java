@@ -3,6 +3,7 @@ package com.surfcode;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.imagepicker.ImagePickerPackage;
 import com.polidea.reactnativeble.BlePackage;
 import com.beefe.picker.PickerViewPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -32,6 +33,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new ImagePickerPackage(),
             new BlePackage(),
             new PickerViewPackage(),
             new VectorIconsPackage(),

@@ -38,10 +38,17 @@ export default class FirstTab extends Component {
     this.setState({ modalVisible: visible });
     if(visible){
       this.setState({
-        isFirstTabPage : true,
-        isListLongPressed: false
+        isFirstTabPage : false
       })
     }
+    else{
+      this.setState({
+        isFirstTabPage : true
+      })
+    }
+    this.setState({
+      isListLongPressed : false
+    })
   }
   changeListLongPressedState = () => {
     this.setState({
@@ -87,18 +94,17 @@ export default class FirstTab extends Component {
       );
     }
     this.setState({
-      isFirstTabPage : true
-    });
-    this.setState({
-      isListLongPressed: false
+      isFirstTabPage : true,
+      isListLongPressed: !this.state.isListLongPressed
     });
     console.log(this.state.isListLongPressed + "!!!!");
   };
   deleteCancel = () => {
     this.setState({
       isFirstTabPage : true,
-      isListLongPressed: false
+      isListLongPressed: !this.state.isListLongPressed
     });
+    console.log(this.state.isListLongPressed + "~!!!!");
   }
 
   render() {

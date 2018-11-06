@@ -6,7 +6,8 @@ var flatListData = [
         "bpm":"106",
         "brethe":"87",
         "user_icon_url":"../images/user/ys.jpg",
-        "selected":false
+        "tel":"",
+        "email":""
     },
     {
         "key":"abc31",
@@ -14,8 +15,9 @@ var flatListData = [
         "state":"양호한 상태",
         "bpm":"112",
         "brethe":"82",
-        "user_icon_url":"./images/user/sh.png",
-        "selected":false
+        "user_icon_url":"../images/user/sh.png",
+        "tel":"",
+        "email":""
     },
     {
         "key":"abc22",
@@ -24,7 +26,8 @@ var flatListData = [
         "bpm":"103",
         "brethe":"86",
         "user_icon_url":"../images/user/ch.png",
-        "selected":false
+        "tel":"",
+        "email":""
     },
 ];
 module.exports = flatListData;
