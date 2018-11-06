@@ -7,6 +7,7 @@ import {
   Text,
   Image,
   View,
+  AsyncStorage,
   Dimensions
 } from "react-native";
 import ActionBar from "react-native-action-bar";
@@ -18,41 +19,89 @@ import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import flatListData from "../data/flatListData";
 import { CheckBox } from "react-native-elements";
 
+import firebase from 'react-native-firebase';
+import ImagePicker from 'react-native-image-picker';
+import RNFetchBlob from 'react-native-fetch-blob'
+
 var screen = Dimensions.get("window");
 let listData = [];
+
+const options = {
+  title: 'Input user data',
+  //customButtons: [{ name: 'user_info', title: 'Input user information' }],
+  storageOptions: {
+      skipBackup: true,
+      path: 'images',
+  },
+};
+
+
 export default class FirstTab extends Component {
   state = {
     modalVisible: false,
     userName: "Tom",
     isListLongPressed: false,
-    isFirstTabPage : true
+    isFirstTabPage: true,
+    userImage: '../images/personxhdpi.png',
+    userId: '',
+    userTel: ''
   };
+  _retrieveData = async () => {
+    try {
+      var value = await AsyncStorage.getItem('Auth');
+      console.log("~~~~~~~~~~~~~~~~~" + value);
+      value = 'cys_star@naver.com';
+      if (value !== null) {
+        this.state.userId = value;
+        this.readUserData();
 
+      }
+    } catch (error) {
+      // Error retrieving data
+    }
+  }
+  readUserData() {
+    let dbUrl = 'member/teacher/' + this.state.userId.replace(".", "").replace("#", "").replace("$", '').replace("@", "").replace("!", "").replace("%", "")
+      .replace("^", "").replace("&", "").replace("*", "").replace("(", "").replace(")", "").replace("-", "")
+      .replace("/", "").replace("\\", "").replace("[", "").replace("]", "").replace("{", "").replace("}", "")
+      .replace("`", "").replace("~", "").replace("?", "").replace(",", "").replace("<", "").replace(">", "") + "/phone";
+    firebase.database().ref(dbUrl).on('value', (snapshot) => {
+      console.log(snapshot.val() + "@@@");
+      this.state.userTel = snapshot.val();
+      const ref = firebase.storage().ref(this.state.userTel + '/profile.jpg');
+      ref.getDownloadURL()
+        .then((url) => {
+          this.setState({ userImage: url });
+        });
+    });
+  }
   constructor(props) {
     super(props);
+    this._retrieveData();
+
   }
   changePage = () => {
     console.log("~~~~~~~~~~~~~~~~~~~~!!");
   };
   setModalVisible(visible) {
     this.setState({ modalVisible: visible });
-    if(visible){
+    if (visible) {
       this.setState({
-        isFirstTabPage : false
+        isFirstTabPage: false
       })
     }
-    else{
+    else {
       this.setState({
-        isFirstTabPage : true
+        isFirstTabPage: true
       })
     }
     this.setState({
-      isListLongPressed : false
+      isListLongPressed: false
     })
   }
   changeListLongPressedState = () => {
     this.setState({
-      isFirstTabPage : true,
+      isFirstTabPage: true,
       isListLongPressed: !this.state.isListLongPressed
     });
     if (this.state.isListLongPressed) {
@@ -60,6 +109,7 @@ export default class FirstTab extends Component {
     }
     console.log("isLong!! : " + this.state.isListLongPressed);
   };
+
   changeListCheckBoxSelectState = (index, checked) => {
     console.log("changeListCheckBoxSelectState : " + index + " " + checked);
     if (checked) {
@@ -94,21 +144,88 @@ export default class FirstTab extends Component {
       );
     }
     this.setState({
-      isFirstTabPage : true,
+      isFirstTabPage: true,
       isListLongPressed: !this.state.isListLongPressed
     });
     console.log(this.state.isListLongPressed + "!!!!");
   };
   deleteCancel = () => {
     this.setState({
-      isFirstTabPage : true,
+      isFirstTabPage: true,
       isListLongPressed: !this.state.isListLongPressed
     });
     console.log(this.state.isListLongPressed + "~!!!!");
   }
+  
+  uploadImage = (uri, imageName) => {
+    
+    const image = uri
+ 
+    const Blob = RNFetchBlob.polyfill.Blob
+    const fs = RNFetchBlob.fs
+    window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
+    window.Blob = Blob
+ 
+   
+    let uploadBlob = null
+    let reference = 'gs://surfcode-d9b4d.appspot.com/'+this.state.userTel+'/'+imageName
+    console.log("rrrrr",reference)
+    const imageRef = firebase.storage().ref(reference)
+    let mime = 'image/jpg'
+    fs.readFile(image, 'base64')
+      .then((data) => {
+        return Blob.build(data, { type: `${mime};BASE64` })
+    })
+    .then((blob) => {
+        uploadBlob = blob
+        return imageRef.put(blob, { contentType: mime })
+      })
+      .then(() => {
+        uploadBlob.close()
+        return imageRef.getDownloadURL()
+      })
+      .then((url) => {
+        // URL of the image uploaded on Firebase storage
+        console.log(url);
+        
+      })
+      .catch((error) => {
+        console.log(error);
+ 
+      })  
+ 
+  }
+  setUserImage() {
+    ImagePicker.showImagePicker(options, (response) => {
+      console.log('Response = ', response);
 
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        //const source = { uri: response.uri };
+
+        // You can also display the image using data:
+         const source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+        // const fs = RNFetchBlob.fs;
+        firebase.storage().ref(this.state.userTel).child('profile.jpg').put(response.uri,{contentType:'image/jpg'});
+        // .then(successCb)
+        // .catch(failureCb);
+        //this.uploadImage(response.uri,'profile.jpg');
+        //console.log('Response = ', source);
+        this.setState({
+          userImage: response.uri
+        });
+        
+      }
+    });
+  }
   render() {
-    console.log("FirstTab.js render() called!!");   
+    console.log("FirstTab.js render() called!!");
     return (
       <View colors={["#00C6FB", "#005BEA"]} style={styles.container}>
         {/*modal부분 start*/}
@@ -118,7 +235,7 @@ export default class FirstTab extends Component {
           visible={this.state.modalVisible}
           onRequestClose={() => {
             //alert('Modal has been closed.');
-            this.setModalVisible(!this.state.modalVisible);                    
+            this.setModalVisible(!this.state.modalVisible);
           }}
         >
           <View>
@@ -134,15 +251,55 @@ export default class FirstTab extends Component {
               onLeftPress={() => this.setModalVisible(!this.state.modalVisible)}
               leftIconContainerStyle={modalStyles.leftIconContainerStyle}
             />
-            <View>
+            <View style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              marginTop: 40
+            }}>
               <TouchableHighlight
                 onPress={() => {
-                  this.setModalVisible(!this.state.modalVisible);
-                }}
-              >
-                <Text>{this.state.userName} Page</Text>
+                  console.log("dsfsdf");
+                  this.setUserImage();
+                }}>
+                <Image source={{uri:this.state.userImage}} style={{
+                  width: 200,
+                  height: 200,
+                  borderWidth: 1,
+                  borderColor: '#82889c',
+                  borderRadius: 100,
+                }} />
               </TouchableHighlight>
             </View>
+            <View style={[modalStyles.info, { marginTop: 20 }]}>
+              <Image
+                style={{ height: 32, width: 32, marginRight: 10 }}
+                source={require('../images/id.png')}
+              />
+              <Text
+                style={modalStyles.titleStyle}>
+                {this.state.userId}
+              </Text>
+            </View>
+            <View style={[modalStyles.info, { marginTop: 15 }]}>
+              <Image
+                style={{ height: 32, width: 32, marginRight: 10 }}
+                source={require('../images/tel.png')}
+              />
+              <Text
+                style={modalStyles.titleStyle}>
+                {this.state.userId}
+              </Text>
+            </View>
+            <View style={[modalStyles.info, { marginTop: 15 }]}>
+              <Image
+                style={{ height: 32, width: 32, marginRight: 10 }}
+                source={require('../images/email.png')}
+              />
+              <Text
+                style={modalStyles.titleStyle}>
+                {this.state.userId}
+              </Text>
+            </View>           
           </View>
         </Modal>
         {/*modal부분 end*/}
@@ -169,7 +326,7 @@ export default class FirstTab extends Component {
                   flexDirection: 'row',
                   justifyContent: 'center'
                 }}>
-                  <Image source={require('../images/personxhdpi.png')} style={{
+                  <Image source={{ uri: this.state.userImage }} style={{
                     width: 24,
                     height: 24,
                     borderWidth: 1,
@@ -247,7 +404,7 @@ export default class FirstTab extends Component {
 
         {/*list부분 start*/}
         <Student_BasicFlatList
-          isFirstTabPage = {this.state.isFirstTabPage}
+          isFirstTabPage={this.state.isFirstTabPage}
           changeListLongPressedState={this.changeListLongPressedState}
           isListLongPressed={this.state.isListLongPressed}
           changeListCheckBoxSelectState={this.changeListCheckBoxSelectState}
@@ -304,6 +461,44 @@ const modalStyles = StyleSheet.create({
     width: 14.5,
     height: 30,
     tintColor: "#82889c"
+  },
+  info: {
+    flexDirection: 'row',
+    alignItems: 'center', // 가운데 맞춤
+    justifyContent: 'center', // 위 아래로 중앙정렬
+  },
+  autologin: {
+    alignItems: 'flex-end',
+    marginLeft: 24,
+    marginRight: 24,
+    marginBottom: 16,
+    height: 40,
+  },
+  orLine: {
+    marginLeft: 24,
+    marginRight: 24,
+    marginBottom: 24,
+    marginTop: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  boxContainer: {
+    height: 50,
+    marginLeft: 24,
+    marginRight: 24,
+    marginBottom: 16,
+    borderRadius: 4,
+    alignItems: 'center', // 가운데 맞춤
+    justifyContent: 'center', // 위 아래로 중앙정렬
+  },
+  textInput: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 4,
+    borderColor: '#d0d2da',
+    borderWidth: 1,
+    paddingLeft: 12,
+    paddingRight: 12,
   }
 });
 const styles = StyleSheet.create({
