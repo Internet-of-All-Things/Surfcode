@@ -26,7 +26,7 @@ export default class Student_FlatListItem extends Component {
         //this.setState({ userImageSource: props.item.user_icon_url });
 
         this.state.userImageSource = props.item.user_icon_url;
-        console.log(this.state.userImageSource + "!!!!" + props.item.user_icon_url);
+        //console.log(this.state.userImageSource + "!!!!" + props.item.user_icon_url);
     }
     _onLongPressButton() {
         this.props.changeListLongPressedState();
