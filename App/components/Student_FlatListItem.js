@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { TouchableHighlight, TouchableOpacity, FlatList, Modal, Image, TextInput, StyleSheet, Text, View } from "react-native";
 import { CheckBox } from 'react-native-elements'
 import ImagePicker from 'react-native-image-picker';
+import flatListData from "../data/flatListData";
 
 const options = {
     title: 'Input user data',
@@ -16,7 +17,7 @@ export default class Student_FlatListItem extends Component {
         isListLongPressed: false,
         itemChecked: false,
         userImageSource: '../images/personxhdpi.png',
-        modalVisible: false
+        modalVisible: false,
     }
     constructor(props) {
         super(props);
@@ -78,6 +79,12 @@ export default class Student_FlatListItem extends Component {
             }
         });
     }
+    saveUserDate(){
+        flatListData[this.props.index].email = this.state.email;
+        flatListData[this.props.index].name = this.state.name;
+        flatListData[this.props.index].tel = this.state.tel;
+        this.setUserImageModalVisible(!this.state.modalVisible);
+    }
 
 
     render() {
@@ -138,15 +145,21 @@ export default class Student_FlatListItem extends Component {
                                 justifyContent: 'center',
                                 marginTop: 40
                             }}>
-                                <Image source={this.state.userImageSource} style={{
-                                    width: 200,
-                                    height: 200,
-                                    borderWidth: 1,
-                                    borderColor: '#82889c',
-                                    borderRadius: 100,
-                                }} />
+                                <TouchableHighlight 
+                                        onPress={() => {
+                                            console.log("dsfsdf");
+                                            this.setUserImage();
+                                        }}>
+                                    <Image source={this.state.userImageSource} style={{
+                                        width: 120,
+                                        height: 120,
+                                        borderWidth: 1,
+                                        borderColor: '#82889c',
+                                        borderRadius: 100,
+                                    }} />
+                                </TouchableHighlight>
                             </View>
-                            <View style={[styles.info, { marginTop: 25 }]}>
+                            <View style={[styles.info, { marginTop: 20 }]}>
                                 <Image
                                     style={{ height: 32, width: 32, marginRight: 10 }}
                                     source={require('../images/id.png')}
@@ -159,10 +172,10 @@ export default class Student_FlatListItem extends Component {
                                     value={this.state.name}
                                 />
                             </View>
-                            <View style={[styles.info, { marginTop: 20 }]}>
+                            <View style={[styles.info, { marginTop: 15 }]}>
                                 <Image
                                     style={{ height: 32, width: 32, marginRight: 10 }}
-                                    source={require('../images/pw.png')}
+                                    source={require('../images/tel.png')}
                                 />
                                 <TextInput
                                     style={[styles.textInput, { flex: 0.8, height: 40, borderColor: '#d0d2da', borderWidth: 1 }]}
@@ -172,10 +185,10 @@ export default class Student_FlatListItem extends Component {
                                     value={this.state.tel}
                                 />
                             </View>
-                            <View style={[styles.info, { marginTop: 20 }]}>
+                            <View style={[styles.info, { marginTop: 15 }]}>
                                 <Image
                                     style={{ height: 32, width: 32, marginRight: 10 }}
-                                    source={require('../images/pw.png')}
+                                    source={require('../images/email.png')}
                                 />
                                 <TextInput
                                     style={[styles.textInput, { flex: 0.8, height: 40, borderColor: '#d0d2da', borderWidth: 1 }]}
@@ -187,9 +200,9 @@ export default class Student_FlatListItem extends Component {
                             </View>
 
                             <TouchableHighlight
-                                onPress={() => this.setUserImageModalVisible(!this.state.modalVisible)}
+                                onPress={() => this.saveUserDate()}
                                 underlayColor="rgba(47,82,196,0.7)"
-                                style={[styles.boxContainer, { backgroundColor: "#2f52c4" }]}
+                                style={[styles.boxContainer, { backgroundColor: "#2f52c4", marginTop: 20 }]}
                             >
                                 <Text
                                     style={{ color: '#f9f9fa' }}
