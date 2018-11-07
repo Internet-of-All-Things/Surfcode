@@ -35,6 +35,12 @@ const options = {
   },
 };
 
+function renderForUpdate(){
+  if(!this.state.unmount)
+    this.forceUpdate()
+}
+
+export { renderForUpdate }
 
 export default class FirstTab extends Component {
   state = {
@@ -52,7 +58,19 @@ export default class FirstTab extends Component {
     userImage: '이미지',
     /* firebase */
     firebaseID: '', 
+
   };
+
+  constructor(props) {
+    super(props)
+    this._retrieveData()
+    renderForUpdate = renderForUpdate.bind(this)
+  }
+
+  componentWillUnmount(){
+    this.setState({unmount : true})
+    console.log("Unmount!!!!!!!!!!!!!!!!!!!!!!!")
+  }
 
   _retrieveData = async () => {
     try {
@@ -93,11 +111,6 @@ export default class FirstTab extends Component {
             this.setState({ userImage: '../images/personxhdpi.png' })
       })
     });
-  }
-
-  constructor(props) {
-    super(props);
-    this._retrieveData();
   }
 
   changePage = () => {
@@ -245,30 +258,7 @@ export default class FirstTab extends Component {
     });
   }
 
-  componentWillMount() {
-    console.log('//componentWillMount (deprecated)');
-  }
-
-  componentDidMount() {
-    console.log('//componentDidMount');
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    // 5 의 배수라면 리렌더링 하지 않음
-    console.log('//shouldComponentUpdate');
-    return true;
-  }
-
-  componentWillUpdate(nextProps, nextState) {
-    console.log('//componentWillUpdate');
-  }
-  
-  componentDidUpdate(prevProps, prevState) {
-    console.log('//componentDidUpdate');
-  }
-
   render() {
-    console.log("FirstTab.js render() called!!");
     return (
       <View colors={["#00C6FB", "#005BEA"]} style={styles.container}>
         {/*modal부분 start*/}
@@ -447,6 +437,7 @@ export default class FirstTab extends Component {
 
         {/*list부분 start*/}
         <Student_BasicFlatList
+          ref={component => this._flatList = component}
           isFirstTabPage={this.state.isFirstTabPage}
           changeListLongPressedState={this.changeListLongPressedState}
           isListLongPressed={this.state.isListLongPressed}

@@ -67,13 +67,13 @@ export default class FindDevice extends Component {
         });
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         BluetoothManager.getBluetoothManager().stopDeviceScan()
-    }   
+    }
 
     scan() {
         bluetoothDevices = []
-        this.setState({ scanning: true, deviceCount : 0 })
+        this.setState({ scanning: true, deviceCount: 0 })
         BluetoothManager.getBluetoothManager().startDeviceScan(null,
             null, (error, device) => {
                 console.log("Scanning...")
@@ -185,7 +185,7 @@ export default class FindDevice extends Component {
                         renderItem={({ item, index }) => {
                             //console.log(`Item = ${item}, index = ${index}`);
                             return (
-                                <FlatListItem item={item} index={index} parentFlatList={this}>
+                                <FlatListItem item={item} index={index} parentFlatList={this} >
                                 </FlatListItem>
                             );
                         }}
@@ -247,28 +247,28 @@ var connBluetoothDevices = [];
 
 class FlatListItem extends Component {
 
-    _storeData = async (key,data) => {
+    _storeData = async (key, data) => {
         try {
-            console.log('insertion success. ' + key + '//'+data)
+            console.log('insertion success. ' + key + '//' + data)
             await AsyncStorage.setItem(key.toString(), data.toString());
         } catch (error) {
-            console.log('??'+error)
+            console.log('??' + error)
         }
     }
 
     _addData = async (device) => {
         try {
             const value = await AsyncStorage.getItem('Count');
-            console.log(value+" valuevlaue")
+            console.log(value + " valuevlaue")
             if (value !== null) {
                 console.log("value is not null ################################")
                 let tmp = parseInt(value) + 1
-                this._storeData('Count',tmp)
-                this._storeData('device'+ tmp, device.id + ',' + device.name)
+                this._storeData('Count', tmp)
+                this._storeData('device' + tmp, device.id + ',' + device.name)
             } else {
                 console.log("value is null $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-                this._storeData('Count',1)
-                this._storeData('device'+ 1, device.id + ',' + device.name)
+                this._storeData('Count', 1)
+                this._storeData('device' + 1, device.id + ',' + device.name)
             }
         } catch (error) {
             console.log(error);
@@ -288,6 +288,25 @@ class FlatListItem extends Component {
                         })
                         .then((device) => {
                             console.log("Setting notifications")
+                            BluetoothManager.
+                                getBluetoothManager().
+                                onDeviceDisconnected(device.id, (error, device) => {
+                                    /* reconnect */
+                                    device.connect()
+                                        .then((device) => {
+                                            console.log("Discovering services and characteristics")
+                                            return device.discoverAllServicesAndCharacteristics()
+                                        })
+                                        .then((device) => {
+                                            console.log("Setting notifications")
+                                            return BluetoothManager.setupNotifications(device)
+                                        })
+                                        .then(() => {
+
+                                        }, (error) => {
+                                            console.log(error.message)
+                                        })
+                                })
                             return BluetoothManager.setupNotifications(device)
                         })
                         .then(() => {
@@ -300,16 +319,17 @@ class FlatListItem extends Component {
                                 ],
                                 { cancelable: false }
                             )
-                            
+
                             flatListData.push({
                                 "key": this.props.item.device.id,
                                 "name": this.props.item.device.name,
                                 "state": "양호한 상태",
                                 "bpm": "미측정",
                                 "brethe": "미측정",
-                                "user_icon_url":"../images/user/ch.png",
+                                "user_icon_url": "../images/user/ch.png",
                                 "selected": false
                             })
+
                             updateState({ refresh: true })
                             //updateState({ refresh: false })
                             this._addData(this.props.item.device)

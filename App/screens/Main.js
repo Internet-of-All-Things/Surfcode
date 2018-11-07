@@ -10,6 +10,7 @@ import {
 import MainTabNavigator from '../navigators/MainTabNavigator';
 import PermissionManager from '../utils/PermissionManager';
 import {updateState} from '../components/Student_BasicFlatList';
+import RNExitApp from 'react-native-exit-app';
 
 export default class Main extends Component {
 
@@ -29,7 +30,8 @@ export default class Main extends Component {
     }
 
     goBack = async () =>{
-        BackHandler.exitApp();
+        //BackHandler.exitApp();
+        RNExitApp.exitApp();
     }
 
     componentWillMount(){

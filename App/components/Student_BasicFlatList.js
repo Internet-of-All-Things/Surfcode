@@ -3,12 +3,10 @@ import { TouchableHighlight, ActivityIndicator, FlatList, StyleSheet, Text, View
 
 import flatListData from "../data/flatListData";
 import Student_FlatListItem from './Student_FlatListItem';
-import updateStopState from '../utils/BluetoothManager';
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { ListItem } from "react-native-elements";
 
 function updateState(refresh) {
-    this.setState({ refresh })
+    if(!this.state.unmount)
+        this.setState({ refresh })
 }
 
 export { updateState }
@@ -18,6 +16,7 @@ export default class Student_BasicFlatList extends Component {
     state = {
         isListLongPressed: false,
         refresh : false,
+        unmount : false,
     }
 
     constructor(props){
@@ -33,16 +32,14 @@ export default class Student_BasicFlatList extends Component {
         }
     }
 
-    componentWillUnmount(){
-        updateStopState(true);
+    shouldComponentUpdate(){
+        updateState = updateState.bind(this);
+        return true;
     }
-    // changeListLongPressedState = () => {
-    //     this.setState({
-    //         isListLongPressed: !this.props.isListLongPressed
-    //     });
-    //     this.props.changeListLongPressedState();
-    //     console.log("list! : " + this.state.isListLongPressed);
-    // }
+
+    componentWillUnmount(){
+        this.setState({unmount : true})
+    }
 
     renderFooter = () =>{
         return(
@@ -60,7 +57,16 @@ export default class Student_BasicFlatList extends Component {
         );
     }
 
+    _onRefresh = () => {
+        this.setState({refresh: true});
+        fetchData().then(() => {
+          this.setState({refresh: false});
+        });
+    }
+    
     render() {
+        console.log('basicflatlist render')
+        updateState = updateState.bind(this);
         return (
             <View style={{ flex: 1 }}>
                 <FlatList
