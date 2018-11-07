@@ -30,8 +30,8 @@ const options = {
   title: 'Input user data',
   //customButtons: [{ name: 'user_info', title: 'Input user information' }],
   storageOptions: {
-      skipBackup: true,
-      path: 'images',
+    skipBackup: true,
+    path: 'images',
   },
 };
 
@@ -39,47 +39,67 @@ const options = {
 export default class FirstTab extends Component {
   state = {
     modalVisible: false,
-    userName: "Tom",
+
     isListLongPressed: false,
     isFirstTabPage: true,
-    userImage: '../images/personxhdpi.png',
-    userId: '',
-    userTel: ''
+    /* User Info */
+    userName: '이름',
+    userSchool: '스쿨',
+    userNickName: '닉네임',
+    userId: '이메일',
+    userTel: '연락처',
+    userCareer: '경력',
+    userImage: '이미지',
+    /* firebase */
+    firebaseID: '', 
   };
+
   _retrieveData = async () => {
     try {
+      /* get Email ID */
       var value = await AsyncStorage.getItem('Auth');
-      console.log("~~~~~~~~~~~~~~~~~" + value);
-      value = 'cys_star@naver.com';
-      if (value !== null) {
-        this.state.userId = value;
-        this.readUserData();
-
-      }
+      this.readUserData(value);
     } catch (error) {
-      // Error retrieving data
+      /* return to Login */
+      this.props.navigation.navigate('Login');
     }
   }
-  readUserData() {
-    let dbUrl = 'member/teacher/' + this.state.userId.replace(".", "").replace("#", "").replace("$", '').replace("@", "").replace("!", "").replace("%", "")
-      .replace("^", "").replace("&", "").replace("*", "").replace("(", "").replace(")", "").replace("-", "")
-      .replace("/", "").replace("\\", "").replace("[", "").replace("]", "").replace("{", "").replace("}", "")
-      .replace("`", "").replace("~", "").replace("?", "").replace(",", "").replace("<", "").replace(">", "") + "/phone";
+
+  readUserData = async (value) => {
+    this.state.firebaseID = value.replace(".", "").replace("#", "").replace("$", '').replace("@", "").replace("!", "").replace("%", "")
+                          .replace("^", "").replace("&", "").replace("*", "").replace("(", "").replace(")", "").replace("-", "")
+                          .replace("/", "").replace("\\", "").replace("[", "").replace("]", "").replace("{", "").replace("}", "")
+                          .replace("`", "").replace("~", "").replace("?", "").replace(",", "").replace("<", "").replace(">", "")
+    let dbUrl = 'member/teacher/' + this.state.firebaseID
+    console.log(this.state.firebaseID)
     firebase.database().ref(dbUrl).on('value', (snapshot) => {
-      console.log(snapshot.val() + "@@@");
-      this.state.userTel = snapshot.val();
-      const ref = firebase.storage().ref(this.state.userTel + '/profile.jpg');
-      ref.getDownloadURL()
+      let user = snapshot.val()
+      this.setState({
+        /* User Info */
+        userName: user.name,
+        userSchool: user.school,
+        userNickName: user.nickname,
+        userId: user.email,
+        userTel: user.phone,
+        userCareer: user.career,
+      })
+      /* User Image Info */
+      firebase.storage().ref(this.state.firebaseID+ '/profile.jpg').getDownloadURL()
         .then((url) => {
           this.setState({ userImage: url });
-        });
+      }).catch((error) => {
+          /* There is no match ref */
+          if(error.code === 'storage/object-not-found')
+            this.setState({ userImage: '../images/personxhdpi.png' })
+      })
     });
   }
+
   constructor(props) {
     super(props);
     this._retrieveData();
-
   }
+
   changePage = () => {
     console.log("~~~~~~~~~~~~~~~~~~~~!!");
   };
@@ -156,27 +176,27 @@ export default class FirstTab extends Component {
     });
     console.log(this.state.isListLongPressed + "~!!!!");
   }
-  
+
   uploadImage = (uri, imageName) => {
-    
+
     const image = uri
- 
+
     const Blob = RNFetchBlob.polyfill.Blob
     const fs = RNFetchBlob.fs
     window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest
     window.Blob = Blob
- 
-   
+
+
     let uploadBlob = null
-    let reference = 'gs://surfcode-d9b4d.appspot.com/'+this.state.userTel+'/'+imageName
-    console.log("rrrrr",reference)
+    let reference = 'gs://surfcode-d9b4d.appspot.com/' + this.state.userTel + '/' + imageName
+    console.log("rrrrr", reference)
     const imageRef = firebase.storage().ref(reference)
     let mime = 'image/jpg'
     fs.readFile(image, 'base64')
       .then((data) => {
         return Blob.build(data, { type: `${mime};BASE64` })
-    })
-    .then((blob) => {
+      })
+      .then((blob) => {
         uploadBlob = blob
         return imageRef.put(blob, { contentType: mime })
       })
@@ -187,13 +207,13 @@ export default class FirstTab extends Component {
       .then((url) => {
         // URL of the image uploaded on Firebase storage
         console.log(url);
-        
+
       })
       .catch((error) => {
         console.log(error);
- 
-      })  
- 
+
+      })
+
   }
   setUserImage() {
     ImagePicker.showImagePicker(options, (response) => {
@@ -209,10 +229,10 @@ export default class FirstTab extends Component {
         //const source = { uri: response.uri };
 
         // You can also display the image using data:
-         const source = { uri: 'data:image/jpeg;base64,' + response.data };
+        const source = { uri: 'data:image/jpeg;base64,' + response.data };
 
         // const fs = RNFetchBlob.fs;
-        firebase.storage().ref(this.state.userTel).child('profile.jpg').put(response.uri,{contentType:'image/jpg'});
+        firebase.storage().ref(this.state.firebaseID).child('profile.jpg').put(response.uri, { contentType: 'image/jpg' });
         // .then(successCb)
         // .catch(failureCb);
         //this.uploadImage(response.uri,'profile.jpg');
@@ -220,10 +240,33 @@ export default class FirstTab extends Component {
         this.setState({
           userImage: response.uri
         });
-        
+
       }
     });
   }
+
+  componentWillMount() {
+    console.log('//componentWillMount (deprecated)');
+  }
+
+  componentDidMount() {
+    console.log('//componentDidMount');
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    // 5 의 배수라면 리렌더링 하지 않음
+    console.log('//shouldComponentUpdate');
+    return true;
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    console.log('//componentWillUpdate');
+  }
+  
+  componentDidUpdate(prevProps, prevState) {
+    console.log('//componentDidUpdate');
+  }
+
   render() {
     console.log("FirstTab.js render() called!!");
     return (
@@ -261,7 +304,7 @@ export default class FirstTab extends Component {
                   console.log("dsfsdf");
                   this.setUserImage();
                 }}>
-                <Image source={{uri:this.state.userImage}} style={{
+                <Image source={{ uri: this.state.userImage }} style={{
                   width: 200,
                   height: 200,
                   borderWidth: 1,
@@ -277,7 +320,7 @@ export default class FirstTab extends Component {
               />
               <Text
                 style={modalStyles.titleStyle}>
-                {this.state.userId}
+                {this.state.userName}
               </Text>
             </View>
             <View style={[modalStyles.info, { marginTop: 15 }]}>
@@ -287,7 +330,7 @@ export default class FirstTab extends Component {
               />
               <Text
                 style={modalStyles.titleStyle}>
-                {this.state.userId}
+                {this.state.userTel}
               </Text>
             </View>
             <View style={[modalStyles.info, { marginTop: 15 }]}>
@@ -299,7 +342,7 @@ export default class FirstTab extends Component {
                 style={modalStyles.titleStyle}>
                 {this.state.userId}
               </Text>
-            </View>           
+            </View>
           </View>
         </Modal>
         {/*modal부분 end*/}
@@ -335,7 +378,7 @@ export default class FirstTab extends Component {
                   }} />
                 </View>
                 <Text style={titleStyles.titleUserText} ref="userName">
-                  {(this.state.userName = "최용석")}
+                  {(this.state.userName)}
                 </Text>
               </View>
             </TouchableHighlight>

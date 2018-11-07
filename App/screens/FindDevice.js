@@ -7,6 +7,7 @@ import {
     View,
     Image,
     Alert,
+    AsyncStorage,
     BackHandler,
     Platform,
 } from 'react-native';
@@ -66,8 +67,13 @@ export default class FindDevice extends Component {
         });
     }
 
+    componentWillUnmount(){
+        BluetoothManager.getBluetoothManager().stopDeviceScan()
+    }   
+
     scan() {
-        this.setState({ scanning: true })
+        bluetoothDevices = []
+        this.setState({ scanning: true, deviceCount : 0 })
         BluetoothManager.getBluetoothManager().startDeviceScan(null,
             null, (error, device) => {
                 console.log("Scanning...")
@@ -79,7 +85,7 @@ export default class FindDevice extends Component {
                         if (bluetoothDevices[i].device.id === device.id)
                             return
                     }
-
+                    //connBluetoothDevices.push([device.id, device.name])
                     bluetoothDevices.push({
                         'key': this.generateKey(24),
                         'device': device
@@ -95,7 +101,7 @@ export default class FindDevice extends Component {
                     }
                 }
             });
-        setTimeout(() => { BluetoothManager.getBluetoothManager().stopDeviceScan(); this.setState({ scanning: false }) }, 3000)
+        setTimeout(() => { BluetoothManager.getBluetoothManager().stopDeviceScan(); this.state.scanning = false }, 3000)
 
     }
 
@@ -110,7 +116,7 @@ export default class FindDevice extends Component {
     );
 
     goBack = async () => {
-        this.manager.stopDeviceScan();
+        BluetoothManager.getBluetoothManager().stopDeviceScan();
         NavigationService.navigate("Main", {});
     }
 
@@ -241,12 +247,39 @@ var connBluetoothDevices = [];
 
 class FlatListItem extends Component {
 
+    _storeData = async (key,data) => {
+        try {
+            console.log('insertion success. ' + key + '//'+data)
+            await AsyncStorage.setItem(key.toString(), data.toString());
+        } catch (error) {
+            console.log('??'+error)
+        }
+    }
+
+    _addData = async (device) => {
+        try {
+            const value = await AsyncStorage.getItem('Count');
+            console.log(value+" valuevlaue")
+            if (value !== null) {
+                console.log("value is not null ################################")
+                let tmp = parseInt(value) + 1
+                this._storeData('Count',tmp)
+                this._storeData('device'+ tmp, device.id + ',' + device.name)
+            } else {
+                console.log("value is null $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+                this._storeData('Count',1)
+                this._storeData('device'+ 1, device.id + ',' + device.name)
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     render() {
         return (
             <View>
                 <TouchableHighlight onPress={() => {
 
-                    //console.log(this.props.item.device._manager);
                     BluetoothManager.getBluetoothManager().stopDeviceScan()
                     this.props.item.device.connect()
                         .then((device) => {
@@ -267,7 +300,7 @@ class FlatListItem extends Component {
                                 ],
                                 { cancelable: false }
                             )
-
+                            
                             flatListData.push({
                                 "key": this.props.item.device.id,
                                 "name": this.props.item.device.name,
@@ -277,15 +310,13 @@ class FlatListItem extends Component {
                                 "user_icon_url":"../images/user/ch.png",
                                 "selected": false
                             })
-                            updateState({ refresh: true });
-                            updateState({ refresh: false });
-                            NavigationService.navigate("Main", { changed: true });
+                            updateState({ refresh: true })
+                            //updateState({ refresh: false })
+                            this._addData(this.props.item.device)
+                            NavigationService.navigate("Main", { changed: true })
                         }, (error) => {
                             console.log(error.message)
                         })
-                    console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ");
-                    console.log(this.props.item.device);
-                    console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ");
                 }}
                     underlayColor="#b7c3ea"
                     style={{

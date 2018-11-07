@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import { TouchableHighlight, ActivityIndicator, FlatList, StyleSheet, Text, View, CheckBox } from "react-native";
 
 import flatListData from "../data/flatListData";
-import Student_FlatListItem from './Student_FlatListItem'
+import Student_FlatListItem from './Student_FlatListItem';
+import updateStopState from '../utils/BluetoothManager';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { ListItem } from "react-native-elements";
 
@@ -30,6 +31,10 @@ export default class Student_BasicFlatList extends Component {
             //this.setState({ isListLongPressed: !props.isListLongPressed });
             this.setState({ isListLongPressed: props.isListLongPressed });         
         }
+    }
+
+    componentWillUnmount(){
+        updateStopState(true);
     }
     // changeListLongPressedState = () => {
     //     this.setState({

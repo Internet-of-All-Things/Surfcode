@@ -48,6 +48,10 @@ export default class Main extends Component {
 
     componentDidUpdate(){
         console.log("Main.js componentDidUpdate")
+        this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+            this.goBack();
+            return true;
+        });
         //if(!this.state.first)
             //updateState({ refresh : false });
         //else
