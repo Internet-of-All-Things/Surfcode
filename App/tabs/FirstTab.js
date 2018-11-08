@@ -5,7 +5,7 @@ import {
   StyleSheet,
   Text,
   Image,
-  View,  
+  View,
   Dimensions
 } from "react-native";
 import { AddButton } from "../components/AddButton";
@@ -30,21 +30,43 @@ const options = {
   },
 };
 
+function renderForUpdate(){
+  if(!this.state.unmount)
+    this.forceUpdate()
+}
+
+export { renderForUpdate }
 
 export default class FirstTab extends Component {
   state = {
     isListLongPressed: false,
     isFirstTabPage: true,
+    /* User Info */
+    userName: '이름',
+    userSchool: '스쿨',
+    userNickName: '닉네임',
+    userId: '이메일',
+    userTel: '연락처',
+    userCareer: '경력',
+    userImage: '이미지',
+    /* firebase */
+    firebaseID: '', 
   };
 
-
   constructor(props) {
-    super(props);
+    super(props)
+    renderForUpdate = renderForUpdate.bind(this)
   }
+
+  componentWillUnmount(){
+    this.setState({unmount : true})
+    console.log("Unmount!!!!!!!!!!!!!!!!!!!!!!!")
+  }
+
   changePage = () => {
     console.log("~~~~~~~~~~~~~~~~~~~~!!");
   };
-  
+
   changeListLongPressedState = () => {
     this.setState({
       isFirstTabPage: true,
@@ -171,6 +193,7 @@ export default class FirstTab extends Component {
 
         {/*list부분 start*/}
         <Student_BasicFlatList
+          ref={component => this._flatList = component}
           isFirstTabPage={this.state.isFirstTabPage}
           changeListLongPressedState={this.changeListLongPressedState}
           isListLongPressed={this.state.isListLongPressed}

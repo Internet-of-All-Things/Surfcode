@@ -8,8 +8,6 @@ import { updateState } from '../components/Student_BasicFlatList';
 export default class Login extends Component {
     state = {
         auth: 0,
-        cnt: 0,
-        //count: 0
     }
     static navigationOptions = {
         header: null
@@ -21,76 +19,101 @@ export default class Login extends Component {
         //AsyncStorage.clear()
     }
 
+    componentWillUnmount(){
+        //BluetoothManager.getBluetoothManager().stopDeviceScan()
+    }
+
     _retrieveData = async () => {
         try {
             const value = await AsyncStorage.getItem('Auth');
-            
+
             if (value !== null) {
-                /*const count = await AsyncStorage.getItem('Count')
-                //this.state.count = count;
-                console.log('count : ' + count)
-                console.log('flatListData :' +flatListData.length)
-                
-                if (count === '0' || count === null || count == flatListData.length){
-                    this.props.navigation.navigate('Main');
-                    return
-                }
-                    
-                console.log('run !!!!!!!!!!!')
-                for (let i = flatListData.length; i <= parseInt(count); i++) {
+                const count = await AsyncStorage.getItem('Count')
+                console.log("count : " + count)
+                for (let i = 1; i < parseInt(count) + 1; i++) {
                     let device = await AsyncStorage.getItem('device' + i)
                     console.log(device)
                     let splitDevice = device.split(',')
-                    flatListData.push({
+                    connDeviceInfo.push({
                         "key": splitDevice[0],
                         "name": splitDevice[1],
-                        "state": "양호한 상태",
-                        "bpm": "미측정",
-                        "brethe": "미측정",
-                        "user_icon_url": "../images/user/ch.png",
-                        "selected": false
                     })
+
                 }
+                /* start scanning */
+                BluetoothManager.getBluetoothManager().startDeviceScan(null,
+                    null, (error, device) => {
+                        console.log("scanning");
+                        if (connDeviceInfo.length === flatListData.length) {
+                            BluetoothManager.getBluetoothManager().stopDeviceScan()
+                            return
+                        }
 
-                if (flatListData.length != parseInt(count)){
-                    BluetoothManager.getBluetoothManager().startDeviceScan(null,
-                        null, (error, device) => {
-                            console.log("Scanning..." + count)
-                            if (count === flatListData.length) {
-                                BluetoothManager.getBluetoothManager().stopDeviceScan()
-                            }
-
-                            if (device != null && device.id != null) {
-                                for (let i = 0; i < flatListData.length; i++) {
-                                    if (flatListData[i].key === device.id) {
-
-                                        device.connect()
-                                            .then((device) => {
-                                                console.log("Discovering services and characteristics")
-                                                return device.discoverAllServicesAndCharacteristics()
-                                            })
-                                            .then((device) => {
-                                                console.log("Setting notifications")
-                                                return BluetoothManager.setupNotifications(device)
-                                            })
-                                            .then(() => {
-                                                this.state.cnt = this.state.cnt + 1
-                                            }, (error) => {
-                                                console.log(error.message)
-                                            })
-                                        return
+                        if (device != null && device.id != null) {
+                            for (let i = 0; i < connDeviceInfo.length; i++) {
+                                if (connDeviceInfo[i].key === device.id) {
+                                    for (let j = 0; j < flatListData.length; j++) {
+                                        if (flatListData[j].key === device.id) {
+                                            return;
+                                        }
                                     }
+                                    flatListData.push({
+                                        "key": connDeviceInfo[i].key,
+                                        "name": connDeviceInfo[i].name,
+                                        "state": "양호한 상태",
+                                        "bpm": "미측정",
+                                        "brethe": "미측정",
+                                        "user_icon_url": "../images/user/ch.png",
+                                        "selected": false
+                                    })
+                                    updateState({ refresh: true })
+                                    device.connect()
+                                        .then((device) => {
+                                            console.log("Discovering services and characteristics")
+                                            return device.discoverAllServicesAndCharacteristics()
+                                        })
+                                        .then((device) => {
+                                            console.log("Setting notifications")
+                                            BluetoothManager.
+                                                getBluetoothManager().
+                                                onDeviceDisconnected(device.id, (error, device) => {
+                                                    /* reconnect */
+                                                    device.connect()
+                                                        .then((device) => {
+                                                            console.log("Discovering services and characteristics")
+                                                            return device.discoverAllServicesAndCharacteristics()
+                                                        })
+                                                        .then((device) => {
+                                                            console.log("Setting notifications")
+                                                            return BluetoothManager.setupNotifications(device)
+                                                        })
+                                                        .then(() => {
 
-                                }
+                                                        }, (error) => {
+                                                            console.log(error.message)
+                                                        })
+                                                })    
+                                            return BluetoothManager.setupNotifications(device) 
+                                        })
+                                        .then(() => {
 
-                                if (error) {
-                                    this.error(error.message)
+                                        }, (error) => {
+                                            console.log(error.message)
+                                        })
                                     return
                                 }
+
                             }
-                        })
-                }
-*/
+
+                            if (error) {
+                                this.error(error.message)
+                                return
+                            }
+                        }
+
+                    })
+                /* scanner option */
+                // setTimeout(() => { BluetoothManager.getBluetoothManager().stopDeviceScan(); this.state.scanning = false }, 3000)
                 this.props.navigation.navigate('Main');
             } else {
                 console.log("value is null");
