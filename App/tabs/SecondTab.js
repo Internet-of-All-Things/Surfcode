@@ -17,7 +17,7 @@ import { LocaleConfig } from "react-native-calendars";
 
 import Picker from 'react-native-picker';
 import moment from 'moment'
-
+import { NavigationEvents } from 'react-navigation';
 // LocaleConfig.locales['kr'] = {
 //   monthNames: ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
 //   monthNamesShort: ['Janv.','Févr.','Mars','Avril','Mai','Juin','Juil.','Août','Sept.','Oct.','Nov.','Déc.'],
@@ -26,7 +26,7 @@ import moment from 'moment'
 // };
 
 // LocaleConfig.defaultLocale = 'kr';
-
+import screenTitleData from '../data/screenTitleData'
 
 export default class SecondScreen extends Component {
 
@@ -63,7 +63,7 @@ export default class SecondScreen extends Component {
         else {
             value = month;
         }
-        console.log("ttttttttt " + dateObj.getFullYear() + " " + value);
+
         this.state = {
             maxdate: moment(dateObj).format('YYYY-MM-DD'),
             pickedDate: moment(dateObj).format('YYYY-MM-DD'),
@@ -72,7 +72,14 @@ export default class SecondScreen extends Component {
             displayDate: dateObj.getFullYear() + "년 " + value + "월"
         };
         this.onDayPress = this.onDayPress.bind(this);
+        //console.log(this.props.screenProps + "~!!!");
+
     }
+
+    // componentDidMount() {
+    //     //this.props.screenProps.setTitle("사용 기록");
+    // }
+
     _showDatePicker() {
         let date = new Date();
         let year = date.getFullYear();
@@ -119,10 +126,24 @@ export default class SecondScreen extends Component {
         });
         Picker.show();
     }
+    setUserTitle = ()=>{
+        console.log(this.props.screenProps + "~!!!");
+        //this.props.screenProps("사용기록");
+        screenTitleData[0] = "사용 기록";
+        for(var i=0; i<4; i++)
+        console.log(screenTitleData[i] + "  ");
+        //this.props.screenProps.setTitle("사용 기록");
+    }
     render() {
 
         return (
             <View style={styles.container}>
+                <NavigationEvents
+                    onWillFocus={payload => this.setUserTitle()}
+                    onDidFocus={payload => console.log('did focus', payload)}
+                    onWillBlur={payload => console.log('will blur', payload)}
+                    onDidBlur={payload => console.log('did blur', payload)}
+                />
                 {/*title부분 start*/}
                 <View style={titleStyles.container}>
                     <View
@@ -175,8 +196,8 @@ export default class SecondScreen extends Component {
                         </View> */}
 
                         {/*Month Picker 부분 start*/}
-                        <TouchableOpacity style={{ flexDirection: "row"}} onPress={this._showDatePicker.bind(this)}>
-                            <View style={{ flexDirection: "row"}}>
+                        <TouchableOpacity style={{ flexDirection: "row" }} onPress={this._showDatePicker.bind(this)}>
+                            <View style={{ flexDirection: "row" }}>
                                 <Image style={{ marginRight: 5, marginTop: 4, width: 15, height: 15, tintColor: "#82889c", resizeMode: 'contain' }} source={require('../images/clockmdpi.png')} />
                                 <Text style={{ color: '#82889c', fontSize: 14 }}>{this.state.displayDate}</Text>
                                 <Image style={{ marginLeft: 8, marginTop: 6, width: 10, height: 10, tintColor: "#82889c", resizeMode: 'contain' }} source={require('../images/tiny-arrow-downmdpi.png')} />

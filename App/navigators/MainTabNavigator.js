@@ -37,6 +37,7 @@ const MainTabNavigator = createBottomTabNavigator(
         tabBarOnPress: ({ navigation, defaultHandler }) => {
           console.log("!@#!$!@$!@$!@#!@$dddddddddddddddddddddd");
           this.state.addingBtnVisable = true;
+          //props.setTitleName(screenTitle[0]);
           defaultHandler();
         }
       })
@@ -52,14 +53,20 @@ const MainTabNavigator = createBottomTabNavigator(
         tabBarColor: "#ff0000",
         tabBarOnPress: ({ navigation, defaultHandler }) => {
           this.state.addingBtnVisable = false;
+          
+          //props.setTitleName(screenTitle[1]);
           defaultHandler();
         }
       })
     },
     Adding: {
-      screen: () => null,
+      screen: AddButton,
       navigationOptions: ({ navigation }) => ({
+        tabBarOnPress: ({ navigation, defaultHandler }) => {
+        
+        },
         tabBarIcon: <AddButton />
+        
       })
     },
     WeatherInfo: {
@@ -72,6 +79,7 @@ const MainTabNavigator = createBottomTabNavigator(
         ),
         tabBarColor: "#ff0000",
         tabBarOnPress: ({ navigation, defaultHandler }) => {
+          //props.setTitleName(screenTitle[2]);
           this.state.addingBtnVisable = false;
           defaultHandler();
         }
@@ -87,6 +95,7 @@ const MainTabNavigator = createBottomTabNavigator(
         ),
         tabBarColor: "#ff0000",
         tabBarOnPress: ({ navigation, defaultHandler }) => {
+          //props.setTitleName(screenTitle[3]);
           this.state.addingBtnVisable = false;
           defaultHandler();
         }
