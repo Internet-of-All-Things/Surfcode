@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 
 import MainTabNavigator from '../navigators/MainTabNavigator';
+import MainScreen from '../tabs/MainScreen';
 import PermissionManager from '../utils/PermissionManager';
 import {updateState} from '../components/Student_BasicFlatList';
 
@@ -70,7 +71,8 @@ export default class Main extends Component {
     
         return (
             <View style={styles.containers}>
-                <MainTabNavigator />
+                <MainScreen/>
+                {/* <MainTabNavigator /> */}
             </View>
         )
     }
