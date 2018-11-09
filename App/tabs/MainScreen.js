@@ -23,14 +23,19 @@ function setTitleName(title) {
 }
 export { setTitleName }
 export default class MainScreen extends Component {
-  // static navigationOptions = {
-  //     header: null
-  // }
   state = {
     modalVisible: false,
-    userName: "Tom",
-    userId: "",
-    userImage: "../images/personxhdpi.png",
+
+    /* User Info */
+    userName: '이름',
+    userSchool: '스쿨',
+    userNickName: '닉네임',
+    userId: '이메일',
+    userTel: '연락처',
+    userCareer: '경력',
+    userImage: '이미지',
+    /* firebase */
+    firebaseID: '', 
     titleName: "수강생 상태"
   };
 
@@ -39,60 +44,48 @@ export default class MainScreen extends Component {
     this._retrieveData();
     setTitleName = setTitleName.bind(this)
   }
+
   _retrieveData = async () => {
     try {
-      var value = await AsyncStorage.getItem("Auth");
-      console.log("~~~~~~~~~~~~~~~~~" + value);
-      value = "cys_star@naver.com";
-      if (value !== null) {
-        this.state.userId = value;
-        this.readUserData();
-      }
+      /* get Email ID */
+      var value = await AsyncStorage.getItem('Auth');
+      this.readUserData(value);
     } catch (error) {
-      // Error retrieving data
+      /* return to Login */
+      this.props.navigation.navigate('Login');
     }
-  };
-  readUserData() {
-    let dbUrl =
-      "member/teacher/" +
-      this.state.userId
-        .replace(".", "")
-        .replace("#", "")
-        .replace("$", "")
-        .replace("@", "")
-        .replace("!", "")
-        .replace("%", "")
-        .replace("^", "")
-        .replace("&", "")
-        .replace("*", "")
-        .replace("(", "")
-        .replace(")", "")
-        .replace("-", "")
-        .replace("/", "")
-        .replace("\\", "")
-        .replace("[", "")
-        .replace("]", "")
-        .replace("{", "")
-        .replace("}", "")
-        .replace("`", "")
-        .replace("~", "")
-        .replace("?", "")
-        .replace(",", "")
-        .replace("<", "")
-        .replace(">", "") +
-      "/phone";
-    firebase
-      .database()
-      .ref(dbUrl)
-      .on("value", snapshot => {
-        console.log(snapshot.val() + "@@@");
-        this.state.userTel = snapshot.val();
-        const ref = firebase.storage().ref(this.state.userTel + "/profile.jpg");
-        ref.getDownloadURL().then(url => {
-          this.setState({ userImage: url });
-        });
-      });
   }
+
+  readUserData = async (value) => {
+    this.state.firebaseID = value.replace(".", "").replace("#", "").replace("$", '').replace("@", "").replace("!", "").replace("%", "")
+                          .replace("^", "").replace("&", "").replace("*", "").replace("(", "").replace(")", "").replace("-", "")
+                          .replace("/", "").replace("\\", "").replace("[", "").replace("]", "").replace("{", "").replace("}", "")
+                          .replace("`", "").replace("~", "").replace("?", "").replace(",", "").replace("<", "").replace(">", "")
+    let dbUrl = 'member/teacher/' + this.state.firebaseID
+    console.log(this.state.firebaseID)
+    firebase.database().ref(dbUrl).on('value', (snapshot) => {
+      let user = snapshot.val()
+      this.setState({
+        /* User Info */
+        userName: user.name,
+        userSchool: user.school,
+        userNickName: user.nickname,
+        userId: user.email,
+        userTel: user.phone,
+        userCareer: user.career,
+      })
+      /* User Image Info */
+      firebase.storage().ref(this.state.firebaseID+ '/profile.jpg').getDownloadURL()
+        .then((url) => {
+          this.setState({ userImage: url });
+      }).catch((error) => {
+          /* There is no match ref */
+          if(error.code === 'storage/object-not-found')
+            this.setState({ userImage: '../images/personxhdpi.png' })
+      })
+    });
+  }
+
   setUserImage() {
     ImagePicker.showImagePicker(options, response => {
       console.log("Response = ", response);
@@ -199,14 +192,14 @@ export default class MainScreen extends Component {
                 style={{ height: 32, width: 32, marginRight: 10 }}
                 source={require("../images/id.png")}
               />
-              <Text style={modalStyles.titleStyle}>{this.state.userId}</Text>
+              <Text style={modalStyles.titleStyle}>{this.state.userNickName}</Text>
             </View>
             <View style={[modalStyles.info, { marginTop: 15 }]}>
               <Image
                 style={{ height: 32, width: 32, marginRight: 10 }}
                 source={require("../images/tel.png")}
               />
-              <Text style={modalStyles.titleStyle}>{this.state.userId}</Text>
+              <Text style={modalStyles.titleStyle}>{this.state.userTel}</Text>
             </View>
             <View style={[modalStyles.info, { marginTop: 15 }]}>
               <Image
@@ -251,7 +244,7 @@ export default class MainScreen extends Component {
                 />
               </View>
               <Text style={titleStyles.titleUserText} ref="userName">
-                {(this.state.userName = "최용석")}
+                {this.state.userName}
               </Text>
             </View>
           </TouchableHighlight>
