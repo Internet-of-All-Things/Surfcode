@@ -14,8 +14,14 @@ import ActionBar from "react-native-action-bar";
 
 import firebase from "react-native-firebase";
 import ImagePicker from "react-native-image-picker";
-import screenTitleData from '../data/screenTitleData'
 
+
+function setTitleName(title) {
+  this.state.titleName = title;
+  console.log("!!!! " + this.state.titleName, title);
+  this.forceUpdate();
+}
+export { setTitleName }
 export default class MainScreen extends Component {
   // static navigationOptions = {
   //     header: null
@@ -25,11 +31,14 @@ export default class MainScreen extends Component {
     userName: "Tom",
     userId: "",
     userImage: "../images/personxhdpi.png",
-    titleName: screenTitleData[0]
-    };
-  componentWillReceiveProps(props) {
-    console.log("component Will Receive Props1", JSON.stringify(props),props);   
-}
+    titleName: "수강생 상태"
+  };
+
+  constructor(props) {
+    super(props);
+    this._retrieveData();
+    setTitleName = setTitleName.bind(this)
+  }
   _retrieveData = async () => {
     try {
       var value = await AsyncStorage.getItem("Auth");
@@ -133,15 +142,7 @@ export default class MainScreen extends Component {
       isListLongPressed: false
     })
   }
-  setTitleName = (title) => {
-    console.log(title + "~~~~~~~~~~~~~~~~~");
-    this.setState({ titleName: title });
-  }
 
-  constructor(props) {
-    super(props);
-    this._retrieveData();
-  }
   render() {
     return (
       <View style={styles.container}>
@@ -258,7 +259,7 @@ export default class MainScreen extends Component {
         </View>
         {/*title부분 end*/}
 
-        <MainTabNavigator screenProps={this.setTitleName} />
+        <MainTabNavigator />
       </View>
     );
   }
@@ -277,7 +278,7 @@ const titleStyles = StyleSheet.create({
   titleStyle: {
     fontSize: 21,
     color: "#3b3e4c",
-    fontFamily: "SpoqaHanSans-Bold"
+    fontFamily:'Spoqa Han Sans Bold'
   },
   titleRightStyle: {
     flexDirection: "row",
@@ -287,7 +288,8 @@ const titleStyles = StyleSheet.create({
   titleUserText: {
     fontSize: 14,
     color: "#82889c",
-    paddingLeft: 5
+    paddingLeft: 5,
+    fontFamily:'Spoqa Han Sans Bold'
   },
 });
 

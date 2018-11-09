@@ -211,7 +211,7 @@ export default class Student_FlatListItem extends Component {
                         </Modal>
                         {/*modal부분 end*/}
                         <View style={{ flex: 0.45, flexDirection: "column", marginLeft: 25 }}>
-                            <Text style={[styles.textStyle, { fontSize: 24 }]}>{this.props.item.name}</Text>
+                            <Text style={[styles.textStyle, { fontSize: 24, fontFamily:'Spoqa Han Sans Bold'}]}>{this.props.item.name}</Text>
                             <Text style={styles.smallText}>{this.props.item.state}</Text>
                         </View>
                         <View style={{ flex: 0.55, flexDirection: "row", paddingTop: 5 }}>
@@ -243,11 +243,13 @@ export default class Student_FlatListItem extends Component {
 const styles = StyleSheet.create({
     textStyle: {
         color: '#3b3e4c',
-        fontSize: 14
+        fontSize: 14,
+        fontFamily:'Spoqa Han Sans Regular'
     },
     smallText: {
         fontSize: 12,
-        color: '#82889c'
+        color: '#82889c',
+        fontFamily:'Spoqa Han Sans Regular'
     },
     info: {
         flexDirection: 'row',
