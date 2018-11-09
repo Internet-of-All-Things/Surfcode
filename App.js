@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView,StatusBar } from 'react-native';
 
 import Naviagtor from "./App/navigators/Navigator";
 import NavigationService from './App/utils/NavigationService';
@@ -9,6 +9,7 @@ export default class App extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <StatusBar hidden={true}/>
         <SafeAreaView style={{ flex: 1 }}>
           <Naviagtor 
           ref={navigatorRef => {
