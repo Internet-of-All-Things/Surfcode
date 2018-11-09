@@ -59,6 +59,9 @@ export default class Student_FlatListItem extends Component {
         }
     }
     componentWillReceiveProps(props) {
+        this.state.email = this.props.item.email
+        this.state.name = this.props.item.name
+        this.state.tel = this.props.item.tel
         this.setState({ itemChecked: false });
         this.setState({ isListLongPressed: props.isListLongPressed });
         //console.log("item! : " + this.state.isListLongPressed + " " + this.props.index + " "+ this.state.itemChecked + " " + JSON.stringify(props) );
@@ -88,14 +91,14 @@ export default class Student_FlatListItem extends Component {
         this.props.item.tel = this.state.tel
         /*flatListData[this.props.index].email = this.state.email;
         flatListData[this.props.index].name = this.state.name;
-        flatListData[this.props.index].tel = this.state.tel;*/
-        this._storeData()
-        this.setUserImageModalVisible(!this.state.modalVisible);
+        flatListData[this.props.index].tel = this.state.tel;*/ 
         firebase
               .storage()
               .ref("student/"+this.state.tel)
               .child("profile.jpg")
               .put(this.state.userImageSource, { contentType: "image/jpg" });
+        this._storeData()
+        this.setUserImageModalVisible(!this.state.modalVisible);
     }
 
     _storeData = async () => {
@@ -107,7 +110,7 @@ export default class Student_FlatListItem extends Component {
             this.state.name+','+
             this.state.email+','+
             this.state.tel+','+
-            this.props.item.user_icon_url
+            this.state.userImageSource
             )
           console.log("##################")
           let value = await AsyncStorage.getItem(this.props.item.key);
