@@ -18,11 +18,18 @@ import FourthTab from "../tabs/FourthTab";
 
 import { createBottomTabNavigator } from "react-navigation";
 import { AddButton } from "../components/AddButton";
+import { setTitleName } from "../tabs/MainScreen"
 
 this.state = {
   addingBtnVisable: false
 };
-
+var screenTitleData = [
+  "수강생 상태",
+  "사용 기록",
+  "파도와 날씨",
+  "설정"
+]
+var selectedMyTab = 0;
 const MainTabNavigator = createBottomTabNavigator(
   {
     Biometrics: {
@@ -31,13 +38,13 @@ const MainTabNavigator = createBottomTabNavigator(
         title: "생체정보",
         tabBarLabel: "Biometrics",
         tabBarIcon: ({ tintColor, focused }) => (
-          <Image style={[{ idth: 24, height: 24, resizeMode: 'contain'},focused?{}:{tintColor:'#d0d2da'}]} source={focused?(require('../images/tab/Asset-53xxxhdpi.png')):(require('../images/tab/heart-beatxxxhdpi.png'))} />
-          ),
+          <Image style={[{ idth: 24, height: 24, resizeMode: 'contain' }, focused ? {} : { tintColor: '#d0d2da' }]} source={focused ? (require('../images/tab/Asset-53xxxhdpi.png')) : (require('../images/tab/heart-beatxxxhdpi.png'))} />
+        ),
         tabBarColor: "#f2f2f2",
         tabBarOnPress: ({ navigation, defaultHandler }) => {
-          console.log("!@#!$!@$!@$!@#!@$dddddddddddddddddddddd");
+          setTitleName(screenTitleData[0]);
+          selectedMyTab = 0;
           this.state.addingBtnVisable = true;
-          //props.setTitleName(screenTitle[0]);
           defaultHandler();
         }
       })
@@ -48,13 +55,13 @@ const MainTabNavigator = createBottomTabNavigator(
         title: "파도정보",
         tabBarLabel: "WeatherInfo",
         tabBarIcon: ({ tintColor, focused }) => (
-          <Image style={[{ idth: 24, height: 24, resizeMode: 'contain' },focused?{}:{tintColor:'#d0d2da'}]} source={focused?(require('../images/tab/calendar-colorxxxhdpi.png')):(require('../images/tab/calendar-monoxxxhdpi.png'))} />          
+          <Image style={[{ idth: 24, height: 24, resizeMode: 'contain' }, focused ? {} : { tintColor: '#d0d2da' }]} source={focused ? (require('../images/tab/calendar-colorxxxhdpi.png')) : (require('../images/tab/calendar-monoxxxhdpi.png'))} />
         ),
         tabBarColor: "#ff0000",
         tabBarOnPress: ({ navigation, defaultHandler }) => {
+          setTitleName(screenTitleData[1]);
+          selectedMyTab = 1;
           this.state.addingBtnVisable = false;
-          
-          //props.setTitleName(screenTitle[1]);
           defaultHandler();
         }
       })
@@ -63,10 +70,10 @@ const MainTabNavigator = createBottomTabNavigator(
       screen: AddButton,
       navigationOptions: ({ navigation }) => ({
         tabBarOnPress: ({ navigation, defaultHandler }) => {
-        
+
         },
         tabBarIcon: <AddButton />
-        
+
       })
     },
     WeatherInfo: {
@@ -75,11 +82,12 @@ const MainTabNavigator = createBottomTabNavigator(
         title: "파도정보",
         tabBarLabel: "WeatherInfo",
         tabBarIcon: ({ tintColor, focused }) => (
-          <Image style={[{ idth: 24, height: 24, resizeMode: 'contain'  },focused?{}:{tintColor:'#d0d2da'}]} source={focused?(require('../images/tab/wave-lv3xxxhdpi.png')):(require('../images/tab/wave-monoxxxhdpi.png'))} />      
+          <Image style={[{ idth: 24, height: 24, resizeMode: 'contain' }, focused ? {} : { tintColor: '#d0d2da' }]} source={focused ? (require('../images/tab/wave-lv3xxxhdpi.png')) : (require('../images/tab/wave-monoxxxhdpi.png'))} />
         ),
         tabBarColor: "#ff0000",
         tabBarOnPress: ({ navigation, defaultHandler }) => {
-          //props.setTitleName(screenTitle[2]);
+          setTitleName(screenTitleData[2]);
+          selectedMyTab = 2;
           this.state.addingBtnVisable = false;
           defaultHandler();
         }
@@ -91,11 +99,12 @@ const MainTabNavigator = createBottomTabNavigator(
         title: "파도정보",
         tabBarLabel: "Setting",
         tabBarIcon: ({ tintColor, focused }) => (
-          <Image style={[{ idth: 24, height: 24, resizeMode: 'contain' },focused?{}:{tintColor:'#d0d2da'}]} source={focused?(require('../images/tab/setting-colorxxxhdpi.png')):(require('../images/tab/setting-monoxxxhdpi.png'))} />      
+          <Image style={[{ idth: 24, height: 24, resizeMode: 'contain' }, focused ? {} : { tintColor: '#d0d2da' }]} source={focused ? (require('../images/tab/setting-colorxxxhdpi.png')) : (require('../images/tab/setting-monoxxxhdpi.png'))} />
         ),
         tabBarColor: "#ff0000",
         tabBarOnPress: ({ navigation, defaultHandler }) => {
-          //props.setTitleName(screenTitle[3]);
+          setTitleName(screenTitleData[3]);
+          selectedMyTab = 3;
           this.state.addingBtnVisable = false;
           defaultHandler();
         }
@@ -106,13 +115,13 @@ const MainTabNavigator = createBottomTabNavigator(
     tabBarOptions: {
       showLabel: false,
       activeTintColor: "#000000",
-      inactiveTintColor: "#000000",     
+      inactiveTintColor: "#000000",
       style: {
         backgroundColor: "#f9f9fa"
       },
       tabStyle: {}
     },
-    lazy:false
+    lazy: false
   }
 );
 

@@ -17,7 +17,6 @@ import { LocaleConfig } from "react-native-calendars";
 
 import Picker from 'react-native-picker';
 import moment from 'moment'
-import { NavigationEvents } from 'react-navigation';
 // LocaleConfig.locales['kr'] = {
 //   monthNames: ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
 //   monthNamesShort: ['Janv.','Févr.','Mars','Avril','Mai','Juin','Juil.','Août','Sept.','Oct.','Nov.','Déc.'],
@@ -26,7 +25,6 @@ import { NavigationEvents } from 'react-navigation';
 // };
 
 // LocaleConfig.defaultLocale = 'kr';
-import screenTitleData from '../data/screenTitleData'
 
 export default class SecondScreen extends Component {
 
@@ -126,81 +124,27 @@ export default class SecondScreen extends Component {
         });
         Picker.show();
     }
-    setUserTitle = ()=>{
-        console.log(this.props.screenProps + "~!!!");
-        //this.props.screenProps("사용기록");
-        screenTitleData[0] = "사용 기록";
-        for(var i=0; i<4; i++)
-        console.log(screenTitleData[i] + "  ");
-        //this.props.screenProps.setTitle("사용 기록");
-    }
     render() {
 
         return (
             <View style={styles.container}>
-                <NavigationEvents
+                {/* <NavigationEvents
                     onWillFocus={payload => this.setUserTitle()}
                     onDidFocus={payload => console.log('did focus', payload)}
                     onWillBlur={payload => console.log('will blur', payload)}
                     onDidBlur={payload => console.log('did blur', payload)}
-                />
+                /> */}
                 {/*title부분 start*/}
                 <View style={titleStyles.container}>
                     <View
-                        style={{ flex: 0.6, flexDirection: "row", alignItems: "center" }}
-                    >
-                        <Text style={[titleStyles.titleStyle, { flex: 0.8 }]}>사용 기록</Text>
-                        <TouchableHighlight underlayColor="#ffffff" style={titleStyles.titleRightStyle} onPress={() => {
-                            this.setModalVisible(true);
-                        }}>
-                            <View style={{ flexDirection: 'row' }}>
-                                <View style={{
-                                    flexDirection: 'row',
-                                    justifyContent: 'center'
-                                }}>
-                                    <Image source={require('../images/personxhdpi.png')} style={{
-                                        width: 24,
-                                        height: 24,
-                                        borderWidth: 1,
-                                        borderColor: '#82889c',
-                                        borderRadius: 100,
-                                    }} />
-                                </View>
-                                <Text style={titleStyles.titleUserText} ref='userName'>{this.state.userName = '최용석'}</Text>
-                            </View>
-                        </TouchableHighlight>
-                    </View>
-                    <View
                         style={{ flex: 0.4, flexDirection: "row", alignItems: "center" }}
                     >
-                        {/* <View style={{ flex: 0.6, flexDirection: "row" }}>
-                            <Text style={titleStyles.subTitleStyle}> 수강생 목록</Text>
-                            <View
-                                style={{
-                                    marginLeft: 8,
-                                    marginBottom: 5,
-                                    paddingTop: 1,
-                                    paddingBottom: 1,
-                                    paddingLeft: 7,
-                                    paddingRight: 7,
-                                    backgroundColor: "#d0d2da",
-                                    borderRadius: 5,
-                                    borderWidth: 1,
-                                    borderColor: "#fff"
-                                }}
-                            >
-                                <Text style={{ color: "#3b3e4c", fontSize: 12 }}>
-                                    44
-                                </Text>
-                            </View>
-                        </View> */}
-
                         {/*Month Picker 부분 start*/}
                         <TouchableOpacity style={{ flexDirection: "row" }} onPress={this._showDatePicker.bind(this)}>
                             <View style={{ flexDirection: "row" }}>
-                                <Image style={{ marginRight: 5, marginTop: 4, width: 15, height: 15, tintColor: "#82889c", resizeMode: 'contain' }} source={require('../images/clockmdpi.png')} />
-                                <Text style={{ color: '#82889c', fontSize: 14 }}>{this.state.displayDate}</Text>
-                                <Image style={{ marginLeft: 8, marginTop: 6, width: 10, height: 10, tintColor: "#82889c", resizeMode: 'contain' }} source={require('../images/tiny-arrow-downmdpi.png')} />
+                                <Image style={{ marginRight: 5, marginTop: 7, width: 16, height: 16, tintColor: "#82889c", resizeMode: 'contain' }} source={require('../images/clockmdpi.png')} />
+                                <Text style={{ color: '#82889c', fontSize: 14,  fontFamily: "Spoqa Han Sans Bold" }}>{this.state.displayDate}</Text>
+                                <Image style={{ marginLeft: 8, marginTop: 9, width: 10, height: 10, tintColor: "#82889c", resizeMode: 'contain' }} source={require('../images/tiny-arrow-downmdpi.png')} />
                             </View>
                         </TouchableOpacity>
                         {/*Month Picker 부분 end*/}
@@ -257,31 +201,18 @@ export default class SecondScreen extends Component {
 }
 const titleStyles = StyleSheet.create({
     container: {
-        height: 107, flexDirection: "column", paddingLeft: 16, paddingRight: 16, backgroundColor: '#f9f9fa'
+        height: 54,
+        flexDirection: "row",
+        alignItems: "center",
+        paddingLeft: 16,
+        paddingRight: 16,
+        backgroundColor: "#f9f9fa"
     },
     titleStyle: {
         fontSize: 21,
         color: "#3b3e4c",
         fontFamily: 'SpoqaHanSans-Bold'
     },
-    titleRightStyle: {
-        flexDirection: "row",
-        flex: 0.4,
-        justifyContent: "flex-end"
-    },
-    subTitleStyle: {
-        fontSize: 14,
-        color: "#3b3e4c"
-    },
-    titleUserText: {
-        fontSize: 14,
-        color: "#82889c",
-        paddingLeft: 5
-    },
-    titleDeleteStyle: {
-        fontSize: 14,
-        color: '#f33c17'
-    }
 });
 
 const styles = StyleSheet.create({

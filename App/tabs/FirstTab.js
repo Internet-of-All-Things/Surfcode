@@ -138,7 +138,8 @@ export default class FirstTab extends Component {
             <View
               style={{
                 marginLeft: 8,
-                marginBottom: 5,
+                marginTop:3,
+                marginBottom: 3,
                 paddingTop: 1,
                 paddingBottom: 1,
                 paddingLeft: 7,
@@ -149,7 +150,7 @@ export default class FirstTab extends Component {
                 borderColor: "#fff"
               }}
             >
-              <Text style={{ color: "#3b3e4c", fontSize: 12 }}>
+              <Text style={{ color: "#3b3e4c", fontSize: 12,  fontFamily: "SpoqaHanSans-Bold" }}>
                 {flatListData.length}
               </Text>
             </View>
@@ -227,7 +228,8 @@ const titleStyles = StyleSheet.create({
   },
   subTitleStyle: {
     fontSize: 14,
-    color: "#3b3e4c"
+    color: "#3b3e4c",
+    fontFamily:'Spoqa Han Sans Bold'
   },
   titleUserText: {
     fontSize: 14,
