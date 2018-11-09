@@ -1,9 +1,7 @@
 import { NativeModules } from 'react-native';
 import { BleManager } from 'react-native-ble-plx';
 import flatListData from "../data/flatListData";
-import { updateState } from '../components/Student_BasicFlatList';
-import Student_BasicFlatList from '../components/Student_BasicFlatList'
-import { renderForUpdate } from '../tabs/FirstTab'
+import { renderForUpdateItem } from '../tabs/FirstTab'
 
 let _bluetoothManager;
 let sensors = {
@@ -86,7 +84,7 @@ setupNotifications = async (device) => {
                 flatListData[i].bpm = characteristic.value;
                 console.log(characteristic.deviceID + " heartrate :" + characteristic.value + "bpm")
             }
-            renderForUpdate()
+            renderForUpdateItem()
             //Student_BasicFlatList.refe()
             //updateState({ refresh: true })
             //updateState({ refresh: false })

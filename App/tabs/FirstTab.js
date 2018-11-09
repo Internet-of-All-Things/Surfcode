@@ -1,34 +1,22 @@
 import React, { Component } from "react";
 import {
-  Platform,
   TouchableHighlight,
   StyleSheet,
   Text,
   Image,
   View,
-  Dimensions
+  AsyncStorage,
 } from "react-native";
 import { AddButton } from "../components/AddButton";
-//import BoxLayout from "../BoxLayout";
 import Student_BasicFlatList from "../components/Student_BasicFlatList";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import flatListData from "../data/flatListData";
-import { CheckBox } from "react-native-elements";
+import BluetoothManager from "../utils/BluetoothManager"
 
-
-
-var screen = Dimensions.get("window");
-let listData = [];
-
-
-
-function renderForUpdate(){
-  if(!this.state.unmount)
-    this.forceUpdate()
+function renderForUpdateItem(){
+  this.forceUpdate()
 }
 
-export { renderForUpdate }
+export { renderForUpdateItem }
 
 export default class FirstTab extends Component {
   state = {
@@ -48,73 +36,64 @@ export default class FirstTab extends Component {
 
   constructor(props) {
     super(props)
-    renderForUpdate = renderForUpdate.bind(this)
+    renderForUpdateItem = renderForUpdateItem.bind(this)
   }
 
   componentWillUnmount(){
     this.setState({unmount : true})
   }
 
-  changePage = () => {
-    console.log("~~~~~~~~~~~~~~~~~~~~!!");
-  };
-
   changeListLongPressedState = () => {
     this.setState({
       isFirstTabPage: true,
       isListLongPressed: !this.state.isListLongPressed
     });
-    if (this.state.isListLongPressed) {
-      listData = [];
-    }
-    console.log("isLong!! : " + this.state.isListLongPressed);
   };
 
-  changeListCheckBoxSelectState = (index, checked) => {
-    console.log("changeListCheckBoxSelectState : " + index + " " + checked);
-    if (checked) {
-      listData.push(index);
-    } else {
-      for (let i = 0; i < listData.length; i++) {
-        if (listData[i] == index) {
-          listData.splice(i, 1);
-          break;
+  async removeItemValue(key) {
+    try {
+      await AsyncStorage.removeItem(key);
+      return true;
+    }
+    catch(exception) {
+      return false;
+    }
+  }
+
+  removeStudentData = async () => {
+    /* 현재 진행 중 */
+    console.log(flatListData)
+    for(let i = 0; i < flatListData.length; i++){
+      if(flatListData[i].selected){
+        console.log("i == "+i+"#########################")
+        //this.removeItemValue(flatListData.)
+        let temp = JSON.parse(await AsyncStorage.getItem('device'))
+        for(let j = 0; j < temp.devices.length; j++){
+          if(flatListData[i].key === temp.devices[j].key){
+            AsyncStorage.removeItem(flatListData[i].key)
+            temp['devices'].splice(j,1)
+            AsyncStorage.setItem('device',JSON.stringify(temp))
+            break
+          }
         }
+        console.log(temp)
+        BluetoothManager.getBluetoothManager().onDeviceDisconnected(flatListData[i].key, null)
+        BluetoothManager.cancelDeviceConnection(flatListData[i].key)
+        flatListData.splice(i,1)
+        i = i - 1
       }
-    }
-    for (let i = 0; i < listData.length; i++) {
-      console.log("★ listData[" + i + "] " + JSON.stringify(listData[i]));
-    }
-  };
-  removeStudentData = () => {
-    for (let i = 0; i < flatListData.length; i++) {
-      console.log(
-        "before flatListData[" + i + "] " + JSON.stringify(flatListData[i])
-      );
-    }
-    for (let i = 0; i < listData.length; i++) {
-      flatListData.splice(listData[i] - i, 1);
-      console.log(
-        "deleted[" + listData[i] + "] " + JSON.stringify(flatListData[i])
-      );
-    }
-    for (let i = 0; i < flatListData.length; i++) {
-      console.log(
-        "after latListData[" + i + "] " + JSON.stringify(flatListData[i])
-      );
     }
     this.setState({
       isFirstTabPage: true,
       isListLongPressed: !this.state.isListLongPressed
     });
-    console.log(this.state.isListLongPressed + "!!!!");
   };
+
   deleteCancel = () => {
     this.setState({
       isFirstTabPage: true,
       isListLongPressed: !this.state.isListLongPressed
     });
-    console.log(this.state.isListLongPressed + "~!!!!");
   }
 
   render() {

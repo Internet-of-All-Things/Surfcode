@@ -43,7 +43,7 @@ export default class ThirdTab extends Component {
         fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&APPID=${API_KEY}`)
             .then(response => response.json())
             .then(json => {
-                console.log(json);
+                //console.log(json);
                 let status = json.weather[0].main;
                 if(json.weather[0].id >= 700 && json.weather[0].id < 800)
                     this.setState({weatherImage : weather_imageData["Clouds"].line})                    

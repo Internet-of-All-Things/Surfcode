@@ -17,6 +17,7 @@ import flatListData from "../data/flatListData";
 import NavigationService from '../utils/NavigationService';
 import BluetoothManager from '../utils/BluetoothManager';
 import { updateState } from '../components/Student_BasicFlatList';
+import connDeviceInfo from "../data/connDeviceInfo";
 
 export default class FindDevice extends Component {
     state = {
@@ -243,7 +244,6 @@ const styles = StyleSheet.create({
 });
 
 var bluetoothDevices = [];
-var connBluetoothDevices = [];
 
 class FlatListItem extends Component {
 
@@ -259,29 +259,32 @@ class FlatListItem extends Component {
     _addData = async (device) => {
         try {
             const value = await AsyncStorage.getItem('Count');
-            console.log(value + " valuevlaue")
             if (value !== null) {
-                console.log("value is not null ################################")
-                let tmp = parseInt(value) + 1
-                this._storeData('Count', tmp)
-                this._storeData('device' + tmp, device.id + ',' + device.name)
+                this._storeData('Count', parseInt(value) + 1)
+                temp = await AsyncStorage.getItem('device')
+                temp2 = JSON.parse(temp)
+                temp2['devices'].push({
+                    "key": device.id,
+                    "name": device.name,
+                })
+                console.log(temp2)
+                await AsyncStorage.setItem('device', JSON.stringify(temp2))
             } else {
-                console.log("value is null $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
                 this._storeData('Count', 1)
-                this._storeData('device' + 1, device.id + ',' + device.name)
+                await AsyncStorage.setItem('device', JSON.stringify({
+                    "devices": [
+                        {"key": device.id, "name": device.name},
+                    ]
+                }))
             }
         } catch (error) {
             console.log(error);
         }
     }
 
-    render() {
-        return (
-            <View>
-                <TouchableHighlight onPress={() => {
-
-                    BluetoothManager.getBluetoothManager().stopDeviceScan()
-                    this.props.item.device.connect()
+    startScan() {
+        /* start scanning */
+        this.props.item.device.connect()
                         .then((device) => {
                             console.log("Discovering services and characteristics")
                             return device.discoverAllServicesAndCharacteristics()
@@ -289,24 +292,16 @@ class FlatListItem extends Component {
                         .then((device) => {
                             console.log("Setting notifications")
                             BluetoothManager.
-                                getBluetoothManager().
-                                onDeviceDisconnected(device.id, (error, device) => {
-                                    /* reconnect */
-                                    device.connect()
-                                        .then((device) => {
-                                            console.log("Discovering services and characteristics")
-                                            return device.discoverAllServicesAndCharacteristics()
+                                        getBluetoothManager().
+                                        onDeviceDisconnected(device.id, (error, device) => {
+                                            for (let j = 0; j < connDeviceInfo.length; j++) {
+                                                if (connDeviceInfo[j].key === device.id) {
+                                                    connDeviceInfo.splice(j,1)
+                                                    break
+                                                }
+                                            }
+                                            this.startScan()
                                         })
-                                        .then((device) => {
-                                            console.log("Setting notifications")
-                                            return BluetoothManager.setupNotifications(device)
-                                        })
-                                        .then(() => {
-
-                                        }, (error) => {
-                                            console.log(error.message)
-                                        })
-                                })
                             return BluetoothManager.setupNotifications(device)
                         })
                         .then(() => {
@@ -320,6 +315,11 @@ class FlatListItem extends Component {
                                 { cancelable: false }
                             )
 
+                            connDeviceInfo.push({
+                                "key": this.props.item.device.id,
+                                "name": this.props.item.device.name,
+                            })
+
                             flatListData.push({
                                 "key": this.props.item.device.id,
                                 "name": this.props.item.device.name,
@@ -332,7 +332,6 @@ class FlatListItem extends Component {
                                 "selected": false
                             })
 
-
                             updateState({ refresh: true })
                             //updateState({ refresh: false })
                             this._addData(this.props.item.device)
@@ -340,6 +339,15 @@ class FlatListItem extends Component {
                         }, (error) => {
                             console.log(error.message)
                         })
+    }
+
+    render() {
+        return (
+            <View>
+                <TouchableHighlight onPress={() => {
+
+                    BluetoothManager.getBluetoothManager().stopDeviceScan()
+                    this.startScan()
                 }}
                     underlayColor="#b7c3ea"
                     style={{
