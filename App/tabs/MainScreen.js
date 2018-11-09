@@ -35,7 +35,7 @@ export default class MainScreen extends Component {
     userCareer: '경력',
     userImage: '이미지',
     /* firebase */
-    firebaseID: '', 
+    firebaseID: '',
     titleName: "수강생 상태"
   };
 
@@ -58,9 +58,9 @@ export default class MainScreen extends Component {
 
   readUserData = async (value) => {
     this.state.firebaseID = value.replace(".", "").replace("#", "").replace("$", '').replace("@", "").replace("!", "").replace("%", "")
-                          .replace("^", "").replace("&", "").replace("*", "").replace("(", "").replace(")", "").replace("-", "")
-                          .replace("/", "").replace("\\", "").replace("[", "").replace("]", "").replace("{", "").replace("}", "")
-                          .replace("`", "").replace("~", "").replace("?", "").replace(",", "").replace("<", "").replace(">", "")
+      .replace("^", "").replace("&", "").replace("*", "").replace("(", "").replace(")", "").replace("-", "")
+      .replace("/", "").replace("\\", "").replace("[", "").replace("]", "").replace("{", "").replace("}", "")
+      .replace("`", "").replace("~", "").replace("?", "").replace(",", "").replace("<", "").replace(">", "")
     let dbUrl = 'member/teacher/' + this.state.firebaseID
     console.log(this.state.firebaseID)
     firebase.database().ref(dbUrl).on('value', (snapshot) => {
@@ -75,19 +75,19 @@ export default class MainScreen extends Component {
         userCareer: user.career,
       })
       /* User Image Info */
-      firebase.storage().ref(this.state.firebaseID+ '/profile.jpg').getDownloadURL()
+      firebase.storage().ref(this.state.firebaseID + '/profile.jpg').getDownloadURL()
         .then((url) => {
           this.setState({ userImage: url });
-      }).catch((error) => {
+        }).catch((error) => {
           /* There is no match ref */
-          if(error.code === 'storage/object-not-found')
+          if (error.code === 'storage/object-not-found')
             this.setState({ userImage: '../images/personxhdpi.png' })
-      })
+        })
     });
   }
 
   setUserImage() {
-    ImagePicker.showImagePicker(options, response => {
+    ImagePicker.showImagePicker(response => {
       console.log("Response = ", response);
 
       if (response.didCancel) {
@@ -105,7 +105,7 @@ export default class MainScreen extends Component {
         // const fs = RNFetchBlob.fs;
         firebase
           .storage()
-          .ref(this.state.userTel)
+          .ref(this.state.firebaseID)
           .child("profile.jpg")
           .put(response.uri, { contentType: "image/jpg" });
         // .then(successCb)
@@ -187,26 +187,28 @@ export default class MainScreen extends Component {
                 />
               </TouchableHighlight>
             </View>
-            <View style={[modalStyles.info, { marginTop: 20 }]}>
-              <Image
-                style={{ height: 32, width: 32, marginRight: 10 }}
-                source={require("../images/id.png")}
-              />
-              <Text style={modalStyles.titleStyle}>{this.state.userNickName}</Text>
-            </View>
-            <View style={[modalStyles.info, { marginTop: 15 }]}>
-              <Image
-                style={{ height: 32, width: 32, marginRight: 10 }}
-                source={require("../images/tel.png")}
-              />
-              <Text style={modalStyles.titleStyle}>{this.state.userTel}</Text>
-            </View>
-            <View style={[modalStyles.info, { marginTop: 15 }]}>
-              <Image
-                style={{ height: 32, width: 32, marginRight: 10 }}
-                source={require("../images/email.png")}
-              />
-              <Text style={modalStyles.titleStyle}>{this.state.userId}</Text>
+            <View style={{justifyContent: 'center',alignSelf:'center'}}>
+              <View style={[modalStyles.info, { marginTop: 20 }]}>
+                <Image
+                  style={{ height: 32, width: 32, marginRight: 10 }}
+                  source={require("../images/id.png")}
+                />
+                <Text style={modalStyles.titleStyle}>{this.state.userNickName}</Text>
+              </View>
+              <View style={[modalStyles.info, { marginTop: 15 }]}>
+                <Image
+                  style={{ height: 32, width: 32, marginRight: 10 }}
+                  source={require("../images/tel.png")}
+                />
+                <Text style={modalStyles.titleStyle}>{this.state.userTel}</Text>
+              </View>
+              <View style={[modalStyles.info, { marginTop: 15 }]}>
+                <Image
+                  style={{ height: 32, width: 32, marginRight: 10 }}
+                  source={require("../images/email.png")}
+                />
+                <Text style={modalStyles.titleStyle}>{this.state.userId}</Text>
+              </View>
             </View>
           </View>
         </Modal>
@@ -271,7 +273,7 @@ const titleStyles = StyleSheet.create({
   titleStyle: {
     fontSize: 21,
     color: "#3b3e4c",
-    fontFamily:'Spoqa Han Sans Bold'
+    fontFamily: 'Spoqa Han Sans Bold'
   },
   titleRightStyle: {
     flexDirection: "row",
@@ -282,7 +284,7 @@ const titleStyles = StyleSheet.create({
     fontSize: 14,
     color: "#82889c",
     paddingLeft: 5,
-    fontFamily:'Spoqa Han Sans Bold'
+    fontFamily: 'Spoqa Han Sans Bold'
   },
 });
 
@@ -302,8 +304,8 @@ const modalStyles = StyleSheet.create({
   },
   info: {
     flexDirection: 'row',
-    alignItems: 'center', // 가운데 맞춤
-    justifyContent: 'center', // 위 아래로 중앙정렬
+    //alignItems: 'center', // 가운데 맞춤
+    //justifyContent: 'center', // 위 아래로 중앙정렬
   },
   autologin: {
     alignItems: 'flex-end',

@@ -3,6 +3,8 @@ import { TouchableHighlight, TouchableOpacity, FlatList, Modal, Image, TextInput
 import { CheckBox } from 'react-native-elements'
 import ImagePicker from 'react-native-image-picker';
 import flatListData from "../data/flatListData";
+import ActionBar from "react-native-action-bar";
+import firebase from "react-native-firebase";
 
 const options = {
     title: 'Input user data',
@@ -55,31 +57,35 @@ export default class Student_FlatListItem extends Component {
     }
 
     setUserImage() {
-        ImagePicker.showImagePicker(options, (response) => {
-            console.log('Response = ', response);
-
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-            } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
-            } else if (response.customButton) {
-                console.log('User tapped custom button: ', response.customButton);
-                if (response.customButton == 'user_info') {
-
-                }
-            } else {
-                const source = { uri: response.uri };
-
-                // You can also display the image using data:
-                // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-
-                this.setState({
-                    userImageSource: source,
-                });
-            }
+        ImagePicker.showImagePicker(options, response => {
+          console.log("Response = ", response);
+    
+          if (response.didCancel) {
+            console.log("User cancelled image picker");
+          } else if (response.error) {
+            console.log("ImagePicker Error: ", response.error);
+          } else if (response.customButton) {
+            console.log("User tapped custom button: ", response.customButton);
+          } else {
+            //const source = { uri: response.uri };
+    
+            // You can also display the image using data:
+            const source = { uri: "data:image/jpeg;base64," + response.data };
+    
+            // const fs = RNFetchBlob.fs;
+            firebase
+              .storage()
+              .ref("student/"+this.state.tel)
+              .child("profile.jpg")
+              .put(response.uri, { contentType: "image/jpg" });
+      
+            this.setState({
+                userImageSource: response.uri
+            });
+          }
         });
-    }
-    saveUserDate(){
+      }
+    saveUserDate() {
         flatListData[this.props.index].email = this.state.email;
         flatListData[this.props.index].name = this.state.name;
         flatListData[this.props.index].tel = this.state.tel;
@@ -95,12 +101,13 @@ export default class Student_FlatListItem extends Component {
                         flex: 1,
                         flexDirection: "row",
                         padding: 10,
+                        alignItems : 'center',
                         backgroundColor:
                             '#f9f9fa'
                         //this.props.index % 2 == 0 ? "#ffffff" : "#65edea"
                     }}>
                         {this.state.isListLongPressed ? (
-                            <View style={{ flex: 0.18, marginLeft: 0, width: 62, height: 40, paddingTop: 5, paddingLeft: 0, paddingRight: 0, paddingBottom: 0 }}>
+                            <View style={{ flex: 0.18, marginLeft: -10, width: 65, height: 40, paddingTop: 5, paddingLeft: 0, paddingRight: 0, paddingBottom: 0 }}>
                                 <CheckBox
                                     title=''
                                     containerStyle={
@@ -120,15 +127,17 @@ export default class Student_FlatListItem extends Component {
 
                         <View style={{
                             flexDirection: 'row',
-                            justifyContent: 'center'
+                            justifyContent: 'center',
+                            alignItems : 'center'
                         }}>
-                            <Image source={this.state.userImageSource} style={{
-                                width: 45,
-                                height: 45,
+                            <Image source={{uri:this.state.userImageSource}} style={{
+                                width: 50,
+                                height: 50,
                                 borderWidth: 1,
                                 borderColor: '#82889c',
                                 borderRadius: 100,
-                            }} />
+                                backgroundColor:'#f9f9fa'
+                            }}  />
                         </View>
 
                         {/*modal부분 start*/}
@@ -140,22 +149,35 @@ export default class Student_FlatListItem extends Component {
                                 this.setUserImageModalVisible(!this.state.modalVisible);
                             }}
                         >
+                            <ActionBar
+                                containerStyle={styles.bar}
+                                allowFontScaling={true}
+                                title="사용자 정보 등록"
+                                backgroundColor={"#f9f9fa"}
+                                titleStyle={modalStyles.titleStyle}
+                                titleContainerStyle={modalStyles.titleContainerStyle}
+                                iconImageStyle={modalStyles.iconImageStyle}
+                                leftIconName={"back"}
+                                onLeftPress={() => this.setUserImageModalVisible(!this.state.modalVisible)}
+                                leftIconContainerStyle={modalStyles.leftIconContainerStyle}
+                            />
                             <View style={{
                                 flexDirection: 'row',
                                 justifyContent: 'center',
-                                marginTop: 40
+                                marginTop: 20
                             }}>
-                                <TouchableHighlight 
-                                        onPress={() => {
-                                            console.log("dsfsdf");
-                                            this.setUserImage();
-                                        }}>
-                                    <Image source={this.state.userImageSource} style={{
+                                <TouchableHighlight
+                                    onPress={() => {
+                                        console.log("dsfsdf");
+                                        this.setUserImage();
+                                    }}>
+                                    <Image source={{uri:this.state.userImageSource}} style={{
                                         width: 120,
                                         height: 120,
                                         borderWidth: 1,
                                         borderColor: '#82889c',
                                         borderRadius: 100,
+                                        backgroundColor:'#f9f9fa'
                                     }} />
                                 </TouchableHighlight>
                             </View>
@@ -210,24 +232,25 @@ export default class Student_FlatListItem extends Component {
                             </TouchableHighlight>
                         </Modal>
                         {/*modal부분 end*/}
+
                         <View style={{ flex: 0.45, flexDirection: "column", marginLeft: 25 }}>
-                            <Text style={[styles.textStyle, { fontSize: 24, fontFamily:'Spoqa Han Sans Bold'}]}>{this.props.item.name}</Text>
+                            <Text style={[styles.textStyle, { fontSize: 22, fontFamily: 'Spoqa Han Sans Bold' }]}>{this.props.item.name}</Text>
                             <Text style={styles.smallText}>{this.props.item.state}</Text>
                         </View>
                         <View style={{ flex: 0.55, flexDirection: "row", paddingTop: 5 }}>
                             <View style={{ flex: 0.5, alignItems: 'center' }}>
-                                <Text style={[styles.textStyle, { flex: 0.5 }]}>{this.props.item.bpm} BPM</Text>
-                                <View style={{ flexDirection: 'row', flex: 0.5, justifyContent: 'center' }}>
-                                    <Image style={{ marginRight: 5, marginTop: 4, width: 12, height: 12, tintColor: "#82889c", resizeMode: 'contain' }} source={require('../images/empty-heartmdpi.png')} />
+                                <Text style={[styles.textStyle, { flex: 0.5, marginBottom:2}]}>{this.props.item.bpm} BPM</Text>
+                                <View style={{ flexDirection: 'row', flex: 0.5,marginTop:2, alignItems:'center' }}>
+                                    <Image style={{ marginRight: 5, width: 12, height: 12, tintColor: "#82889c", resizeMode: 'contain' }} source={require('../images/empty-heartmdpi.png')} />
                                     <Text style={styles.smallText}>심박</Text>
                                 </View>
                             </View>
 
-                            <View style={{ width: 1, marginBottom: 15, backgroundColor: '#d0d2da', marginTop: 15 }} />{/* 바 부분 */}
+                            <View style={{ width: 1, marginBottom: 15, backgroundColor: '#d0d2da', marginTop: 15, marginLeft:5, marginRight:5 }} />{/* 바 부분 */}
                             <View style={{ flex: 0.5, alignItems: 'center' }}>
-                                <Text style={[styles.textStyle, { flex: 0.5 }]}>{this.props.item.brethe}/Min</Text>
-                                <View style={{ flexDirection: 'row', flex: 0.5 }}>
-                                    <Image style={{ marginRight: 5, marginTop: 4, width: 12, height: 12, tintColor: "#82889c", resizeMode: 'contain' }} source={require('../images/breathingmdpi.png')} />
+                                <Text style={[styles.textStyle, { flex: 0.5, marginBottom:2 }]}>{this.props.item.brethe}/Min</Text>
+                                <View style={{ flexDirection: 'row', flex: 0.5,marginTop:2, alignItems:'center' }}>
+                                    <Image style={{ marginRight: 5, width: 12, height: 12, tintColor: "#82889c", resizeMode: 'contain' }} source={require('../images/breathingmdpi.png')} />
                                     <Text style={styles.smallText}>호흡</Text>
                                 </View>
                             </View>
@@ -238,18 +261,37 @@ export default class Student_FlatListItem extends Component {
         );
     }
 }
-
+const modalStyles = StyleSheet.create({
+    titleStyle: {
+        fontSize: 16,
+        color: "#3b3e4c"
+    },
+    titleContainerStyle: {
+        alignItems: "center",
+        paddingRight: 40
+    },
+    iconImageStyle: {
+        width: 14.5,
+        height: 30,
+        tintColor: "#82889c"
+    },
+    info: {
+        flexDirection: 'row',
+        //alignItems: 'center', // 가운데 맞춤
+        //justifyContent: 'center', // 위 아래로 중앙정렬
+    },
+});
 
 const styles = StyleSheet.create({
     textStyle: {
         color: '#3b3e4c',
-        fontSize: 14,
-        fontFamily:'Spoqa Han Sans Regular'
+        fontSize: 12,
+        fontFamily: 'Spoqa Han Sans Regular'
     },
     smallText: {
         fontSize: 12,
         color: '#82889c',
-        fontFamily:'Spoqa Han Sans Regular'
+        fontFamily: 'Spoqa Han Sans Regular'
     },
     info: {
         flexDirection: 'row',
@@ -288,5 +330,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         paddingLeft: 12,
         paddingRight: 12,
+    },
+    bar: {
+        height: 55,
+        alignItems: "center"
     }
 });
