@@ -71,6 +71,7 @@ setupNotifications = async (device) => {
 
         device.monitorCharacteristicForService("0000180D-0000-1000-8000-00805F9B34FB", "00002A37-0000-1000-8000-00805F9B34FB", (error, characteristic) => {
             if (error) {
+                console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
                 console.log(error.message)
                 return
             }
@@ -83,7 +84,7 @@ setupNotifications = async (device) => {
 
             if (i != flatListData.length) {
                 flatListData[i].bpm = characteristic.value;
-                console.log(characteristic.deviceID + " heartrate : " + toUTF8Array(Base64.decode(characteristic.value)) + " bpm")
+                console.log(characteristic.deviceID + " heartrate :" + characteristic.value + "bpm")
             }
             renderForUpdate()
             //Student_BasicFlatList.refe()

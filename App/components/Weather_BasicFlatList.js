@@ -58,6 +58,7 @@ export default class Weather_BasicFlatList extends Component {
                     showsHorizontalScrollIndicator={false}
                     data={this.props.weatherData}
                     renderItem={({ item, index }) => {                                             
+
                         return <Weather_HorizontalFlatListItem item={item} index={index} parentFlatList={this} />;
                     }}
                 />

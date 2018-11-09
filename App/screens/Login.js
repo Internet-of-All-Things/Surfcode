@@ -4,6 +4,8 @@ import flatListData from "../data/flatListData";
 import connDeviceInfo from "../data/connDeviceInfo";
 import BluetoothManager from '../utils/BluetoothManager';
 import { updateState } from '../components/Student_BasicFlatList';
+import { updateStudentImage } from '../components/Student_FlatListItem';
+import firebase from "react-native-firebase";
 
 export default class Login extends Component {
     state = {
@@ -19,7 +21,7 @@ export default class Login extends Component {
         //AsyncStorage.clear()
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         //BluetoothManager.getBluetoothManager().stopDeviceScan()
     }
 
@@ -34,39 +36,75 @@ export default class Login extends Component {
                     let device = await AsyncStorage.getItem('device' + i)
                     console.log(device)
                     let splitDevice = device.split(',')
-                    connDeviceInfo.push({
-                        "key": splitDevice[0],
-                        "name": splitDevice[1],
-                    })
 
+                    console.log(splitDevice[0] + "/////////////////////")
+                    let value = await AsyncStorage.getItem(splitDevice[0]);
+                    console.log(value)
+                    console.log(value.key + "???????????????????????????????????")
+                    if (value === undefined) {
+                        flatListData.push({
+                            "key": splitDevice[0],
+                            "name": splitDevice[1],
+                            "state": "양호한 상태",
+                            "bpm": "미측정",
+                            "brethe": "미측정",
+                            "user_icon_url": "../images/user/personxhdpi.png",
+                            "email": null,
+                            "tel": null,
+                            "selected": false
+                        })
+                    } else {
+                        
+                        let splitValue = value.split(',')
+                        console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+                        console.log(splitValue[4])
+                        console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+                        flatListData.push({
+                            "key": splitValue[0],
+                            "name": splitValue[1],
+                            "state": "양호한 상태",
+                            "bpm": "미측정",
+                            "brethe": "미측정",
+                            "user_icon_url": splitValue[4],
+                            "email": splitValue[2],
+                            "tel": splitValue[3],
+                            "selected": false
+                        })
+                        /* User Image Info */
+                        /*firebase.storage().ref(value.tel + '/profile.jpg').getDownloadURL()
+                            .then((url) => {
+                                updateStudentImage({ userImuserImageSourceage: url });
+                            }).catch((error) => {
+                               
+                                if (error.code === 'storage/object-not-found')
+                                    updateStudentImage({ userImuserImageSourceage: '../images/personxhdpi.png' });
+                            })*/
+                    }
                 }
+
                 /* start scanning */
                 BluetoothManager.getBluetoothManager().startDeviceScan(null,
                     null, (error, device) => {
                         console.log("scanning");
+                        //console.log(flatListData[0].key + ", , " + device.id)
                         if (connDeviceInfo.length === flatListData.length) {
                             BluetoothManager.getBluetoothManager().stopDeviceScan()
                             return
                         }
 
                         if (device != null && device.id != null) {
-                            for (let i = 0; i < connDeviceInfo.length; i++) {
-                                if (connDeviceInfo[i].key === device.id) {
-                                    for (let j = 0; j < flatListData.length; j++) {
-                                        if (flatListData[j].key === device.id) {
+                            for (let i = 0; i < flatListData.length; i++) {
+                                if (flatListData[i].key === device.id) {
+                                    console.log("찾앗다.")
+                                    for (let j = 0; j < connDeviceInfo.length; j++) {
+                                        if (connDeviceInfo[j].key === device.id) {
                                             return;
                                         }
                                     }
-                                    flatListData.push({
-                                        "key": connDeviceInfo[i].key,
-                                        "name": connDeviceInfo[i].name,
-                                        "state": "양호한 상태",
-                                        "bpm": "미측정",
-                                        "brethe": "미측정",
-                                        "user_icon_url": "../images/user/ch.png",
-                                        "selected": false
+                                    connDeviceInfo.push({
+                                        "key": flatListData[i].key,
+                                        "name": flatListData[i].name,
                                     })
-                                    updateState({ refresh: true })
                                     device.connect()
                                         .then((device) => {
                                             console.log("Discovering services and characteristics")
@@ -92,8 +130,8 @@ export default class Login extends Component {
                                                         }, (error) => {
                                                             console.log(error.message)
                                                         })
-                                                })    
-                                            return BluetoothManager.setupNotifications(device) 
+                                                })
+                                            return BluetoothManager.setupNotifications(device)
                                         })
                                         .then(() => {
 

@@ -53,7 +53,6 @@ export default class FirstTab extends Component {
 
   componentWillUnmount(){
     this.setState({unmount : true})
-    console.log("Unmount!!!!!!!!!!!!!!!!!!!!!!!")
   }
 
   changePage = () => {
@@ -119,7 +118,6 @@ export default class FirstTab extends Component {
   }
 
   render() {
-    console.log("FirstTab.js render() called!!");
     return (
       <View colors={["#00C6FB", "#005BEA"]} style={styles.container}>
         {/*title부분 start*/}
