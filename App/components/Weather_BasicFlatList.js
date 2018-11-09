@@ -1,13 +1,16 @@
 import React, { Component } from "react";
 import { TouchableHighlight, Image, FlatList, StyleSheet, Text, View, CheckBox } from "react-native";
 
-import {weatherStatus} from '../data/weather_flatListData'
-import {weatherListData} from '../data/weather_flatListData'
+import {weather_imageData} from '../data/weather_imageData'
 
+let img;
 class Weather_HorizontalFlatListItem extends Component {
-    constructor(props){
+    constructor(props) {
         super(props)
-        console.log("::::::::::",this.props.item.status.color);
+        if(props.item.id >= 700 && props.item.id < 800)
+            img = weather_imageData["Clouds"].color;
+        else
+            img = weather_imageData[props.item.status].color;       
     }
     render() {
         return (
@@ -16,25 +19,25 @@ class Weather_HorizontalFlatListItem extends Component {
                     flex: 1,
                     flexDirection: 'column',
                     alignItems: 'center',
-                    width: 60,                    
+                    width: 60,
                     margin: 4
-            }}>
-            <Text style={{
-                fontSize:12,
-                fontFamily:'Spoqa Han Sans Regular',
-                color : '#82889c',
-                margin : 3
-            }}>
-            {this.props.item.hour}
-            </Text>
-            <Image source={require("../images/weather/sunny-color.png")} style={{width : 18, height :18, resizeMode: 'contain'}} ></Image>
-            <Text style={{
-                fontSize:12,
-                fontFamily:'Spoqa Han Sans Regular',
-                color : '#3b3e4c',
-                margin : 3
-            }}>
-            {this.props.item.temperature} °C
+                }}>
+                <Text style={{
+                    fontSize: 12,
+                    fontFamily: 'Spoqa Han Sans Regular',
+                    color: '#82889c',
+                    margin: 3
+                }}>
+                    {this.props.item.hour}
+                </Text>        
+                <Image source={img} style={{ width: 18, height: 18, resizeMode: 'contain' }} ></Image>
+                <Text style={{
+                    fontSize: 12,
+                    fontFamily: 'Spoqa Han Sans Regular',
+                    color: '#3b3e4c',
+                    margin: 3
+                }}>
+                    {this.props.item.temperature} °C
             </Text>
             </View>
         )
@@ -44,18 +47,17 @@ export default class Weather_BasicFlatList extends Component {
     state = {
     }
     constructor(props) {
-        super(props);      
+        super(props);
     }
+
     render() {
-        console.log('basicflatlist render')
         return (
-            <View style={{height:90,width:'100%'}}>
+            <View style={{ height: 90, width: '100%' }}>
                 <FlatList
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
-                    data={weatherListData}
-                    renderItem={({ item, index }) => {                        
-                        console.log(`Item = ${JSON.stringify(item)}, index = ${index}`);                                              
+                    data={this.props.weatherData}
+                    renderItem={({ item, index }) => {                                             
                         return <Weather_HorizontalFlatListItem item={item} index={index} parentFlatList={this} />;
                     }}
                 />
