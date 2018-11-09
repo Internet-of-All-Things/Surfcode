@@ -21,14 +21,7 @@ import { CheckBox } from "react-native-elements";
 var screen = Dimensions.get("window");
 let listData = [];
 
-const options = {
-  title: 'Input user data',
-  //customButtons: [{ name: 'user_info', title: 'Input user information' }],
-  storageOptions: {
-    skipBackup: true,
-    path: 'images',
-  },
-};
+
 
 function renderForUpdate(){
   if(!this.state.unmount)
@@ -184,10 +177,7 @@ export default class FirstTab extends Component {
           ) : (
               /*delete부분 end*/
 
-              <View style={[titleStyles.titleRightStyle, { flex: 0.4, paddingRight: 15 }]}>
-                <Icon name="heart" color={"#ff0000"} size={12} />
-                <Icon name="heart" color={"#ff0000"} size={12} />
-              </View>
+              null
             )}
         </View>
         {/*title부분 end*/}

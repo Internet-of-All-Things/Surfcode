@@ -142,9 +142,9 @@ export default class SecondScreen extends Component {
                         {/*Month Picker 부분 start*/}
                         <TouchableOpacity style={{ flexDirection: "row" }} onPress={this._showDatePicker.bind(this)}>
                             <View style={{ flexDirection: "row" }}>
-                                <Image style={{ marginRight: 5, marginTop: 7, width: 16, height: 16, tintColor: "#82889c", resizeMode: 'contain' }} source={require('../images/clockmdpi.png')} />
+                                <Image style={{ marginRight: 5, marginTop: 7, width: 16, height: 16, tintColor: "#82889c", resizeMode: 'contain' }} source={require('../images/clock.png')} />
                                 <Text style={{ color: '#82889c', fontSize: 14,  fontFamily: "Spoqa Han Sans Bold" }}>{this.state.displayDate}</Text>
-                                <Image style={{ marginLeft: 8, marginTop: 9, width: 10, height: 10, tintColor: "#82889c", resizeMode: 'contain' }} source={require('../images/tiny-arrow-downmdpi.png')} />
+                                <Image style={{ marginLeft: 8, marginTop: 9, width: 10, height: 10, tintColor: "#82889c", resizeMode: 'contain' }} source={require('../images/down-triangular.png')} />
                             </View>
                         </TouchableOpacity>
                         {/*Month Picker 부분 end*/}

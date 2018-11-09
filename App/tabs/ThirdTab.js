@@ -3,7 +3,22 @@ import { Platform, StyleSheet, Text, View, TouchableOpacity, Image } from "react
 import { NavigationEvents } from 'react-navigation';
 import LinearGradient from 'react-native-linear-gradient';
 import Weather_BasicFlatList from '../components/Weather_BasicFlatList'
+import Wave_BasicFlatList from '../components/Wave_BasicFlatList'
 
+import { getLocation, getData } from 'react-native-weather-api';
+
+getLocation();
+let cityName = "";
+let temperature = "";
+let windSpeed = "";
+setTimeout(function () {
+    let data = new getData()
+    cityName = data.city;
+    temperature = data.tempC;
+    windSpeed = data.windKph;
+    //console.log(cityName + " " + temperature + "~~")
+
+}, 2000)
 export default class ThirdTab extends Component {
     static navigationOptions = {
         header: null
@@ -12,10 +27,20 @@ export default class ThirdTab extends Component {
         currentLocation: '부산 송정',
         gradientTitle: '10시, 조금 쌀살해요',
         currentTemperature: '15°C',
+    }
+    constructor(props) {
+        super(props)
+        //let dateObj = new Date();
+        //this.state.gradientTitle = dateObj.getHours + ", "
 
     }
-    isFocused() {
 
+
+    isFocused() {
+        this.setState({
+            currentLocation: cityName,
+            currentTemperature: temperature + "°C"
+        });
     }
     render() {
         return (
@@ -26,7 +51,7 @@ export default class ThirdTab extends Component {
                 {/*title부분 start*/}
                 <View style={titleStyles.container}>
                     <View
-                        style={{ flex: 0.4, flexDirection: "column", alignItems: "center" }}
+                        style={{ flex: 0.4, flexDirection: "column"}}
                     >
                         {/*Location 부분 start*/}
                         <TouchableOpacity style={{ flexDirection: "row" }}>
@@ -44,10 +69,10 @@ export default class ThirdTab extends Component {
                 {/*Gradient 부분 start*/}
                 <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={['#1F34EC', '#78C2E9']} style={gradientStye.container}>
                     <View style={{ flexDirection: "column" }}>
-                        <View style={{ flexDirection: "row",  alignItems: 'center', justifyContent: 'center'}}>
+                        <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: 'center' }}>
                             <Text style={{ color: "#f9f9fa", marginTop: 30, fontFamily: 'Spoqa Han Sans Regular' }}>{this.state.gradientTitle}</Text>
                         </View>
-                        <View style={{ flexDirection: "row",  alignItems: 'center', justifyContent: 'center' }}>
+                        <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: 'center' }}>
                             <Image style={{ marginRight: 5, marginTop: 4, width: 32, tintColor: "#f9f9fa", resizeMode: 'contain' }} source={require('../images/clockmdpi.png')} />
                             <Text style={{ color: '#f9f9fa', marginLeft: 5, fontSize: 47, fontFamily: 'Spoqa Han Sans Bold' }}>{this.state.currentTemperature}</Text>
                         </View>
@@ -56,7 +81,10 @@ export default class ThirdTab extends Component {
                 {/*Gradient 부분 end*/}
 
                 <Text style={{ color: '##3b3e4c', fontSize: 14, paddingLeft: 16, paddingRight: 16, paddingTop: 10, fontFamily: 'Spoqa Han Sans Bold' }}>다음 24시간</Text>
-                <Weather_BasicFlatList/>
+                <Weather_BasicFlatList />
+
+                <Text style={{ color: '##3b3e4c', fontSize: 14, paddingLeft: 16, paddingRight: 16, paddingTop: 10, fontFamily: 'Spoqa Han Sans Bold' }}>파도</Text>
+                <Wave_BasicFlatList />
             </View>
         );
     }
