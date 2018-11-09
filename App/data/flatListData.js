@@ -1,5 +1,5 @@
 var flatListData = [
-    {
+    /*{
         "key":"abc21",
         "name": "최용석",
         "state":"양호한 상태",
@@ -28,6 +28,6 @@ var flatListData = [
         "user_icon_url":"../images/user/ch.png",
         "tel":"",
         "email":""
-    },
+    },*/
 ];
 module.exports = flatListData;

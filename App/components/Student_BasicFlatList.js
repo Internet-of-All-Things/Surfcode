@@ -25,7 +25,6 @@ export default class Student_BasicFlatList extends Component {
     }
 
     componentWillReceiveProps(props) {
-        console.log("component Will Receive Props1", JSON.stringify(props),props.isListLongPressed);
         if(this.props.isFirstTabPage){
             //this.setState({ isListLongPressed: !props.isListLongPressed });
             this.setState({ isListLongPressed: props.isListLongPressed });         
@@ -65,7 +64,6 @@ export default class Student_BasicFlatList extends Component {
     }
     
     render() {
-        console.log('basicflatlist render')
         updateState = updateState.bind(this);
         return (
             <View style={{ flex: 1 }}>

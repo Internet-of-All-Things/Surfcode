@@ -7,7 +7,6 @@ import {weatherListData} from '../data/weather_flatListData'
 class Weather_HorizontalFlatListItem extends Component {
     constructor(props){
         super(props)
-        console.log("::::::::::",this.props.item.status.color);
     }
     render() {
         return (
@@ -47,7 +46,6 @@ export default class Weather_BasicFlatList extends Component {
         super(props);      
     }
     render() {
-        console.log('basicflatlist render')
         return (
             <View style={{height:90,width:'100%'}}>
                 <FlatList
@@ -55,7 +53,6 @@ export default class Weather_BasicFlatList extends Component {
                     showsHorizontalScrollIndicator={false}
                     data={weatherListData}
                     renderItem={({ item, index }) => {                        
-                        console.log(`Item = ${JSON.stringify(item)}, index = ${index}`);                                              
                         return <Weather_HorizontalFlatListItem item={item} index={index} parentFlatList={this} />;
                     }}
                 />

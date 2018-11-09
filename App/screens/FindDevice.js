@@ -326,9 +326,12 @@ class FlatListItem extends Component {
                                 "state": "양호한 상태",
                                 "bpm": "미측정",
                                 "brethe": "미측정",
-                                "user_icon_url": "../images/user/ch.png",
+                                "user_icon_url": "../images/user/personxhdpi.png",
+                                "email": null,
+                                "tel": null,
                                 "selected": false
                             })
+
 
                             updateState({ refresh: true })
                             //updateState({ refresh: false })

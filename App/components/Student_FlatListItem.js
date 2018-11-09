@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { TouchableHighlight, TouchableOpacity, FlatList, Modal, Image, TextInput, StyleSheet, Text, View } from "react-native";
+import { TouchableHighlight, Modal, Image, TextInput, StyleSheet, Text, View, AsyncStorage } from "react-native";
 import { CheckBox } from 'react-native-elements'
 import ImagePicker from 'react-native-image-picker';
 import flatListData from "../data/flatListData";
@@ -14,6 +14,14 @@ const options = {
         path: 'images',
     },
 };
+
+function updateStudentImage(userImageSource){
+    this.setState({userImageSource})
+    this.forceUpdate()
+}
+
+export { updateStudentImage }
+
 export default class Student_FlatListItem extends Component {
     state = {
         isListLongPressed: false,
@@ -28,7 +36,7 @@ export default class Student_FlatListItem extends Component {
         //this.setState({ userImageSource: props.item.user_icon_url });
 
         this.state.userImageSource = props.item.user_icon_url;
-        //console.log(this.state.userImageSource + "!!!!" + props.item.user_icon_url);
+        updateStudentImage = updateStudentImage.bind(this)
     }
     _onLongPressButton() {
         this.props.changeListLongPressedState();
@@ -67,18 +75,7 @@ export default class Student_FlatListItem extends Component {
           } else if (response.customButton) {
             console.log("User tapped custom button: ", response.customButton);
           } else {
-            //const source = { uri: response.uri };
-    
-            // You can also display the image using data:
-            const source = { uri: "data:image/jpeg;base64," + response.data };
-    
-            // const fs = RNFetchBlob.fs;
-            firebase
-              .storage()
-              .ref("student/"+this.state.tel)
-              .child("profile.jpg")
-              .put(response.uri, { contentType: "image/jpg" });
-      
+            
             this.setState({
                 userImageSource: response.uri
             });
@@ -86,10 +83,39 @@ export default class Student_FlatListItem extends Component {
         });
       }
     saveUserDate() {
-        flatListData[this.props.index].email = this.state.email;
+        this.props.item.email = this.state.email
+        this.props.item.name = this.state.name
+        this.props.item.tel = this.state.tel
+        /*flatListData[this.props.index].email = this.state.email;
         flatListData[this.props.index].name = this.state.name;
-        flatListData[this.props.index].tel = this.state.tel;
+        flatListData[this.props.index].tel = this.state.tel;*/
+        this._storeData()
         this.setUserImageModalVisible(!this.state.modalVisible);
+        firebase
+              .storage()
+              .ref("student/"+this.state.tel)
+              .child("profile.jpg")
+              .put(this.state.userImageSource, { contentType: "image/jpg" });
+    }
+
+    _storeData = async () => {
+        try {
+            console.log(this.props.item)
+            console.log("##################")
+          await AsyncStorage.setItem(this.props.item.key,
+            this.props.item.key+','+
+            this.state.name+','+
+            this.state.email+','+
+            this.state.tel+','+
+            this.props.item.user_icon_url
+            )
+          console.log("##################")
+          let value = await AsyncStorage.getItem(this.props.item.key);
+          console.log(value)
+        } catch (error) {
+            console.log("$$$$$$$$$$$$$$$$$$$")
+            console.log(error);
+        }
     }
 
 
