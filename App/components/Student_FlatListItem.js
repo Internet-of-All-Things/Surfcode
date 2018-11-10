@@ -5,6 +5,8 @@ import ImagePicker from 'react-native-image-picker';
 import flatListData from "../data/flatListData";
 import ActionBar from "react-native-action-bar";
 import firebase from "react-native-firebase";
+import userInfo from "../data/userInfo"
+import moment from 'moment'
 
 const options = {
     title: 'Input user data',
@@ -19,21 +21,19 @@ function updateStudentImage(userImageSource){
     this.setState({userImageSource})
     this.forceUpdate()
 }
-
+  
 export { updateStudentImage }
 
 export default class Student_FlatListItem extends Component {
     state = {
         isListLongPressed: false,
-        itemChecked: false,
+        selected : false,
         userImageSource: '../images/personxhdpi.png',
         modalVisible: false,
     }
     constructor(props) {
         super(props);
         this._onLongPressButton = this._onLongPressButton.bind(this);
-        //var imageName = `image!${props.item.user_icon_url}`
-        //this.setState({ userImageSource: props.item.user_icon_url });
 
         this.state.userImageSource = props.item.user_icon_url;
         updateStudentImage = updateStudentImage.bind(this)
@@ -47,24 +47,25 @@ export default class Student_FlatListItem extends Component {
     }
     checkListItem() {
         if (this.state.isListLongPressed) {
-            console.log("dddd", this.state);
-            var itemstate = this.state.itemChecked = !this.state.itemChecked;
-            this.setState({ itemChecked: itemstate });
-            //this.state.checked = !this.state.checked//이건 위의 this.state
-            this.props.changeListCheckBoxSelectState(this.props.index, itemstate);
-            console.log(this.props.index + " checked : " + itemstate);
+            this.props.item.selected = !this.props.item.selected
+            this.state.selected = this.props.item.selected
+            this.forceUpdate()
         }
         else {
             this.setUserImageModalVisible(true);
         }
     }
     componentWillReceiveProps(props) {
-        this.state.email = this.props.item.email
-        this.state.name = this.props.item.name
-        this.state.tel = this.props.item.tel
-        this.setState({ itemChecked: false });
+        if(!this.state.modalVisible){
+            this.state.email = this.props.item.email
+            this.state.name = this.props.item.name
+            this.state.tel = this.props.item.tel
+        }
+        if(!this.state.isListLongPressed){
+            this.state.selected = false
+        }
         this.setState({ isListLongPressed: props.isListLongPressed });
-        //console.log("item! : " + this.state.isListLongPressed + " " + this.props.index + " "+ this.state.itemChecked + " " + JSON.stringify(props) );
+        
     }
 
     setUserImage() {
@@ -86,17 +87,36 @@ export default class Student_FlatListItem extends Component {
         });
       }
     saveUserDate() {
+        let firebaseID = userInfo.email
+        let dbUrl = 'member/teacher/' + firebaseID
+
         this.props.item.email = this.state.email
         this.props.item.name = this.state.name
-        this.props.item.tel = this.state.tel
-        /*flatListData[this.props.index].email = this.state.email;
-        flatListData[this.props.index].name = this.state.name;
-        flatListData[this.props.index].tel = this.state.tel;*/ 
-        firebase
+        this.props.item.tel = this.state.tel 
+        let dateObj = new Date();
+        let date = moment(dateObj).format('YYYY-MM-DD')
+        var tempKey = firebase.database().ref(dbUrl+"/students/"+date).push().key
+        console.log(dbUrl+'/students/'+date+'/'+tempKey)
+        firebase.database().ref(dbUrl+'/students/'+date+'/'+tempKey).set(
+            {
+                "email" : this.props.item.email,
+                "name" : this.props.item.name,
+                "tel" : this.props.item.tel,
+            }
+        )
+
+        var newDataRef = firebase.database().ref("data/"+firebaseID).push().child('user')
+        newDataRef.set({
+            "email" : this.props.item.email,
+            "name" : this.props.item.name,
+            "tel" : this.props.item.tel,
+        })
+        
+        /*firebase
               .storage()
               .ref("student/"+this.state.tel)
               .child("profile.jpg")
-              .put(this.state.userImageSource, { contentType: "image/jpg" });
+              .put(this.state.userImageSource, { contentType: "image/jpg" });*/
         this._storeData()
         this.setUserImageModalVisible(!this.state.modalVisible);
     }
@@ -105,16 +125,13 @@ export default class Student_FlatListItem extends Component {
         try {
             console.log(this.props.item)
             console.log("##################")
-          await AsyncStorage.setItem(this.props.item.key,
-            this.props.item.key+','+
-            this.state.name+','+
-            this.state.email+','+
-            this.state.tel+','+
-            this.state.userImageSource
-            )
-          console.log("##################")
-          let value = await AsyncStorage.getItem(this.props.item.key);
-          console.log(value)
+          await AsyncStorage.setItem(this.props.item.key, JSON.stringify({
+            key : this.props.item.key,
+            name : this.state.name,
+            email : this.state.email,
+            tel : this.state.tel,
+            userImageSource : this.state.userImageSource
+          }))
         } catch (error) {
             console.log("$$$$$$$$$$$$$$$$$$$")
             console.log(error);
@@ -146,7 +163,7 @@ export default class Student_FlatListItem extends Component {
                                             backgroundColor: '#ff000000'
                                         }
                                     }
-                                    checked={this.state.itemChecked}
+                                    checked={this.state.selected}
                                     onPress={() => { this.checkListItem() }}
                                 />
                             </View>

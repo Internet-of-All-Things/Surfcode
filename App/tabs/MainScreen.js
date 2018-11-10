@@ -14,6 +14,7 @@ import ActionBar from "react-native-action-bar";
 
 import firebase from "react-native-firebase";
 import ImagePicker from "react-native-image-picker";
+import userInfo from "../data/userInfo"
 
 
 function setTitleName(title) {
@@ -56,15 +57,32 @@ export default class MainScreen extends Component {
     }
   }
 
+  _retrieveUserInfo = async () => {
+    try {
+      /* get Email ID */
+      var value = await AsyncStorage.getItem('User');
+      this.readUserData(value);
+    } catch (error) {
+      /* return to Login */
+      this.props.navigation.navigate('Login');
+    }
+  }
+
   readUserData = async (value) => {
-    this.state.firebaseID = value.replace(".", "").replace("#", "").replace("$", '').replace("@", "").replace("!", "").replace("%", "")
-      .replace("^", "").replace("&", "").replace("*", "").replace("(", "").replace(")", "").replace("-", "")
-      .replace("/", "").replace("\\", "").replace("[", "").replace("]", "").replace("{", "").replace("}", "")
-      .replace("`", "").replace("~", "").replace("?", "").replace(",", "").replace("<", "").replace(">", "")
+    this.state.firebaseID = userInfo.email
     let dbUrl = 'member/teacher/' + this.state.firebaseID
-    console.log(this.state.firebaseID)
+
+    //_retrieveUserInfo()
     firebase.database().ref(dbUrl).on('value', (snapshot) => {
       let user = snapshot.val()
+      /*userInfo.push({
+        userName: user.name,
+        userSchool: user.school,
+        userNickName: user.nickname,
+        userId: user.email,
+        userTel: user.phone,
+        userCareer: user.career,
+      })*/
       this.setState({
         /* User Info */
         userName: user.name,

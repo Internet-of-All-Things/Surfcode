@@ -5,8 +5,10 @@ import flatListData from "../data/flatListData";
 import Student_FlatListItem from './Student_FlatListItem';
 
 function updateState(refresh) {
-    if(!this.state.unmount)
+    if(!this.state.unmount){
         this.setState({ refresh })
+        //console.log(this.state)
+    }
 }
 
 export { updateState }
