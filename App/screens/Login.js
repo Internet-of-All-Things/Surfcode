@@ -28,8 +28,9 @@ export default class Login extends Component {
         BluetoothManager.getBluetoothManager().startDeviceScan(null,
             null, (error, device) => {
                 console.log("scanning");
-                //console.log(flatListData[0].key + ", , " + device.id)
+                console.log(connDeviceInfo.length + ", , " + flatListData.length)
                 if (connDeviceInfo.length === flatListData.length) {
+                    console.log("scanning end")
                     BluetoothManager.getBluetoothManager().stopDeviceScan()
                     return
                 }
@@ -57,13 +58,18 @@ export default class Login extends Component {
                                     BluetoothManager.
                                         getBluetoothManager().
                                         onDeviceDisconnected(device.id, (error, device) => {
-                                            for (let j = 0; j < connDeviceInfo.length; j++) {
-                                                if (connDeviceInfo[j].key === device.id) {
-                                                    connDeviceInfo.splice(j,1)
-                                                    break
+                                            if (error !== null) {
+                                                for (let j = 0; j < connDeviceInfo.length; j++) {
+                                                    if (connDeviceInfo[j].key === device.id) {
+                                                        connDeviceInfo.splice(j, 1)
+                                                        break
+                                                    }
                                                 }
+                                                console.log('ㅁㅁ마마먐ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ')
+                                                this.startScan()
+                                            } else {
+                                                console.log('ㅁㅁ마마먐ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ123123123123123')
                                             }
-                                            this.startScan()
                                         })
                                     return BluetoothManager.setupNotifications(device)
                                 })
@@ -93,48 +99,50 @@ export default class Login extends Component {
 
             if (value !== null) {
                 userInfo.email = value.replace(".", "").replace("#", "").replace("$", '').replace("@", "").replace("!", "").replace("%", "")
-                .replace("^", "").replace("&", "").replace("*", "").replace("(", "").replace(")", "").replace("-", "")
-                .replace("/", "").replace("\\", "").replace("[", "").replace("]", "").replace("{", "").replace("}", "")
-                .replace("`", "").replace("~", "").replace("?", "").replace(",", "").replace("<", "").replace(">", "")
-
-                const count = await AsyncStorage.getItem('Count')
+                    .replace("^", "").replace("&", "").replace("*", "").replace("(", "").replace(")", "").replace("-", "")
+                    .replace("/", "").replace("\\", "").replace("[", "").replace("]", "").replace("{", "").replace("}", "")
+                    .replace("`", "").replace("~", "").replace("?", "").replace(",", "").replace("<", "").replace(">", "")
+                console.log("로그인에 성공 " + userInfo.email)
                 let device = JSON.parse(await AsyncStorage.getItem('device'))
-                for (let i = 0; i < device['devices'].length; i++) {
-                    let value = await AsyncStorage.getItem(device['devices'][i].key);
-                    if (value === undefined || value === null) {
-                        flatListData.push({
-                            "key": device['devices'][i].key,
-                            "name": device['devices'][i].name,
-                            "state": "양호한 상태",
-                            "bpm": "미측정",
-                            "brethe": "미측정",
-                            "user_icon_url": "../images/user/personxhdpi.png",
-                            "email": null,
-                            "tel": null,
-                            "selected": false
-                        })
-                    } else {
-                        value = JSON.parse(value)
-                        console.log(value)
-                        flatListData.push({
-                            "key": value.key,
-                            "name": value.name,
-                            "state": "양호한 상태",
-                            "bpm": "미측정",
-                            "brethe": "미측정",
-                            "user_icon_url": value.userImageSource,
-                            "email": value.email,
-                            "tel": value.tel,
-                            "selected": false
-                        })
+                if (device !== null) {
+                    for (let i = 0; i < device['devices'].length; i++) {
+                        let value = await AsyncStorage.getItem(device['devices'][i].key);
+                        if (value === undefined || value === null) {
+                            flatListData.push({
+                                "key": device['devices'][i].key,
+                                "name": device['devices'][i].name,
+                                "state": "양호한 상태",
+                                "bpm": "미측정",
+                                "brethe": "미측정",
+                                "user_icon_url": "../images/user/personxhdpi.png",
+                                "email": null,
+                                "tel": null,
+                                "selected": false
+                            })
+                        } else {
+                            value = JSON.parse(value)
+                            console.log(value)
+                            flatListData.push({
+                                "key": value.key,
+                                "name": value.name,
+                                "state": "양호한 상태",
+                                "bpm": "미측정",
+                                "brethe": "미측정",
+                                "user_icon_url": value.userImageSource,
+                                "email": value.email,
+                                "tel": value.tel,
+                                "selected": false
+                            })
+                        }
                     }
-                }
 
-                this.startScan()
-                // setTimeout(() => { BluetoothManager.getBluetoothManager().stopDeviceScan(); this.state.scanning = false }, 3000)
+
+                    this.startScan()
+                    // setTimeout(() => { BluetoothManager.getBluetoothManager().stopDeviceScan(); this.state.scanning = false }, 3000)
+                }
                 this.props.navigation.navigate('Main');
             } else {
-                console.log("value is null");
+                console.log("로그인 되어 있지 않음.");
                 this.setState({ auth: 1 });
             }
         } catch (error) {
