@@ -69,7 +69,11 @@ export default class MainScreen extends Component {
   }
 
   readUserData = async (value) => {
-    this.state.firebaseID = userInfo.email
+    this.state.firebaseID = value.replace(".", "").replace("#", "").replace("$", '').replace("@", "").replace("!", "").replace("%", "")
+    .replace("^", "").replace("&", "").replace("*", "").replace("(", "").replace(")", "").replace("-", "")
+    .replace("/", "").replace("\\", "").replace("[", "").replace("]", "").replace("{", "").replace("}", "")
+    .replace("`", "").replace("~", "").replace("?", "").replace(",", "").replace("<", "").replace(">", "")
+
     let dbUrl = 'member/teacher/' + this.state.firebaseID
 
     //_retrieveUserInfo()

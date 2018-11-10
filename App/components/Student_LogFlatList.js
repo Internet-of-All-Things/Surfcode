@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
 });
 
 
-export default class Student_BasicFlatList extends Component {
+export default class Student_LogFlatList extends Component {
     state = {
         isListLongPressed: false,
         refresh: false,

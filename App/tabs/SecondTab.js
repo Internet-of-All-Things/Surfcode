@@ -5,7 +5,7 @@ import {
     Text,
     ScrollView,
     View,
-    Modal,    
+    Modal,
     Image,
     TouchableHighlight,
     TouchableOpacity
@@ -18,51 +18,99 @@ import firebase from "react-native-firebase";
 
 import Picker from 'react-native-picker';
 import moment from 'moment'
-// LocaleConfig.locales['kr'] = {
-//   monthNames: ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
-//   monthNamesShort: ['Janv.','Févr.','Mars','Avril','Mai','Juin','Juil.','Août','Sept.','Oct.','Nov.','Déc.'],
-//   dayNames: ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
-//   dayNamesShort: ['Dim.','Lun.','Mar.','Mer.','Jeu.','Ven.','Sam.']
-// };
+import userInfo from '../data/userInfo'
 
-// LocaleConfig.defaultLocale = 'kr';
+import Student_LogFlatList from '../components/Student_LogFlatList'
 
+
+var data = {};
 export default class SecondScreen extends Component {
 
     onDayPress(day) {
-        console.log("!!" + day.dateString + " " + this.state.selected);
-        if (this.state.selected == undefined || this.state.selected == null) {
-            this.setState({
-                selected: day.dateString
-            });
+        // this.setState({
+        //     selected: day.dateString
+        // });
+        // if(dateStrng != null){
+        //     if(data[dateStrng].marked == true){
+        //         data[dateStrng].selected = false
+        //     }
+        //     else
+        //         delete data[dateStrng];
+        // }
+        // console.log(data[day.dateString],"@@",this.state.markedDates,"dddd")
+        // //console.log(typeof(data[day.dateString]) == 'undefined')
+        // if(typeof(data[day.dateString]) !== 'undefined' && data[day.dateString].marked==true){
+        //     data[day.dateString] = {
+        //         marked:true,
+        //         selected: true, selectedColor: '#2f52c4'
+        //     };            
+        // }
+        // else{
+        //     data[day.dateString] = {
+        //         selected: true, selectedColor: '#2f52c4'
+        //     };
+
+        // }
+
+        // dateStrng = day.dateString
+
+        // this.setState({
+        //     markedDates : data
+        // });
+
+        if (typeof (data[day.dateString]) !== 'undefined' && data[day.dateString].marked == true) {
+            var tt = Object.keys(this.state.userLogData);
+            for (var i = 0; i < tt.length; i++) {
+                var keys = Object.keys(this.state.userLogData[tt[i]]);//[ 'LQxPLYA2apaj2dYvlrp','LQxPLYA2apaj2dYvlrp' ]
+                this.state.userLogDataArray = [];
+                for (var j = 0; j < keys.length; j++) {
+                    firebase.database().ref('data/' + userInfo.email).orderByChild('user/tel/').equalTo(this.state.userLogData[tt[i]][keys[0]].tel).once('value', (snapshot) => {
+                        snapshot.forEach((dataSnapShot) => {
+                            let dd = dataSnapShot.val();
+                            console.log("@@@", dataSnapShot.val());
+                            this.state.userLogDataArray.push({
+                                name: dd['user']['name'],
+                                date: day.dateString,
+                                tel: dd['user']['tel'],
+                                email: dd['user']['email'],
+                                data: dd[day.dateString]
+                            })
+                        })                        
+                        console.log(this.state.userLogDataArray, "ddddddddd")
+                    })
+                }
+            }
+            this.setModalVisible(!this.state.modalVisible);
         }
-        else if (day.dateString == this.state.selected) {
-            this.setState({
-                selected: undefined
-            });
-        }
-        else {
-            this.setState({
-                selected: day.dateString
-            });
-        }
-        this.setModalVisible(!this.state.modalVisible);
+        this.forceUpdate();
     }
 
     readUserLogData = async (value) => {
-        firebase.database().ref('member/teacher/').once('value', (snapshot) => {                        
-            
+        let url = 'member/teacher/' + userInfo.email + '/students';
+        console.log("!!!!!!", url)
+        firebase.database().ref(url).once('value', (snapshot) => {
+
             this.state.userLogData = snapshot.val();
-            // console.log("~~~~~~~!!",this.state.userLogData.map(function(x,i){
-            //     console.log(x,i)                          
-            // }))
-            console.log(this.state.userLogData,"ddddddddd")
-            var keys = Object.keys(this.state.userLogData)            
-            for(var i=0; i<this.state.userLogData.length; i++){
-                console.log("~~!! ",Object.keys(this.state.userLogData[i]));
-                this.state.userLogDate.push(Object.keys(this.state.userLogData[i]))
-            }
-           //console.log(this.state.userLogData,this.state.userLogDate);
+
+            var tt = Object.keys(this.state.userLogData);//[ '2018-11-10' ]
+
+            for (var i = 0; i < tt.length; i++) {
+
+                //console.log(this.state.userLogData[tt[i]], "ddddddddd")
+                data[tt[i]] = {
+                    marked: true,
+                    selected: true, selectedColor: '#2f52c4'
+                };
+
+                //console.log(this.state.userLogData[tt[i]])
+                //console.log(this.state.userLogData[tt[i]][keys[0]].tel)
+
+            };
+
+            this.setState({
+                markedDates: data
+            });
+            console.log(this.state.markedDates, "dddd")
         });
     }
 
@@ -84,10 +132,11 @@ export default class SecondScreen extends Component {
             selectedYear: dateObj.getFullYear(),
             selectedMonth: dateObj.getMonth(),
             displayDate: dateObj.getFullYear() + "년 " + value + "월",
-            modalVisible : false,
-            userLogData : [],
-            userLogDate : [],
-            markedDates : {}
+            modalVisible: false,
+            userLogData: {},
+            userLogDataArray: [],
+            loadedMarkedData: {},
+            markedDates: {}
         };
         this.onDayPress = this.onDayPress.bind(this);
         this.readUserLogData();
@@ -181,7 +230,7 @@ export default class SecondScreen extends Component {
                             onLeftPress={() => this.setModalVisible(!this.state.modalVisible)}
                             leftIconContainerStyle={modalStyles.leftIconContainerStyle}
                         />
-
+                        {/* <Student_LogFlatList data={this.state.userLogDataArray} /> */}
                     </View>
                 </Modal>
                 {/*modal부분 end*/}
@@ -214,13 +263,16 @@ export default class SecondScreen extends Component {
                         onDayPress={this.onDayPress}
                         markedDates={this.state.markedDates}
                         onDayLongPress={(day) => { console.log('selected day', day) }}
-                        markedDates={{
-                            [this.state.selected]: {
-                                selected: true,
-                                //disableTouchEvent: true,                            
-                                color: '#2f52c4'
-                            }
-                        }}
+                        // markedDates={{
+                        //     [this.state.selected]: {
+                        //         selected: true,
+                        //         //disableTouchEvent: true,                            
+                        //         color: '#2f52c4'
+                        //     },
+                        //     [this.state.markedDates]:{
+                        //         marked:true,
+                        //     }
+                        // }}
                         monthFormat={'yyyy년 MM월'}
                         onMonthChange={(months) => {
                             var month = months.month;
@@ -299,4 +351,8 @@ const styles = StyleSheet.create({
         backgroundColor: "#f9f9fa",
         borderWidth: 0
     },
+    bar: {
+        height: 55,
+        alignItems: "center"
+    }
 });
