@@ -3,6 +3,7 @@ import { StyleSheet, View, TouchableHighlight, Text, Image, ImageBackground, Dim
 import flatListData from "../data/flatListData";
 import connDeviceInfo from "../data/connDeviceInfo";
 import BluetoothManager from '../utils/BluetoothManager';
+import userInfo from '../data/userInfo'
 
 export default class Login extends Component {
     state = {
@@ -91,6 +92,11 @@ export default class Login extends Component {
             const value = await AsyncStorage.getItem('Auth');
 
             if (value !== null) {
+                userInfo.email = value.replace(".", "").replace("#", "").replace("$", '').replace("@", "").replace("!", "").replace("%", "")
+                .replace("^", "").replace("&", "").replace("*", "").replace("(", "").replace(")", "").replace("-", "")
+                .replace("/", "").replace("\\", "").replace("[", "").replace("]", "").replace("{", "").replace("}", "")
+                .replace("`", "").replace("~", "").replace("?", "").replace(",", "").replace("<", "").replace(">", "")
+
                 const count = await AsyncStorage.getItem('Count')
                 let device = JSON.parse(await AsyncStorage.getItem('device'))
                 for (let i = 0; i < device['devices'].length; i++) {

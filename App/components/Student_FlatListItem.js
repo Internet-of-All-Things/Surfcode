@@ -5,6 +5,8 @@ import ImagePicker from 'react-native-image-picker';
 import flatListData from "../data/flatListData";
 import ActionBar from "react-native-action-bar";
 import firebase from "react-native-firebase";
+import userInfo from "../data/userInfo"
+import moment from 'moment'
 
 const options = {
     title: 'Input user data',
@@ -85,14 +87,36 @@ export default class Student_FlatListItem extends Component {
         });
       }
     saveUserDate() {
+        let firebaseID = userInfo.email
+        let dbUrl = 'member/teacher/' + firebaseID
+
         this.props.item.email = this.state.email
         this.props.item.name = this.state.name
         this.props.item.tel = this.state.tel 
-        firebase
+        let dateObj = new Date();
+        let date = moment(dateObj).format('YYYY-MM-DD')
+        var tempKey = firebase.database().ref(dbUrl+"/students/"+date).push().key
+        console.log(dbUrl+'/students/'+date+'/'+tempKey)
+        firebase.database().ref(dbUrl+'/students/'+date+'/'+tempKey).set(
+            {
+                "email" : this.props.item.email,
+                "name" : this.props.item.name,
+                "tel" : this.props.item.tel,
+            }
+        )
+
+        var newDataRef = firebase.database().ref("data/"+firebaseID).push().child('user')
+        newDataRef.set({
+            "email" : this.props.item.email,
+            "name" : this.props.item.name,
+            "tel" : this.props.item.tel,
+        })
+        
+        /*firebase
               .storage()
               .ref("student/"+this.state.tel)
               .child("profile.jpg")
-              .put(this.state.userImageSource, { contentType: "image/jpg" });
+              .put(this.state.userImageSource, { contentType: "image/jpg" });*/
         this._storeData()
         this.setUserImageModalVisible(!this.state.modalVisible);
     }
