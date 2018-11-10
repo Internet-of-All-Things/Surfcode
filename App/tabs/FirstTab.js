@@ -11,6 +11,7 @@ import { AddButton } from "../components/AddButton";
 import Student_BasicFlatList from "../components/Student_BasicFlatList";
 import flatListData from "../data/flatListData";
 import BluetoothManager from "../utils/BluetoothManager"
+import connDeviceInfo from "../data/connDeviceInfo"
 
 function renderForUpdateItem(){
   this.forceUpdate()
@@ -76,9 +77,12 @@ export default class FirstTab extends Component {
             break
           }
         }
+
         console.log(temp)
-        BluetoothManager.getBluetoothManager().onDeviceDisconnected(flatListData[i].key, null)
-        BluetoothManager.cancelDeviceConnection(flatListData[i].key)
+        BluetoothManager.getBluetoothManager().onDeviceDisconnected(flatListData[i].key, ()=>{
+          console.log("강제로 장치 연결 끊음")
+        })
+        BluetoothManager.getBluetoothManager().cancelDeviceConnection(flatListData[i].key)
         flatListData.splice(i,1)
         i = i - 1
       }
