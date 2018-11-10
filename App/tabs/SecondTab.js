@@ -5,15 +5,16 @@ import {
     Text,
     ScrollView,
     View,
+    Modal,    
     Image,
     TouchableHighlight,
     TouchableOpacity
 } from "react-native";
 
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Calendar, CalendarList, Agenda } from "react-native-calendars";
-
+import ActionBar from "react-native-action-bar";
 import { LocaleConfig } from "react-native-calendars";
+import firebase from "react-native-firebase";
 
 import Picker from 'react-native-picker';
 import moment from 'moment'
@@ -31,23 +32,38 @@ export default class SecondScreen extends Component {
     onDayPress(day) {
         console.log("!!" + day.dateString + " " + this.state.selected);
         if (this.state.selected == undefined || this.state.selected == null) {
-            //console.log(this.state.selected + " : " + day.dateString + "!!!!!!!");
             this.setState({
                 selected: day.dateString
             });
         }
         else if (day.dateString == this.state.selected) {
-            //console.log(day.dateString + "!!!!!!!");
             this.setState({
                 selected: undefined
             });
         }
         else {
-            //console.log(this.state.selected + " : " + day.dateString + "!!!!!!!");
             this.setState({
                 selected: day.dateString
             });
         }
+        this.setModalVisible(!this.state.modalVisible);
+    }
+
+    readUserLogData = async (value) => {
+        firebase.database().ref('member/teacher/').once('value', (snapshot) => {                        
+            
+            this.state.userLogData = snapshot.val();
+            // console.log("~~~~~~~!!",this.state.userLogData.map(function(x,i){
+            //     console.log(x,i)                          
+            // }))
+            console.log(this.state.userLogData,"ddddddddd")
+            var keys = Object.keys(this.state.userLogData)            
+            for(var i=0; i<this.state.userLogData.length; i++){
+                console.log("~~!! ",Object.keys(this.state.userLogData[i]));
+                this.state.userLogDate.push(Object.keys(this.state.userLogData[i]))
+            }
+           //console.log(this.state.userLogData,this.state.userLogDate);
+        });
     }
 
     constructor(props) {
@@ -67,11 +83,14 @@ export default class SecondScreen extends Component {
             pickedDate: moment(dateObj).format('YYYY-MM-DD'),
             selectedYear: dateObj.getFullYear(),
             selectedMonth: dateObj.getMonth(),
-            displayDate: dateObj.getFullYear() + "년 " + value + "월"
+            displayDate: dateObj.getFullYear() + "년 " + value + "월",
+            modalVisible : false,
+            userLogData : [],
+            userLogDate : [],
+            markedDates : {}
         };
         this.onDayPress = this.onDayPress.bind(this);
-        //console.log(this.props.screenProps + "~!!!");
-
+        this.readUserLogData();
     }
 
     // componentDidMount() {
@@ -124,6 +143,11 @@ export default class SecondScreen extends Component {
         });
         Picker.show();
     }
+
+    setModalVisible(visible) {
+        this.setState({ modalVisible: visible });
+    }
+
     render() {
 
         return (
@@ -134,6 +158,35 @@ export default class SecondScreen extends Component {
                     onWillBlur={payload => console.log('will blur', payload)}
                     onDidBlur={payload => console.log('did blur', payload)}
                 /> */}
+
+                {/*modal부분 start*/}
+                <Modal
+                    animationType="slide"
+                    transparent={false}
+                    visible={this.state.modalVisible}
+                    onRequestClose={() => {
+                        this.setModalVisible(!this.state.modalVisible);
+                    }}
+                >
+                    <View>
+                        <ActionBar
+                            containerStyle={styles.bar}
+                            allowFontScaling={true}
+                            title={"수강생 기록 조회"}
+                            backgroundColor={"#f9f9fa"}
+                            titleStyle={modalStyles.titleStyle}
+                            titleContainerStyle={modalStyles.titleContainerStyle}
+                            iconImageStyle={modalStyles.iconImageStyle}
+                            leftIconName={"back"}
+                            onLeftPress={() => this.setModalVisible(!this.state.modalVisible)}
+                            leftIconContainerStyle={modalStyles.leftIconContainerStyle}
+                        />
+
+                    </View>
+                </Modal>
+                {/*modal부분 end*/}
+
+
                 {/*title부분 start*/}
                 <View style={titleStyles.container}>
                     <View
@@ -143,7 +196,7 @@ export default class SecondScreen extends Component {
                         <TouchableOpacity style={{ flexDirection: "row" }} onPress={this._showDatePicker.bind(this)}>
                             <View style={{ flexDirection: "row" }}>
                                 <Image style={{ marginRight: 5, marginTop: 7, width: 16, height: 16, tintColor: "#82889c", resizeMode: 'contain' }} source={require('../images/clock.png')} />
-                                <Text style={{ color: '#82889c', fontSize: 14,  fontFamily: "Spoqa Han Sans Bold" }}>{this.state.displayDate}</Text>
+                                <Text style={{ color: '#82889c', fontSize: 14, fontFamily: "Spoqa Han Sans Bold" }}>{this.state.displayDate}</Text>
                                 <Image style={{ marginLeft: 8, marginTop: 9, width: 10, height: 10, tintColor: "#82889c", resizeMode: 'contain' }} source={require('../images/down-triangular.png')} />
                             </View>
                         </TouchableOpacity>
@@ -159,6 +212,7 @@ export default class SecondScreen extends Component {
                         current={this.state.pickedDate}
                         maxDate={this.state.maxdate}
                         onDayPress={this.onDayPress}
+                        markedDates={this.state.markedDates}
                         onDayLongPress={(day) => { console.log('selected day', day) }}
                         markedDates={{
                             [this.state.selected]: {
@@ -183,7 +237,6 @@ export default class SecondScreen extends Component {
                                 selectedMonth: months.month,
                                 displayDate: months.year + "년 " + value + "월"
                             });
-                            console.log("fff", this.state);
                         }}
                         onPressArrowLeft={substractMonth => substractMonth()}
                         onPressArrowRight={addMonth => addMonth()}
@@ -199,6 +252,24 @@ export default class SecondScreen extends Component {
         );
     }
 }
+
+const modalStyles = StyleSheet.create({
+    titleStyle: {
+        fontSize: 16,
+        color: "#3b3e4c"
+    },
+    titleContainerStyle: {
+        alignItems: "center",
+        paddingRight: 40
+    },
+    iconImageStyle: {
+        width: 14.5,
+        height: 30,
+        tintColor: "#82889c"
+    },
+});
+
+
 const titleStyles = StyleSheet.create({
     container: {
         height: 54,
@@ -218,7 +289,6 @@ const titleStyles = StyleSheet.create({
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        flexDirection: "column",
         backgroundColor: "#f9f9fa",
     },
     calendarStyle: {

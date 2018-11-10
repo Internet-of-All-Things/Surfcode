@@ -120,20 +120,7 @@ export default class MainScreen extends Component {
   }
 
   setModalVisible(visible) {
-    this.setState({ modalVisible: visible });
-    if (visible) {
-      this.setState({
-        isFirstTabPage: false
-      })
-    }
-    else {
-      this.setState({
-        isFirstTabPage: true
-      })
-    }
-    this.setState({
-      isListLongPressed: false
-    })
+    this.setState({ modalVisible: visible }); 
   }
 
   render() {
