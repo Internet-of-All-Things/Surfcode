@@ -35,11 +35,11 @@ export default class SecondScreen extends Component {
                 var logArray = []
                 var loadingCount = 0;
                 for (var j = 0; j < keys.length; j++) {
-                    firebase.database().ref('data/' + userInfo.email).orderByChild('user/tel/').equalTo(this.state.userLogData[tt[i]][keys[j]].tel).once('value', (snapshot) => {
+                    firebase.database().ref('data/' + userInfo.firebaseID).orderByChild('user/tel/').equalTo(this.state.userLogData[tt[i]][keys[j]].tel).once('value', (snapshot) => {
+                        //console.log("@@@@@",snapshot)
                         snapshot.forEach((dataSnapShot) => {
                             let dd = dataSnapShot.val();
                             /* User Image Info */
-                            var timeKey = Object.keys(dd['data'][day.dateString]) 
                             const ordered = {};
                             Object.keys(dd['data'][day.dateString]).sort().forEach(function(key) {
                                 ordered[key] = dd['data'][day.dateString][key];
@@ -70,7 +70,7 @@ export default class SecondScreen extends Component {
     }
 
     readUserLogData = async (value) => {
-        let url = 'member/teacher/' + userInfo.email + '/students';
+        let url = 'member/teacher/' + userInfo.firebaseID + '/students';
         console.log("!!!!!!", url)
         firebase.database().ref(url).once('value', (snapshot) => {
 
@@ -84,7 +84,7 @@ export default class SecondScreen extends Component {
                         selected: true, selectedColor: '#2f52c4'
                     };
 
-                    //console.log(this.state.userLogData[tt[i]])
+                    console.log(this.state.userLogData[tt[i]])
                     //console.log(this.state.userLogData[tt[i]][keys[0]].tel)
 
                 };
@@ -166,7 +166,7 @@ export default class SecondScreen extends Component {
                     selectedMonth: parseInt(value),
                     displayDate: pickedValue[0] + "년 " + value + "월"
                 });
-                console.log("gggg", this.state);
+                //console.log("gggg", this.state);
             },
             onPickerCancel: (pickedValue, pickedIndex) => {
             },

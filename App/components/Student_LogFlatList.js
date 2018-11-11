@@ -4,7 +4,7 @@ import firebase from "react-native-firebase";
 import ActionBar from "react-native-action-bar";
 import PureChart from 'react-native-pure-chart';
 import { Dimensions } from 'react-native'
-import { LineChart } from 'react-native-chart-kit'
+
 const screenWidth = Dimensions.get('window').width
 
 class Student_LogListItem extends Component {
