@@ -126,7 +126,7 @@ export default class Student_FlatListItem extends Component {
         });
     }
     saveUserDate() {
-        let firebaseID = userInfo.email
+        let firebaseID = userInfo.firebaseID
         let dbUrl = 'member/teacher/' + firebaseID
 
         this.props.item.email = this.state.email
