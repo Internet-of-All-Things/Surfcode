@@ -27,58 +27,36 @@ var data = {};
 export default class SecondScreen extends Component {
 
     onDayPress(day) {
-        // this.setState({
-        //     selected: day.dateString
-        // });
-        // if(dateStrng != null){
-        //     if(data[dateStrng].marked == true){
-        //         data[dateStrng].selected = false
-        //     }
-        //     else
-        //         delete data[dateStrng];
-        // }
-        // console.log(data[day.dateString],"@@",this.state.markedDates,"dddd")
-        // //console.log(typeof(data[day.dateString]) == 'undefined')
-        // if(typeof(data[day.dateString]) !== 'undefined' && data[day.dateString].marked==true){
-        //     data[day.dateString] = {
-        //         marked:true,
-        //         selected: true, selectedColor: '#2f52c4'
-        //     };            
-        // }
-        // else{
-        //     data[day.dateString] = {
-        //         selected: true, selectedColor: '#2f52c4'
-        //     };
-
-        // }
-
-        // dateStrng = day.dateString
-
-        // this.setState({
-        //     markedDates : data
-        // });
-
         if (typeof (data[day.dateString]) !== 'undefined' && data[day.dateString].marked == true) {
             var tt = Object.keys(this.state.userLogData);
             for (var i = 0; i < tt.length; i++) {
                 var keys = Object.keys(this.state.userLogData[tt[i]]);//[ 'LQxPLYA2apaj2dYvlrp','LQxPLYA2apaj2dYvlrp' ]
-                this.state.userLogDataArray = [];
+                //this.state.userLogDataArray = [];
+                var logArray = []
+                var loadingCount = 0;
                 for (var j = 0; j < keys.length; j++) {
-                    firebase.database().ref('data/' + userInfo.email).orderByChild('user/tel/').equalTo(this.state.userLogData[tt[i]][keys[0]].tel).once('value', (snapshot) => {
+                    //console.log(this.state.userLogData[tt[i]][keys[j]].tel,tt[i],keys[j])
+                    firebase.database().ref('data/' + userInfo.email).orderByChild('user/tel/').equalTo(this.state.userLogData[tt[i]][keys[j]].tel).once('value', (snapshot) => {
                         snapshot.forEach((dataSnapShot) => {
                             let dd = dataSnapShot.val();
-                            console.log("@@@", dataSnapShot.val());
-                            this.state.userLogDataArray.push({
+                            /* User Image Info */                          
+                            logArray.push({
+                                key : "[" + loadingCount +"]",
                                 name: dd['user']['name'],
                                 date: day.dateString,
                                 tel: dd['user']['tel'],
                                 email: dd['user']['email'],
-                                data: dd[day.dateString]
+                                data: dd['data'][day.dateString]
+                            });
+                            this.setState({
+                                userLogDataArray: logArray
                             })
+                            console.log("ddddddddd",loadingCount, this.state.userLogDataArray[loadingCount].tel, this.state.userLogDataArray.length);
+                            loadingCount++;
                         })                        
-                        console.log(this.state.userLogDataArray, "ddddddddd")
                     })
                 }
+                
             }
             this.setModalVisible(!this.state.modalVisible);
         }
@@ -95,8 +73,6 @@ export default class SecondScreen extends Component {
             var tt = Object.keys(this.state.userLogData);//[ '2018-11-10' ]
 
             for (var i = 0; i < tt.length; i++) {
-
-                //console.log(this.state.userLogData[tt[i]], "ddddddddd")
                 data[tt[i]] = {
                     marked: true,
                     selected: true, selectedColor: '#2f52c4'
@@ -136,7 +112,8 @@ export default class SecondScreen extends Component {
             userLogData: {},
             userLogDataArray: [],
             loadedMarkedData: {},
-            markedDates: {}
+            markedDates: {},
+            loadingCount: 0
         };
         this.onDayPress = this.onDayPress.bind(this);
         this.readUserLogData();
@@ -212,12 +189,13 @@ export default class SecondScreen extends Component {
                 <Modal
                     animationType="slide"
                     transparent={false}
+                    style={{flex:1}}
                     visible={this.state.modalVisible}
                     onRequestClose={() => {
                         this.setModalVisible(!this.state.modalVisible);
                     }}
                 >
-                    <View>
+                    <View style={{flex:1}}>
                         <ActionBar
                             containerStyle={styles.bar}
                             allowFontScaling={true}
@@ -230,7 +208,7 @@ export default class SecondScreen extends Component {
                             onLeftPress={() => this.setModalVisible(!this.state.modalVisible)}
                             leftIconContainerStyle={modalStyles.leftIconContainerStyle}
                         />
-                        {/* <Student_LogFlatList data={this.state.userLogDataArray} /> */}
+                        <Student_LogFlatList userLogData={this.state.userLogDataArray} />
                     </View>
                 </Modal>
                 {/*modal부분 end*/}
