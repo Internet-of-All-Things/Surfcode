@@ -84,7 +84,7 @@ export default class ThirdTab extends Component {
                     len = 9;
                 for (var i = 0; i < len; i++) {
                     this.state.weatherData.push({
-                        key: i + "]",
+                        key: "[" + i + "]",
                         temperature: ((parseFloat(json.list[i].main.temp) - 273.15)).toFixed(1),
                         hour: (parseInt(json.list[i].dt_txt.substring(11, 13)) + 9) % 24 + ":00",//seoul +9 UTC시간
                         id : json.list[i].weather[0].id,
