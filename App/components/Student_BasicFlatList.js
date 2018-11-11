@@ -7,9 +7,8 @@ import SoundPlayer from 'react-native-sound-player'
 import urgentStudents from '../data/urgentStudents'
 
 function updateState(refresh) {
-    if (!this.state.unmount) {
+    if (this.state.mount) {
         this.setState({ refresh })
-        //console.log(this.state)
     }
 }
 
@@ -24,7 +23,7 @@ export default class Student_BasicFlatList extends Component {
     state = {
         isListLongPressed: false,
         refresh: false,
-        unmount: false,
+        mount: false,
         urgent: false,
     }
 
@@ -51,6 +50,7 @@ export default class Student_BasicFlatList extends Component {
     }
 
     componentDidMount() {
+        this.state.mount = true
         SoundPlayer.onFinishedPlaying((success) => {
             this.state.urgent = false
             if (urgentStudents.length > 0)
@@ -70,7 +70,7 @@ export default class Student_BasicFlatList extends Component {
     }
 
     componentWillUnmount() {
-        this.setState({ unmount: true })
+        this.state.mount = false
     }
 
     renderFooter = () => {

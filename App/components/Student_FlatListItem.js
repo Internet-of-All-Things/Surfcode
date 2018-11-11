@@ -60,7 +60,9 @@ export default class Student_FlatListItem extends Component {
             this.setUserImageModalVisible(true);
         }
     }
-
+    componentWillUnmount() {
+        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    }
     componentWillReceiveProps(props) {
         if (!this.state.modalVisible) {
             this.state.email = this.props.item.email

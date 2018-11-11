@@ -42,7 +42,12 @@ export default class FirstTab extends Component {
     renderForUpdateItem = renderForUpdateItem.bind(this)
   }
 
+  componentWillMount(){
+    console.log("@@@@@@@@@@@@@@%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% will FirstTab Mount")
+  }
+
   componentWillUnmount() {
+    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     this.setState({ unmount: true })
   }
 

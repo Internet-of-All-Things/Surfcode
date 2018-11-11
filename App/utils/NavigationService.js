@@ -1,4 +1,5 @@
-import { NavigationActions } from 'react-navigation';
+import { NavigationActions, StackActions } from 'react-navigation';
+
 
 let _navigator;
 
@@ -15,12 +16,19 @@ function navigate(routeName, params) {
   );
 }
 
+function popToTop(){
+  _navigator.dispatch(
+    StackActions.popToTop()
+  );
+}
+
 function getParam(key) {
-  return _navigator.getParam(key,'default value');
+  return _navigator.getParam(key);
 }
 
 export default {
   navigate,
   setTopLevelNavigator,
   getParam,
+  popToTop,
 };

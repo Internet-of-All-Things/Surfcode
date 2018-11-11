@@ -4,6 +4,7 @@ import { StyleSheet, View, Text, TextInput, Image, TouchableHighlight, AsyncStor
 import Loader from './Loader';
 
 import firebase from 'react-native-firebase';
+import { updateLoginButton } from './Login'
 
 export default class SignInStudent extends Component {
     state = {
@@ -86,7 +87,9 @@ export default class SignInStudent extends Component {
                     }).catch((error) => {
                         console.log(error);
                     });
-                    this.props.navigation.navigate('Main');
+                    updateLoginButton({ auth : 0 })
+                    this.props.navigation.state.params._login()
+                    this.props.navigation.navigate('Login');
                 }).catch((error) => {
                     this.setState({
                         loading: false

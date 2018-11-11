@@ -18,7 +18,6 @@ import FourthTab from "../tabs/FourthTab";
 
 import { createBottomTabNavigator } from "react-navigation";
 import { AddButton } from "../components/AddButton";
-import { setTitleName } from "../tabs/MainScreen"
 
 this.state = {
   addingBtnVisable: false
@@ -42,7 +41,6 @@ const MainTabNavigator = createBottomTabNavigator(
         ),
         tabBarColor: "#f2f2f2",
         tabBarOnPress: ({ navigation, defaultHandler }) => {
-          setTitleName(screenTitleData[0]);
           selectedMyTab = 0;
           this.state.addingBtnVisable = true;
           defaultHandler();
@@ -59,7 +57,6 @@ const MainTabNavigator = createBottomTabNavigator(
         ),
         tabBarColor: "#ff0000",
         tabBarOnPress: ({ navigation, defaultHandler }) => {
-          setTitleName(screenTitleData[1]);
           selectedMyTab = 1;
           this.state.addingBtnVisable = false;
           defaultHandler();
@@ -86,7 +83,6 @@ const MainTabNavigator = createBottomTabNavigator(
         ),
         tabBarColor: "#ff0000",
         tabBarOnPress: ({ navigation, defaultHandler }) => {
-          setTitleName(screenTitleData[2]);
           selectedMyTab = 2;
           this.state.addingBtnVisable = false;
           defaultHandler();
@@ -103,7 +99,6 @@ const MainTabNavigator = createBottomTabNavigator(
         ),
         tabBarColor: "#ff0000",
         tabBarOnPress: ({ navigation, defaultHandler }) => {
-          setTitleName(screenTitleData[3]);
           selectedMyTab = 3;
           this.state.addingBtnVisable = false;
           defaultHandler();

@@ -16,17 +16,9 @@ import firebase from "react-native-firebase";
 import ImagePicker from "react-native-image-picker";
 import userInfo from "../data/userInfo"
 
-
-function setTitleName(title) {
-  this.state.titleName = title;
-  console.log("!!!! " + this.state.titleName, title);
-  this.forceUpdate();
-}
-export { setTitleName }
 export default class MainScreen extends Component {
   state = {
     modalVisible: false,
-
     /* User Info */
     userName: '이름',
     userSchool: '스쿨',
@@ -42,8 +34,15 @@ export default class MainScreen extends Component {
 
   constructor(props) {
     super(props);
-    this._retrieveData();
-    setTitleName = setTitleName.bind(this)
+    /* User Info */
+    this.state.userName = userInfo.userName,
+    this.state.userSchool = userInfo.userSchool,
+    this.state.userNickName = userInfo.userNickName,
+    this.state.userId = userInfo.userId,
+    this.state.userTel =  userInfo.userTel,
+    this.state.userCareer = userInfo.career,
+    this.state.firebaseId = userInfo.firebaseID,
+    this.state.userImage = userInfo.userImage
   }
 
   _retrieveData = async () => {
@@ -79,26 +78,11 @@ export default class MainScreen extends Component {
     //_retrieveUserInfo()
     firebase.database().ref(dbUrl).on('value', (snapshot) => {
       let user = snapshot.val()
-      /*userInfo.push({
-        userName: user.name,
-        userSchool: user.school,
-        userNickName: user.nickname,
-        userId: user.email,
-        userTel: user.phone,
-        userCareer: user.career,
-      })*/
-      this.setState({
-        /* User Info */
-        userName: user.name,
-        userSchool: user.school,
-        userNickName: user.nickname,
-        userId: user.email,
-        userTel: user.phone,
-        userCareer: user.career,
-      })
+      
       /* User Image Info */
       firebase.storage().ref(this.state.firebaseID + '/profile.jpg').getDownloadURL()
         .then((url) => {
+          userInfo.userImage = url
           this.setState({ userImage: url });
         }).catch((error) => {
           /* There is no match ref */

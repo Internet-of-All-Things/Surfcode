@@ -21,6 +21,11 @@ function getBluetoothManager() {
     return _bluetoothManager;
 }
 
+function destroyBluetoothManager(){
+    _bluetoothManager.destroy();
+    _bluetoothManager = null;
+}
+
 setupNotifications = async (device) => {
     for (const id in sensors) {
         const service = serviceUUID(id)
@@ -87,4 +92,5 @@ writeUUID = (num) => {
 export default {
     getBluetoothManager,
     setupNotifications,
+    destroyBluetoothManager,
 };

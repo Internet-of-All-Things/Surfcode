@@ -1,14 +1,22 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, TouchableHighlight, Text, Image, ImageBackground, Dimensions, AsyncStorage } from 'react-native';
+import { StyleSheet, View, TouchableHighlight, Text, Image, ImageBackground, AsyncStorage } from 'react-native';
 import flatListData from "../data/flatListData";
 import connDeviceInfo from "../data/connDeviceInfo";
 import BluetoothManager from '../utils/BluetoothManager';
 import userInfo from '../data/userInfo'
+import firebase from "react-native-firebase";
 import { renderForUpdateItem } from '../tabs/FirstTab'
+
+function updateLoginButton(auth) {
+    this.setState(auth);
+}
+
+export { updateLoginButton }
 
 export default class Login extends Component {
     state = {
         auth: 0,
+        firebaseID: '',
     }
     static navigationOptions = {
         header: null
@@ -16,19 +24,48 @@ export default class Login extends Component {
 
     constructor(props) {
         super(props);
-        this._retrieveData();
-        //AsyncStorage.clear()
+        this.login();
+        updateLoginButton = updateLoginButton.bind(this)
     }
 
-    componentWillUnmount() {
-        //BluetoothManager.getBluetoothManager().stopDeviceScan()
+    readUserData(value) {
+        this.state.firebaseID = value.replace(".", "").replace("#", "").replace("$", '').replace("@", "").replace("!", "").replace("%", "")
+            .replace("^", "").replace("&", "").replace("*", "").replace("(", "").replace(")", "").replace("-", "")
+            .replace("/", "").replace("\\", "").replace("[", "").replace("]", "").replace("{", "").replace("}", "")
+            .replace("`", "").replace("~", "").replace("?", "").replace(",", "").replace("<", "").replace(">", "")
+
+        let dbUrl = 'member/teacher/' + this.state.firebaseID
+
+        firebase.database().ref(dbUrl).on('value', (snapshot) => {
+            let user = snapshot.val()
+            userInfo.userName = user.name;
+            userInfo.userSchool = user.school;
+            userInfo.userNickName = user.nickname;
+            userInfo.userId = user.email;
+            userInfo.userTel = user.phone;
+            userInfo.career = user.career;
+            userInfo.firebaseID = this.state.firebaseID
+            console.log(userInfo);
+            /* User Image Info */
+            firebase.storage().ref(this.state.firebaseID + '/profile.jpg').getDownloadURL()
+                .then((url) => {
+                    userInfo.userImage = url
+                    this.props.navigation.navigate('Main');
+                }).catch((error) => {
+                    /* There is no match ref */
+                    if (error.code === 'storage/object-not-found')
+                        userInfo.userImage = '../images/personxhdpi.png'
+                    this.props.navigation.navigate('Main');
+                })
+            this.startCheckAndScan()
+
+        });
     }
 
     startCheckAndScan() {
         userInfo.isScan = true
         BluetoothManager.getBluetoothManager().state().then((state) => {
             if (state === "PoweredOn") {
-                console.log("???????????????????대체 뭑 ㅏ문제야")
                 this.startScan()
             } else {
                 BluetoothManager.getBluetoothManager().enable().then((bleManager) => {
@@ -36,7 +73,7 @@ export default class Login extends Component {
                 });
             }
         })
-        
+
     }
 
     startScan() {
@@ -45,7 +82,7 @@ export default class Login extends Component {
             null, (error, device) => {
                 console.log("scanning");
                 if (error) {
-                    if(error.message === "Cannot start scanning operation")
+                    if (error.message === "Cannot start scanning operation")
                         this.startCheckAndScan()
                     console.log(error)
                     return
@@ -125,16 +162,12 @@ export default class Login extends Component {
         /* scanner option */
     }
 
-    _retrieveData = async () => {
+    login = async () => {
         try {
             const value = await AsyncStorage.getItem('Auth');
 
             if (value !== null) {
-                userInfo.email = value.replace(".", "").replace("#", "").replace("$", '').replace("@", "").replace("!", "").replace("%", "")
-                    .replace("^", "").replace("&", "").replace("*", "").replace("(", "").replace(")", "").replace("-", "")
-                    .replace("/", "").replace("\\", "").replace("[", "").replace("]", "").replace("{", "").replace("}", "")
-                    .replace("`", "").replace("~", "").replace("?", "").replace(",", "").replace("<", "").replace(">", "")
-                console.log("로그인에 성공 " + userInfo.email)
+                this.readUserData(value)
                 let device = JSON.parse(await AsyncStorage.getItem('device'))
                 if (device !== null) {
                     for (let i = 0; i < device['devices'].length; i++) {
@@ -171,10 +204,10 @@ export default class Login extends Component {
                     }
 
 
-                    this.startCheckAndScan()
+                    //this.startCheckAndScan()
                     // setTimeout(() => { BluetoothManager.getBluetoothManager().stopDeviceScan(); this.state.scanning = false }, 3000)
                 }
-                this.props.navigation.navigate('Main');
+
             } else {
                 console.log("로그인 되어 있지 않음.");
                 this.setState({ auth: 1 });
@@ -186,52 +219,51 @@ export default class Login extends Component {
     }
 
     render() {
-        var { height, width } = Dimensions.get('window');
         return (
             <ImageBackground
                 style={{ width: '100%', height: '100%' }}
                 source={require('../images/background.png')}>
                 <View style={styles.container}>
-
                     <View
-                        style={styles.logo}>
+                        style={{
+                            flex: this.state.auth ? 0.5 : 1,
+                            alignItems: 'center', // 가운데 맞춤
+                            justifyContent: 'center', // 위 아래로 중앙정렬
+                        }}>
                         <Image
                             style={{ width: '60%', tintColor: '#ffffff', resizeMode: 'contain' }}
                             source={require('../images/logo.png')}
                         />
                     </View>
+                    <View style={{ flex: 0.25 }} />
                     {this.state.auth ? (
-
                         <View style={styles.buttonContainer}>
+                            <View stlye={{ flex: 0.5 }} />
                             <TouchableHighlight
-                                onPress={() => this.props.navigation.navigate('SignInTeacher')}
+                                onPress={() => this.props.navigation.navigate('SignInTeacher', {
+                                    _login: this.login,
+                                })}
                                 underlayColor="#rgba(255,255,255,0.5)"
                                 style={[styles.FirstButton, styles.boxContainer]}
                             >
                                 <Text
                                     style={{ color: '#2f52c4' }}
-                                >강사로 로그인하기</Text>
+                                >로그인하기</Text>
                             </TouchableHighlight>
                             <TouchableHighlight
-                                onPress={() => this.props.navigation.navigate('SignInStudent')}
+                                onPress={() => this.props.navigation.navigate('SignUp', {
+                                    _login: this.login,
+                                })}
                                 underlayColor="#rgba(255,255,255,0.5)"
                                 style={[styles.SecondButton, styles.boxContainer]}
                             >
                                 <Text
                                     style={{ color: '#f9f9fa' }}
-                                >수강생으로 로그인하기</Text>
-                            </TouchableHighlight>
-                            <TouchableHighlight
-                                onPress={() => this.props.navigation.navigate('SignUp')}
-                                underlayColor="#rgba(255,255,255,0.5)"
-                                style={[styles.ThirdButton, styles.boxContainer]}
-                            >
-                                <Text
-                                    style={{ color: '#b7c3ea' }}
                                 >회원가입하기</Text>
                             </TouchableHighlight>
                         </View>
-                    ) : (<View></View>)}
+
+                    ) : (<View />)}
                 </View>
             </ImageBackground>
         )
@@ -242,16 +274,12 @@ const styles = StyleSheet.create({
         flex: 1,
         //flexDirection: 'column', // 수직방향
     },
-    logo: {
-        flex: 0.73,
-        alignItems: 'center', // 가운데 맞춤
-        justifyContent: 'center', // 위 아래로 중앙정렬
-    },
     buttonContainer: {
-        flex: 0.27,
+        flex: 0.2,
+
     },
     boxContainer: {
-        flex: 1,
+        flex: 0.45,
         marginLeft: 24,
         marginRight: 24,
         marginBottom: 16,
@@ -269,8 +297,4 @@ const styles = StyleSheet.create({
         borderColor: '#f9f9fa',
         borderWidth: 1,
     },
-    ThirdButton: {
-        alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0)',
-    }
 });
