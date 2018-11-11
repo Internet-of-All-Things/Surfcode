@@ -41,6 +41,7 @@ setupNotifications = async (device) => {
             var i = 0;
             for (; i < flatListData.length; i++) {
                 if (characteristic.deviceID === flatListData[i].key) {
+                    flatListData[i].isConnected = true
                     break;
                 }
             }

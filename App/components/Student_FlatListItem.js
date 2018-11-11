@@ -32,6 +32,7 @@ export default class Student_FlatListItem extends Component {
         userImageSource: '../images/personxhdpi.png',
         modalVisible: false,
         itemUrgent: false,
+        isItemScan: false,
     }
     constructor(props) {
         super(props);
@@ -67,7 +68,8 @@ export default class Student_FlatListItem extends Component {
         if (!this.state.isListLongPressed) {
             this.state.selected = false
         }
-        //if (this.props.item.isConnected)
+        if (!this.props.item.isConnected)
+            this.state.isItemScan = userInfo.isScan
         /* set urgent situation */
         if (this.props.item.bpm > 127) {
             if (!this.state.itemUrgent) {
@@ -313,35 +315,57 @@ export default class Student_FlatListItem extends Component {
                         {/*modal부분 end*/}
 
                         <View style={{ flex: 0.45, flexDirection: "column", marginLeft: 25 }}>
-                            <Text style={[styles.textStyle, 
-                                { fontSize: 22, 
+                            <Text style={[styles.textStyle,
+                            {
+                                fontSize: 22,
                                 fontFamily: 'Spoqa Han Sans Bold',
-                                color: this.state.itemUrgent ? '#f9f9fa' : '#3b3e4c' }]}>
+                                color: this.state.itemUrgent ? '#f9f9fa' : '#3b3e4c'
+                            }]}>
                                 {this.props.item.name}
                             </Text>
                             <Text style={[styles.smallText,
-                                { color: this.state.itemUrgent ? '#f9f9fa' : '#82889c'}]}>
+                            { color: this.state.itemUrgent ? '#f9f9fa' : '#82889c' }]}>
                                 {this.props.item.state}
                             </Text>
                         </View>
-                        <View style={{ flex: 0.55, flexDirection: "row", paddingTop: 5 }}>
-                            <View style={{ flex: 0.5, alignItems: 'center' }}>
-                                <Text style={[styles.textStyle, { flex: 0.5, marginBottom: 2, color: this.state.itemUrgent ? '#f9f9fa' : '#3b3e4c' }]}>{this.props.item.bpm} BPM</Text>
-                                <View style={{ flexDirection: 'row', flex: 0.5, marginTop: 2, alignItems: 'center' }}>
-                                    <Image style={{ marginRight: 5, width: 12, height: 12, tintColor: this.state.itemUrgent ? '#f9f9fa' : "#82889c", resizeMode: 'contain' }} source={require('../images/empty-heartmdpi.png')} />
-                                    <Text style={[styles.smallText, { color: this.state.itemUrgent ? '#f9f9fa' : '#82889c' }]}>심박</Text>
+                        {this.props.item.isConnected ?
+                            <View style={{ flex: 0.55, flexDirection: "row", paddingTop: 5 }}>
+                                <View style={{ flex: 0.5, alignItems: 'center' }}>
+                                    <Text style={[styles.textStyle, { flex: 0.5, marginBottom: 2, color: this.state.itemUrgent ? '#f9f9fa' : '#3b3e4c' }]}>{this.props.item.bpm} BPM</Text>
+                                    <View style={{ flexDirection: 'row', flex: 0.5, marginTop: 2, alignItems: 'center' }}>
+                                        <Image style={{ marginRight: 5, width: 12, height: 12, tintColor: this.state.itemUrgent ? '#f9f9fa' : "#82889c", resizeMode: 'contain' }} source={require('../images/empty-heartmdpi.png')} />
+                                        <Text style={[styles.smallText, { color: this.state.itemUrgent ? '#f9f9fa' : '#82889c' }]}>심박</Text>
+                                    </View>
                                 </View>
-                            </View>
 
-                            <View style={{ width: 1, marginBottom: 15, backgroundColor: '#d0d2da', marginTop: 15, marginLeft: 5, marginRight: 5 }} />{/* 바 부분 */}
-                            <View style={{ flex: 0.5, alignItems: 'center' }}>
-                                <Text style={[styles.textStyle, { flex: 0.5, marginBottom: 2, color: this.state.itemUrgent ? '#f9f9fa' : '#3b3e4c' }]}>{this.props.item.brethe}/Min</Text>
-                                <View style={{ flexDirection: 'row', flex: 0.5, marginTop: 2, alignItems: 'center' }}>
-                                    <Image style={{ marginRight: 5, width: 12, height: 12, tintColor: this.state.itemUrgent ? '#f9f9fa' : "#82889c", resizeMode: 'contain' }} source={require('../images/breathingmdpi.png')} />
-                                    <Text style={[styles.smallText, { color: this.state.itemUrgent ? '#f9f9fa' : '#82889c' }]}>호흡</Text>
+                                <View style={{ width: 1, marginBottom: 15, backgroundColor: '#d0d2da', marginTop: 15, marginLeft: 5, marginRight: 5 }} />{/* 바 부분 */}
+                                <View style={{ flex: 0.5, alignItems: 'center' }}>
+                                    <Text style={[styles.textStyle, { flex: 0.5, marginBottom: 2, color: this.state.itemUrgent ? '#f9f9fa' : '#3b3e4c' }]}>{this.props.item.brethe}/Min</Text>
+                                    <View style={{ flexDirection: 'row', flex: 0.5, marginTop: 2, alignItems: 'center' }}>
+                                        <Image style={{ marginRight: 5, width: 12, height: 12, tintColor: this.state.itemUrgent ? '#f9f9fa' : "#82889c", resizeMode: 'contain' }} source={require('../images/breathingmdpi.png')} />
+                                        <Text style={[styles.smallText, { color: this.state.itemUrgent ? '#f9f9fa' : '#82889c' }]}>호흡</Text>
+                                    </View>
                                 </View>
-                            </View>
-                        </View>
+                            </View> : <View style={{ flex: 0.55, flexDirection: "row", paddingTop: 5 }}>
+                                {userInfo.isScan ?
+                                    <Text style={{ 
+                                        flex : 1,
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        color: this.state.itemUrgent ? '#f9f9fa' : '#3b3e4c' }}>
+                                        스캔중 ...
+                                    </Text>
+                                    :
+                                    <TouchableHighlight><View>
+                                        <Text style={{ 
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        color: this.state.itemUrgent ? '#f9f9fa' : '#3b3e4c' }}>
+                                        연결 재시도
+                                        </Text>
+                                        </View>
+                                    </TouchableHighlight>}
+                            </View>}
                     </View>
                 </TouchableHighlight>
             </View >

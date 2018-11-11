@@ -54,7 +54,7 @@ export default class Student_BasicFlatList extends Component {
         SoundPlayer.onFinishedPlaying((success) => {
             this.state.urgent = false
             if (urgentStudents.length > 0)
-                playSiren()
+                this.playSiren()
         })
     }
 
