@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { TouchableHighlight, Modal, Image, TextInput, StyleSheet, Text, View, AsyncStorage } from "react-native";
 import { CheckBox } from 'react-native-elements'
 import ImagePicker from 'react-native-image-picker';
-import flatListData from "../data/flatListData";
 import ActionBar from "react-native-action-bar";
 import firebase from "react-native-firebase";
 import userInfo from "../data/userInfo"
@@ -30,6 +29,7 @@ export default class Student_FlatListItem extends Component {
         selected : false,
         userImageSource: '../images/personxhdpi.png',
         modalVisible: false,
+        itemUrgent : false,
     }
     constructor(props) {
         super(props);
@@ -38,6 +38,9 @@ export default class Student_FlatListItem extends Component {
         this.state.userImageSource = props.item.user_icon_url;
         updateStudentImage = updateStudentImage.bind(this)
     }
+
+    
+
     _onLongPressButton() {
         this.props.changeListLongPressedState();
     }
@@ -63,6 +66,13 @@ export default class Student_FlatListItem extends Component {
         }
         if(!this.state.isListLongPressed){
             this.state.selected = false
+        }
+        /* set urgent situation */
+        if(this.props.item.bpm > 127){
+            this.state.itemUrgent = true
+            this.props.playSiren()
+        }else{
+            this.state.itemUrgent = false
         }
         this.setState({ isListLongPressed: props.isListLongPressed });
         
@@ -149,7 +159,7 @@ export default class Student_FlatListItem extends Component {
                         padding: 10,
                         alignItems : 'center',
                         backgroundColor:
-                            '#f9f9fa'
+                        this.state.itemUrgent?'#f33c17' : '#f9f9fa'
                         //this.props.index % 2 == 0 ? "#ffffff" : "#65edea"
                     }}>
                         {this.state.isListLongPressed ? (
