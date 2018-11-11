@@ -68,8 +68,7 @@ export default class FirstTab extends Component {
       if (flatListData[i].selected) {
         for (let j = 0; j < urgentStudents.length; j++) {
           /* sound off */
-          if (urgentStudents[j].tel === flatListData[i].tel &&
-            urgentStudents[j].name === flatListData[i].name) {
+          if (urgentStudents[j].id === flatListData[i].id ) {
             urgentStudents.splice(j, 1)
             if (urgentStudents.length == 0) {
               soundOff()

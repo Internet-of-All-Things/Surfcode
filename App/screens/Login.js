@@ -24,12 +24,32 @@ export default class Login extends Component {
         //BluetoothManager.getBluetoothManager().stopDeviceScan()
     }
 
+    startCheckAndScan() {
+        userInfo.isScan = true
+        BluetoothManager.getBluetoothManager().state().then((state) => {
+            if (state === "PoweredOn") {
+                console.log("???????????????????대체 뭑 ㅏ문제야")
+                this.startScan()
+            } else {
+                BluetoothManager.getBluetoothManager().enable().then((bleManager) => {
+                    this.startCheckAndScan()
+                });
+            }
+        })
+        
+    }
+
     startScan() {
         /* start scanning */
-        userInfo.isScan = true
         BluetoothManager.getBluetoothManager().startDeviceScan(null,
             null, (error, device) => {
                 console.log("scanning");
+                if (error) {
+                    if(error.message === "Cannot start scanning operation")
+                        this.startCheckAndScan()
+                    console.log(error)
+                    return
+                }
                 console.log(connDeviceInfo.length + ", , " + flatListData.length)
                 if (connDeviceInfo.length === flatListData.length) {
                     console.log("scanning end")
@@ -40,6 +60,7 @@ export default class Login extends Component {
                 }
 
                 if (device != null && device.id != null) {
+                    console.log("in????")
                     for (let i = 0; i < flatListData.length; i++) {
                         if (flatListData[i].key === device.id) {
                             console.log("찾앗다.")
@@ -79,7 +100,7 @@ export default class Login extends Component {
                                                 userInfo.isScan = true
                                                 renderForUpdateItem()
                                                 console.log('비정상적인 연결 해제 ')
-                                                this.startScan()
+                                                this.startCheckAndScan()
                                             } else {
                                                 console.log('conn length' + connDeviceInfo.length)
                                                 console.log('정상적인 연결 해제')
@@ -97,13 +118,10 @@ export default class Login extends Component {
 
                     }
 
-                    if (error) {
-                        this.error(error.message)
-                        return
-                    }
                 }
-
+                console.log("끝!")
             })
+
         /* scanner option */
     }
 
@@ -153,7 +171,7 @@ export default class Login extends Component {
                     }
 
 
-                    this.startScan()
+                    this.startCheckAndScan()
                     // setTimeout(() => { BluetoothManager.getBluetoothManager().stopDeviceScan(); this.state.scanning = false }, 3000)
                 }
                 this.props.navigation.navigate('Main');

@@ -49,6 +49,7 @@ export default class Student_FlatListItem extends Component {
     setUserImageModalVisible(visible) {
         this.setState({ modalVisible: visible });
     }
+
     checkListItem() {
         if (this.state.isListLongPressed) {
             this.props.item.selected = !this.props.item.selected
@@ -59,6 +60,7 @@ export default class Student_FlatListItem extends Component {
             this.setUserImageModalVisible(true);
         }
     }
+
     componentWillReceiveProps(props) {
         if (!this.state.modalVisible) {
             this.state.email = this.props.item.email
@@ -74,6 +76,7 @@ export default class Student_FlatListItem extends Component {
         if (this.props.item.bpm > 127) {
             if (!this.state.itemUrgent) {
                 urgentStudents.push({
+                    'id' : this.props.item.id,
                     'name': this.state.name,
                     'tel': this.state.tel,
                 })
@@ -85,8 +88,7 @@ export default class Student_FlatListItem extends Component {
             if (this.state.itemUrgent) {
                 this.props.item.state = "양호한 상태"
                 for (let i = 0; i < urgentStudents.length; i++) {
-                    if (urgentStudents[i].tel == this.state.tel &&
-                        urgentStudents[i].name == this.state.name) {
+                    if (urgentStudents[i].id === this.props.item.id) {
                         urgentStudents.splice(i, 1)
                         if (urgentStudents.length == 0) {
                             this.props.setUrgentFalse()
