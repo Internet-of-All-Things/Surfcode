@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.facebook.react.ReactApplication;
 import com.horcrux.svg.SvgPackage;
+import com.johnsonsu.rnsoundplayer.RNSoundPlayerPackage;
 import com.github.wumke.RNExitApp.RNExitAppPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.imagepicker.ImagePickerPackage;
@@ -38,6 +39,7 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
             new SvgPackage(),
+            new RNSoundPlayerPackage(),
             new RNExitAppPackage(),
             new RNFetchBlobPackage(),
             new ImagePickerPackage(),
