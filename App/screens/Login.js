@@ -4,6 +4,7 @@ import flatListData from "../data/flatListData";
 import connDeviceInfo from "../data/connDeviceInfo";
 import BluetoothManager from '../utils/BluetoothManager';
 import userInfo from '../data/userInfo'
+import { renderForUpdateItem } from '../tabs/FirstTab'
 
 export default class Login extends Component {
     state = {
@@ -23,19 +24,43 @@ export default class Login extends Component {
         //BluetoothManager.getBluetoothManager().stopDeviceScan()
     }
 
+    startCheckAndScan() {
+        userInfo.isScan = true
+        BluetoothManager.getBluetoothManager().state().then((state) => {
+            if (state === "PoweredOn") {
+                console.log("???????????????????대체 뭑 ㅏ문제야")
+                this.startScan()
+            } else {
+                BluetoothManager.getBluetoothManager().enable().then((bleManager) => {
+                    this.startCheckAndScan()
+                });
+            }
+        })
+        
+    }
+
     startScan() {
         /* start scanning */
         BluetoothManager.getBluetoothManager().startDeviceScan(null,
             null, (error, device) => {
                 console.log("scanning");
+                if (error) {
+                    if(error.message === "Cannot start scanning operation")
+                        this.startCheckAndScan()
+                    console.log(error)
+                    return
+                }
                 console.log(connDeviceInfo.length + ", , " + flatListData.length)
                 if (connDeviceInfo.length === flatListData.length) {
                     console.log("scanning end")
                     BluetoothManager.getBluetoothManager().stopDeviceScan()
+                    userInfo.isScan = false
+                    //renderForUpdateItem()
                     return
                 }
 
                 if (device != null && device.id != null) {
+                    console.log("in????")
                     for (let i = 0; i < flatListData.length; i++) {
                         if (flatListData[i].key === device.id) {
                             console.log("찾앗다.")
@@ -65,8 +90,17 @@ export default class Login extends Component {
                                                 }
                                             }
                                             if (error !== null) {
+                                                console.log('비정상적인 연결 해제 2')
+                                                for (let j = 0; j < flatListData.length; j++) {
+                                                    if (flatListData[j].key === device.id) {
+                                                        flatListData[j].isConnected = false;
+                                                        break
+                                                    }
+                                                }
+                                                userInfo.isScan = true
+                                                renderForUpdateItem()
                                                 console.log('비정상적인 연결 해제 ')
-                                                this.startScan()
+                                                this.startCheckAndScan()
                                             } else {
                                                 console.log('conn length' + connDeviceInfo.length)
                                                 console.log('정상적인 연결 해제')
@@ -84,13 +118,10 @@ export default class Login extends Component {
 
                     }
 
-                    if (error) {
-                        this.error(error.message)
-                        return
-                    }
                 }
-
+                console.log("끝!")
             })
+
         /* scanner option */
     }
 
@@ -118,7 +149,8 @@ export default class Login extends Component {
                                 "user_icon_url": "../images/user/personxhdpi.png",
                                 "email": null,
                                 "tel": null,
-                                "selected": false
+                                "selected": false,
+                                "isConnected": false,
                             })
                         } else {
                             value = JSON.parse(value)
@@ -132,13 +164,14 @@ export default class Login extends Component {
                                 "user_icon_url": value.userImageSource,
                                 "email": value.email,
                                 "tel": value.tel,
-                                "selected": false
+                                "selected": false,
+                                "isConnected": false,
                             })
                         }
                     }
 
 
-                    this.startScan()
+                    this.startCheckAndScan()
                     // setTimeout(() => { BluetoothManager.getBluetoothManager().stopDeviceScan(); this.state.scanning = false }, 3000)
                 }
                 this.props.navigation.navigate('Main');
@@ -163,7 +196,7 @@ export default class Login extends Component {
                     <View
                         style={styles.logo}>
                         <Image
-                            style={{ width: '60%',tintColor:'#ffffff',resizeMode: 'contain'}}                            
+                            style={{ width: '60%', tintColor: '#ffffff', resizeMode: 'contain' }}
                             source={require('../images/logo.png')}
                         />
                     </View>

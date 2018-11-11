@@ -64,15 +64,12 @@ export default class FirstTab extends Component {
   }
 
   removeStudentData = async () => {
-    /* 현재 진행 중 */
-    console.log(flatListData)
     for (let i = 0; i < flatListData.length; i++) {
       if (flatListData[i].selected) {
-        for (let i = 0; i < urgentStudents.length; i++) {
+        for (let j = 0; j < urgentStudents.length; j++) {
           /* sound off */
-          if (urgentStudents[i].tel == flatListData[i].tel &&
-            urgentStudents[i].name == flatListData[i].name) {
-            urgentStudents.splice(i, 1)
+          if (urgentStudents[j].id === flatListData[i].id ) {
+            urgentStudents.splice(j, 1)
             if (urgentStudents.length == 0) {
               soundOff()
               SoundPlayer.stop()

@@ -18,6 +18,8 @@ import NavigationService from '../utils/NavigationService';
 import BluetoothManager from '../utils/BluetoothManager';
 import { updateState } from '../components/Student_BasicFlatList';
 import connDeviceInfo from "../data/connDeviceInfo";
+import { renderForUpdateItem } from '../tabs/FirstTab'
+import userInfo from '../data/userInfo'
 
 export default class FindDevice extends Component {
     state = {
@@ -73,6 +75,7 @@ export default class FindDevice extends Component {
     }
 
     scan() {
+        userInfo.isScan = true
         bluetoothDevices = []
         this.setState({ scanning: true, deviceCount: 0 })
         BluetoothManager.getBluetoothManager().startDeviceScan(null,
@@ -102,7 +105,14 @@ export default class FindDevice extends Component {
                     }
                 }
             });
-        setTimeout(() => { BluetoothManager.getBluetoothManager().stopDeviceScan(); this.state.scanning = false }, 3000)
+        setTimeout(() => {
+            BluetoothManager.getBluetoothManager().stopDeviceScan(); 
+            this.state.scanning = false
+            if(userInfo.isScan){
+                userInfo.isScan = false
+                renderForUpdateItem()
+            }
+         }, 3000)
 
     }
 
@@ -119,6 +129,10 @@ export default class FindDevice extends Component {
     goBack = async () => {
         BluetoothManager.getBluetoothManager().stopDeviceScan();
         NavigationService.navigate("Main", {});
+    }
+
+    setLoading = (loading) =>{
+        this.setState(loading)
     }
 
     render() {
@@ -186,7 +200,12 @@ export default class FindDevice extends Component {
                         renderItem={({ item, index }) => {
                             //console.log(`Item = ${item}, index = ${index}`);
                             return (
-                                <FlatListItem item={item} index={index} parentFlatList={this} >
+                                <FlatListItem 
+                                item={item} 
+                                index={index} 
+                                parentFlatList={this}
+                                setLoading={this.setLoading}
+                                 >
                                 </FlatListItem>
                             );
                         }}
@@ -280,10 +299,12 @@ class FlatListItem extends Component {
 
     startScan() {
         /* start scanning */
+        userInfo.isScan = true
         BluetoothManager.getBluetoothManager().startDeviceScan(null,
             null, (error, device) => {
                 console.log("scanning");
                 if (connDeviceInfo.length === flatListData.length) {
+                    userInfo.isScan = false
                     BluetoothManager.getBluetoothManager().stopDeviceScan()
                     return
                 }
@@ -317,7 +338,17 @@ class FlatListItem extends Component {
                                                     break
                                                 }
                                             }
+
                                             if (error !== null) {
+                                                console.log('비정상적인 연결 해제 2')
+                                                for (let j = 0; j < flatListData.length; j++) {
+                                                    if (flatListData[j].key === device.id) {
+                                                        flatListData[j].isConnected = false;
+                                                        break
+                                                    }
+                                                }
+                                                userInfo.isScan = true
+                                                renderForUpdateItem()
                                                 console.log('비정상적인 연결 해제 ')
                                                 this.startScan()
                                             } else {
@@ -351,7 +382,7 @@ class FlatListItem extends Component {
         return (
             <View>
                 <TouchableHighlight onPress={() => {
-
+                    this.props.setLoading({loading : true})
                     BluetoothManager.getBluetoothManager().stopDeviceScan()
                     /* start scanning */
                     this.props.item.device.connect()
@@ -370,7 +401,17 @@ class FlatListItem extends Component {
                                             break
                                         }
                                     }
-                                    if (error !== null) {   
+
+                                    if (error !== null) {
+                                        console.log('비정상적인 연결 해제 2')
+                                        for (let j = 0; j < flatListData.length; j++) {
+                                            if (flatListData[j].key === device.id) {
+                                                flatListData[j].isConnected = false;
+                                                break
+                                            }
+                                        }
+                                        userInfo.isScan = true
+                                        renderForUpdateItem()
                                         console.log('비정상적인 연결 해제 ')
                                         this.startScan()
                                     } else {

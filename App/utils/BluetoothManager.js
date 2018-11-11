@@ -41,6 +41,7 @@ setupNotifications = async (device) => {
             var i = 0;
             for (; i < flatListData.length; i++) {
                 if (characteristic.deviceID === flatListData[i].key) {
+                    flatListData[i].isConnected = true
                     break;
                 }
             }
@@ -50,8 +51,8 @@ setupNotifications = async (device) => {
                     let dateObj = new Date();
                     let key = {}
                     let date = moment(dateObj).format('YYYY-MM-DD/HH:mm:ss')
-                    key[new String('data/' + date + '/심박수')] = characteristic.value
-                    key[new String('data/' + date + '/호흡수')] = flatListData[i].brethe
+                    key[new String('data/' + date + '/심박수')] = characteristic.bpm
+                    key[new String('data/' + date + '/호흡수')] = characteristic.bpm
                     firebase.database().ref('data/'+userInfo.email).orderByChild('user/tel').equalTo(flatListData[i].tel).on('value',(snapshot) => {
                         snapshot.forEach((dataSnapShot)=> { 
                             firebase.database().ref('data/'+userInfo.email+'/'+dataSnapShot.key).update(key)
