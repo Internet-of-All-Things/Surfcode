@@ -18,9 +18,11 @@ const Navigator = createStackNavigator({
     FindDevice: {screen: FindDevice},
     //MainTabNavigator: {screen: MainTabNavigator},  
     MainScreen: {screen: MainScreen},  
-    Main: { screen: Main },
+    Main: { screen: Main }
 },{ 
     initialRouteName: 'Login',
+    swipeEnabled: false,
+    animationEnabled: false,    
 });
 
 export default Navigator;

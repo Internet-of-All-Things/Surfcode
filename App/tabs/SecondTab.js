@@ -26,7 +26,7 @@ import Student_LogFlatList from '../components/Student_LogFlatList'
 var data = {};
 export default class SecondScreen extends Component {
 
-    onDayPress(day) {
+    onDayPress(day) {        
         if (typeof (data[day.dateString]) !== 'undefined' && data[day.dateString].marked == true) {
             var tt = Object.keys(this.state.userLogData);
             for (var i = 0; i < tt.length; i++) {
@@ -35,28 +35,34 @@ export default class SecondScreen extends Component {
                 var logArray = []
                 var loadingCount = 0;
                 for (var j = 0; j < keys.length; j++) {
-                    //console.log(this.state.userLogData[tt[i]][keys[j]].tel,tt[i],keys[j])
                     firebase.database().ref('data/' + userInfo.email).orderByChild('user/tel/').equalTo(this.state.userLogData[tt[i]][keys[j]].tel).once('value', (snapshot) => {
                         snapshot.forEach((dataSnapShot) => {
                             let dd = dataSnapShot.val();
-                            /* User Image Info */                          
+                            /* User Image Info */
+                            var timeKey = Object.keys(dd['data'][day.dateString]) 
+                            const ordered = {};
+                            Object.keys(dd['data'][day.dateString]).sort().forEach(function(key) {
+                                ordered[key] = dd['data'][day.dateString][key];
+                            });
+                              
+                            //console.log("@@",ordered)
                             logArray.push({
-                                key : "[" + loadingCount +"]",
+                                key: "[" + loadingCount + "]",
                                 name: dd['user']['name'],
                                 date: day.dateString,
                                 tel: dd['user']['tel'],
                                 email: dd['user']['email'],
-                                data: dd['data'][day.dateString]
+                                data: ordered
                             });
                             this.setState({
                                 userLogDataArray: logArray
                             })
-                            console.log("ddddddddd",loadingCount, this.state.userLogDataArray[loadingCount].tel, this.state.userLogDataArray.length);
+
                             loadingCount++;
-                        })                        
+                        })
                     })
                 }
-                
+
             }
             this.setModalVisible(!this.state.modalVisible);
         }
@@ -69,24 +75,24 @@ export default class SecondScreen extends Component {
         firebase.database().ref(url).once('value', (snapshot) => {
 
             this.state.userLogData = snapshot.val();
+            if (typeof (this.state.userLogData) !== 'undefined') {
+                var tt = Object.keys(this.state.userLogData);//[ '2018-11-10' ]
 
-            var tt = Object.keys(this.state.userLogData);//[ '2018-11-10' ]
+                for (var i = 0; i < tt.length; i++) {
+                    data[tt[i]] = {
+                        marked: true,
+                        selected: true, selectedColor: '#2f52c4'
+                    };
 
-            for (var i = 0; i < tt.length; i++) {
-                data[tt[i]] = {
-                    marked: true,
-                    selected: true, selectedColor: '#2f52c4'
+                    //console.log(this.state.userLogData[tt[i]])
+                    //console.log(this.state.userLogData[tt[i]][keys[0]].tel)
+
                 };
 
-                //console.log(this.state.userLogData[tt[i]])
-                //console.log(this.state.userLogData[tt[i]][keys[0]].tel)
-
-            };
-
-            this.setState({
-                markedDates: data
-            });
-            console.log(this.state.markedDates, "dddd")
+                this.setState({
+                    markedDates: data
+                });
+            }
         });
     }
 
@@ -189,13 +195,13 @@ export default class SecondScreen extends Component {
                 <Modal
                     animationType="slide"
                     transparent={false}
-                    style={{flex:1}}
+                    style={{ flex: 1 }}
                     visible={this.state.modalVisible}
                     onRequestClose={() => {
                         this.setModalVisible(!this.state.modalVisible);
                     }}
                 >
-                    <View style={{flex:1}}>
+                    <View style={{ flex: 1 }}>
                         <ActionBar
                             containerStyle={styles.bar}
                             allowFontScaling={true}
