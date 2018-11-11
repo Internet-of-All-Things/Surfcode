@@ -2,55 +2,134 @@ import React, { Component } from "react";
 import { TouchableHighlight, Modal, ActivityIndicator, Image, FlatList, StyleSheet, Text, View, CheckBox } from "react-native";
 import firebase from "react-native-firebase";
 import ActionBar from "react-native-action-bar";
-import { LineChart } from 'react-native-chart-kit'
+import PureChart from 'react-native-pure-chart';
 import { Dimensions } from 'react-native'
-
+import { LineChart } from 'react-native-chart-kit'
 const screenWidth = Dimensions.get('window').width
 
 class Student_LogListItem extends Component {
+    
     state = {
         imageUrl: '../images/personxhdpi.png',
-        modalVisible: false,
-        chartLabels: [],
-        chartDatas: []
+        chartModalVisible: false,
+        chartDatas: [],
+        chartDatas2: [],
+        maxHeart: 0,
+        minHeart: 0,
+        maxBrethe: 0,
+        minBrethe: 0,
+        screenHeight: 1200,
+        chartLabels : []
     }
     constructor(props) {
         super(props)
-        console.log("Student_LogListItem!!!", props.item.tel, props.item.email)
-        firebase.storage().ref('student/' + props.item.tel + '/profile.jpg').getDownloadURL()
+        //console.log("Student_LogListItem!!!", props.item.tel, props.item.email)
+
+    }
+    componentDidMount() {
+        console.log("11111")
+        this.loadData();
+        firebase.storage().ref('student/' + this.props.item.tel + '/profile.jpg').getDownloadURL()
             .then((url) => {
-                this.state.imageUrl = url;
-                console.log("@@@ ", logArray.length, url)
+                this.setState({ imageUrl: url })
+                console.log("@@@ ", url)
             }).catch((error) => {
                 /* There is no match ref */
                 if (error.code === 'storage/object-not-found')
-                    this.state.imageUrl =  '../images/personxhdpi.png'                    
+                    this.state.imageUrl = '../images/personxhdpi.png'
             })
+        console.log("3333")
     }
-    setModalVisible(visible) {
-        this.setState({ modalVisible: visible });
+    loadData() {
+        var keys = Object.keys(this.props.item.data);
+        var datas = [
+            {
+                seriesName: 'heart',
+                data: [
+
+                ],
+                color: '#ff0000'
+            },
+            {
+                seriesName: 'brethe',
+                data: [
+
+                ],
+                color: '#0000ff'
+            }
+        ]
+        var datas2;
+        var ddd = []
+        var hhh = []
+        var ttt = []
+
+        var maxHeart = parseInt(this.props.item.data[keys[0]]['심박수'])
+        var minHeart = parseInt(this.props.item.data[keys[0]]['심박수'])
+        var maxBrethe = parseInt(this.props.item.data[keys[0]]['호흡수'])
+        var minBrethe = parseInt(this.props.item.data[keys[0]]['호흡수'])
+        for (var i = 0; i < keys.length; i++) {
+            var heart = parseInt(this.props.item.data[keys[i]]['심박수'])
+            var brethe = parseInt(this.props.item.data[keys[i]]['호흡수'])
+            //ttt.push(keys[i])
+            datas[0].data.push({
+                x: keys[i],
+                y: heart
+            })
+            datas[1].data.push({
+                x: keys[i],
+                y: brethe
+            })
+           // ddd.push(heart)
+            //hhh.push(brethe)
+            
+            if (maxBrethe < brethe)
+                maxBrethe = brethe;
+            if (minBrethe > brethe)
+                minBrethe = brethe;
+            if (maxHeart < heart)
+                maxHeart = heart;
+            if (minHeart > heart)
+                minHeart = heart;
+
+        }
+        // datas2 = [
+        //     {
+        //     data:ddd,
+        //     },
+        //     {
+        //     data:hhh
+        //     }
+        // ]
+        //console.log("~~~~ ",datas2)
+        this.setState({
+            //chartLabels : ttt,
+            chartDatas: datas,
+            maxHeart: maxHeart,
+            minHeart: minHeart,
+            maxBrethe: maxBrethe,
+            minBrethe: minBrethe,
+        });
+    }
+    setChartModalVisible(visible) {
+        console.log("dddddddddd")
+        this.setState({ chartModalVisible: visible });
+        console.log("=-------")
     }
     componentWillReceiveProps(props) {
         console.log("Student_LogListItem Receive props!!!");
     }
-    checkListLog() {
-        // this.setState({
+    
 
-        // })
-        console.log(this.props.item)
-        this.setModalVisible(!this.state.modalVisible);
-    }
-    render() {
+    render() { 
         return (
             <View>
                 {/*modal부분 start*/}
                 <Modal
-                    animationType="slide"
+                    animationType="fade"
                     transparent={false}
-                    style={{ flex: 1 }}
-                    visible={this.state.modalVisible}
+                    visible={this.state.chartModalVisible}
                     onRequestClose={() => {
-                        this.setModalVisible(!this.state.modalVisible);
+                        this.setChartModalVisible(!this.state.chartModalVisible);
                     }}
                 >
                     <View style={{ flex: 1 }}>
@@ -63,35 +142,58 @@ class Student_LogListItem extends Component {
                             titleContainerStyle={modalStyles.titleContainerStyle}
                             iconImageStyle={modalStyles.iconImageStyle}
                             leftIconName={"back"}
-                            onLeftPress={() => this.setModalVisible(!this.state.modalVisible)}
+                            onLeftPress={() => this.setChartModalVisible(!this.state.chartModalVisible)}
                             leftIconContainerStyle={modalStyles.leftIconContainerStyle}
                         />
+                        <View style={{ marginLeft: 20, marginTop: 10 }}>
+                            <Text style={[styles.textStyle, { fontSize: 15, fontFamily: 'Spoqa Han Sans Bold' }]}>심박수 및 호흡수</Text>
+                        </View>
+                        <View style={{ marginTop: 20, flexDirection: 'row' }}>
+                            <View style={{ flex: 0.5, alignItems: 'center' }}>
+                                <Text style={[styles.textStyle, { fontSize: 14, fontFamily: 'Spoqa Han Sans Regular' }]}>최고 심박수 : {this.state.maxHeart}</Text>
+                            </View>
+                            <View style={{ flex: 0.5, alignItems: 'center' }}>
+                                <Text style={[styles.textStyle, { fontSize: 14, fontFamily: 'Spoqa Han Sans Regular' }]}>최저 심박수 : {this.state.minHeart}</Text>
+                            </View>
+                        </View>
+                        <View style={{ marginTop: 10, flexDirection: 'row', marginBottom: 20 }}>
+                            <View style={{ flex: 0.5, alignItems: 'center' }}>
+                                <Text style={[styles.textStyle, { fontSize: 14, fontFamily: 'Spoqa Han Sans Regular' }]}>최고 호흡수 : {this.state.maxBrethe}</Text>
+                            </View>
+                            <View style={{ flex: 0.5, alignItems: 'center' }}>
+                                <Text style={[styles.textStyle, { fontSize: 14, fontFamily: 'Spoqa Han Sans Regular' }]}>최저 호흡수 : {this.state.minBrethe}</Text>
+                            </View>
+                        </View>
 
-                        <LineChart
-                            // labels={this.state.chartLabels}
-                            // data={this.state.chartDatas}
+
+
+                        <PureChart
+                                type={'line'}
+                                width={screenWidth}
+                                height={this.state.screenHeight}
+                                maxValue={this.state.maxBrethe>this.state.maxHeart?this.state.maxHeart+100:this.state.maxBrethe+100}
+                                minValue={this.state.minBrethe>this.state.minHeart?this.state.minHeart-10:this.state.minBrethe-10}
+                                numberOfYAxisGuideLine={50}
+                                data={this.state.chartDatas}
+                                customValueRenderer={(index, point) => {
+                                    if (index % 2 === 0) return null
+                                    return (                                        
+                                         <Text style={{top:'23%', textAlign: 'center', fontSize: 11, fontFamily: 'Spoqa Han Sans Regular',paddingTop:10}}>{point.y}</Text>                                        
+                                    )
+                                }} />
+                        {/* <LineChart
                             data={{
-                                labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-                                datasets: [{
-                                    data: [
-                                        Math.random() * 100,
-                                        Math.random() * 100,
-                                        Math.random() * 100,
-                                        Math.random() * 100,
-                                        Math.random() * 100,
-                                        Math.random() * 100
-                                    ]
-                                }]
+                                labels: this.state.chartLabels,
+                                datasets: this.state.chartDatas
                             }}
-                            width={screenWidth}
-                            height={Dimensions.get('window').height}
+                            width={Dimensions.get('window').width} // from react-native
+                            height={220}
                             chartConfig={{
-                                //backgroundColor:'#f9f9fa',
-                                //backgroundColor: '#e26a00',
-                                 backgroundGradientFrom: '#f9f9fa',
-                                 backgroundGradientTo: '#f9f9fa',
+                                backgroundColor: '#e26a00',
+                                backgroundGradientFrom: '#fb8c00',
+                                backgroundGradientTo: '#ffa726',
                                 decimalPlaces: 2, // optional, defaults to 2dp
-                                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
                                 style: {
                                     borderRadius: 16
                                 }
@@ -99,14 +201,23 @@ class Student_LogListItem extends Component {
                             bezier
                             style={{
                                 marginVertical: 8,
-                                borderRadius: 5
+                                borderRadius: 16
                             }}
-                        />
+                        /> */}
+
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginRight: 15 }}>
+                            <View style={[styles.colorStyle, { backgroundColor: "#ff0000" }]} />
+                            <Text style={[styles.textStyle, { fontSize: 10, fontFamily: 'Spoqa Han Sans Regular' }]}>심박수</Text>
+                            <View style={[styles.colorStyle, { backgroundColor: "#0000ff" }]} />
+                            <Text style={[styles.textStyle, { fontSize: 10, fontFamily: 'Spoqa Han Sans Regular' }]}>호흡수</Text>
+                        </View>
+
+
                     </View>
                 </Modal>
                 {/*modal부분 end*/}
-
-                <TouchableHighlight onPress={() => { this.checkListLog() }} underlayColor="#ffb8c6">
+                {/*onPress={() => navigate('ChartScreen',this.state)}*/}
+                <TouchableHighlight onPress={() => this.setChartModalVisible(!this.state.chartModalVisible)} underlayColor="#ffb8c6">
                     <View style={{
                         flex: 1,
                         flexDirection: "row",
@@ -132,21 +243,21 @@ class Student_LogListItem extends Component {
                         </View>
                         <View style={{ flex: 0.7, flexDirection: "column", paddingTop: 5 }}>
                             <View style={{ flexDirection: 'row', flex: 0.5, marginTop: 2, alignItems: 'center' }}>
-                                <View style={{ flex: 0.35 }}>
+                                <View style={{ flex: 0.3 }}>
                                     <Text style={styles.smallText}>Tel</Text>
                                 </View>
-                                <Text style={[styles.textStyle, { flex: 0.5, marginBottom: 2 }]}>{this.props.item.tel}</Text>
+                                <Text numberOfLines={1} style={[styles.textStyle, { flex: 0.7, marginBottom: 2 }]}>{this.props.item.tel}</Text>
                             </View>
                             <View style={{ flexDirection: 'row', flex: 0.5, marginTop: 2, alignItems: 'center' }}>
-                                <View style={{ flex: 0.35 }}>
+                                <View style={{ flex: 0.3 }}>
                                     <Text style={styles.smallText}>E-mail</Text>
                                 </View>
-                                <Text style={[styles.textStyle, { flex: 0.5, marginBottom: 2 }]}>{this.props.item.email}</Text>
+                                <Text numberOfLines={1} style={[styles.textStyle, { flex: 0.7, marginBottom: 2 }]}>{this.props.item.email}</Text>
                             </View>
                         </View>
                     </View>
                 </TouchableHighlight>
-            </View>
+            </View >
         );
     }
 }
@@ -159,39 +270,36 @@ export default class Student_LogFlatList extends Component {
 
     constructor(props) {
         super(props);
-        console.log("Student_LogFlatList!!!", props)
     }
     componentWillReceiveProps(props) {
-        this.setState({ animating: true })
         console.log("Student_LogFlatList Receive props!!!", props.userLogData.length);
         this.setState({ userLogData: props.userLogData })
         this.setState({ animating: false })
     }
     componentDidMount() {
-        this.setState({ animating: false })
+        console.log("mount!!!")
     }
-    render() {
+    componentWillUnmount() {
+        console.log("unmount!!!")
+        this.setState({ animating: true })
+    }
+    render() {        
         return (
             <View style={{ flex: 1 }}>
-                {this.props.userLogData.length > 0 ?
-                    (
-                        <View>
-                            <ActivityIndicator
-                                animating={this.state.animating}
-                                color='#bc2b78'
-                                size="large"
-                                style={styles.activityIndicator} />
-                            <FlatList
-                                data={this.props.userLogData}
-                                //showsVerticalScrollIndicator={false}
-                                renderItem={({ item, index }) => {
-                                    return <Student_LogListItem item={item} index={index} parentFlatList={this} />;
-                                }}
-                            />
-                        </View>
-                    ) : (
-                        <Text style={styles.textStyle}>기록 없음</Text>
-                    )}
+
+                <ActivityIndicator
+                    animating={this.state.animating}
+                    color='#bc2b78'
+                    size="large"
+                    style={styles.activityIndicator} />
+                <FlatList
+                    data={this.props.userLogData}
+                    //showsVerticalScrollIndicator={false}
+                    renderItem={({ item, index }) => {
+                        return <Student_LogListItem item={item} index={index} parentFlatList={this}/>;
+                    }}
+                />
+
             </View>
         );
     }
@@ -213,7 +321,7 @@ const styles = StyleSheet.create({
         flex: 1,
         position: 'absolute',
         left: '45%',
-        top: '50%',
+        top: '30%',
         justifyContent: 'center',
         alignItems: 'center',
         height: 80
@@ -221,6 +329,14 @@ const styles = StyleSheet.create({
     bar: {
         height: 55,
         alignItems: "center"
+    },
+    colorStyle: {
+        marginLeft: 8,
+        paddingTop: 3,
+        paddingBottom: 3,
+        paddingLeft: 6,
+        paddingRight: 6,
+        borderRadius: 5,
     }
 });
 const modalStyles = StyleSheet.create({
