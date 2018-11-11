@@ -162,7 +162,7 @@ export default class Login extends Component {
                     <View
                         style={styles.logo}>
                         <Image
-                            style={{ width: '70%' }}
+                            style={{ width: '60%',tintColor:'#ffffff',resizeMode: 'contain'}}                            
                             source={require('../images/logo.png')}
                         />
                     </View>
