@@ -66,7 +66,6 @@
 		085764B8C5014792A0E9E0F7 /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A828264E39345B3843AF27E /* libRNSVG.a */; };
 		5F54A797FE8E4772B3D08E0D /* libRNSVG-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D502E29E7B0E4998875AD33D /* libRNSVG-tvOS.a */; };
 		82F2FD1F780C447D8ABE5CD6 /* libRNSoundPlayer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A91467D3F965471AB2497F9C /* libRNSoundPlayer.a */; };
-
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1339,7 +1338,6 @@
 					"$(SRCROOT)\..\node_modules\react-native-fetch-blob\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-sound-player\ios",
-
 				);
 			};
 			name = Debug;
@@ -1371,7 +1369,6 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1382,11 +1379,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-ble-plx\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
 					"$(SRCROOT)\..\node_modules\react-native-fetch-blob\ios/**",
-
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
-
 					"$(SRCROOT)\..\node_modules\react-native-sound-player\ios",
-
 				);
 			};
 			name = Release;
@@ -1416,11 +1410,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-ble-plx\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
 					"$(SRCROOT)\..\node_modules\react-native-fetch-blob\ios/**",
-
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
-
 					"$(SRCROOT)\..\node_modules\react-native-sound-player\ios",
-
 				);
 			};
 			name = Debug;
@@ -1449,11 +1440,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-ble-plx\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-image-picker\ios",
 					"$(SRCROOT)\..\node_modules\react-native-fetch-blob\ios/**",
-
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
-
 					"$(SRCROOT)\..\node_modules\react-native-sound-player\ios",
-
 				);
 			};
 			name = Release;
@@ -1505,7 +1493,6 @@
 					"$(SRCROOT)\..\node_modules\react-native-fetch-blob\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-sound-player\ios",
-
 				);
 			};
 			name = Debug;
