@@ -11,9 +11,11 @@ import { AddButton } from "../components/AddButton";
 import Student_BasicFlatList from "../components/Student_BasicFlatList";
 import flatListData from "../data/flatListData";
 import BluetoothManager from "../utils/BluetoothManager"
-import connDeviceInfo from "../data/connDeviceInfo"
+import SoundPlayer from 'react-native-sound-player'
+import { soundOff } from "../components/Student_BasicFlatList"
+import urgentStudents from "../data/urgentStudents"
 
-function renderForUpdateItem(){
+function renderForUpdateItem() {
   this.forceUpdate()
 }
 
@@ -32,7 +34,7 @@ export default class FirstTab extends Component {
     userCareer: '경력',
     userImage: '이미지',
     /* firebase */
-    firebaseID: '', 
+    firebaseID: '',
   };
 
   constructor(props) {
@@ -40,8 +42,8 @@ export default class FirstTab extends Component {
     renderForUpdateItem = renderForUpdateItem.bind(this)
   }
 
-  componentWillUnmount(){
-    this.setState({unmount : true})
+  componentWillUnmount() {
+    this.setState({ unmount: true })
   }
 
   changeListLongPressedState = () => {
@@ -56,7 +58,7 @@ export default class FirstTab extends Component {
       await AsyncStorage.removeItem(key);
       return true;
     }
-    catch(exception) {
+    catch (exception) {
       return false;
     }
   }
@@ -64,26 +66,37 @@ export default class FirstTab extends Component {
   removeStudentData = async () => {
     /* 현재 진행 중 */
     console.log(flatListData)
-    for(let i = 0; i < flatListData.length; i++){
-      if(flatListData[i].selected){
-        console.log("i == "+i+"#########################")
-        //this.removeItemValue(flatListData.)
+    for (let i = 0; i < flatListData.length; i++) {
+      if (flatListData[i].selected) {
+        for (let i = 0; i < urgentStudents.length; i++) {
+          /* sound off */
+          if (urgentStudents[i].tel == flatListData[i].tel &&
+            urgentStudents[i].name == flatListData[i].name) {
+            urgentStudents.splice(i, 1)
+            if (urgentStudents.length == 0) {
+              soundOff()
+              SoundPlayer.stop()
+            }
+            break
+          }
+        }
+
         let temp = JSON.parse(await AsyncStorage.getItem('device'))
-        for(let j = 0; j < temp.devices.length; j++){
-          if(flatListData[i].key === temp.devices[j].key){
+        for (let j = 0; j < temp.devices.length; j++) {
+          if (flatListData[i].key === temp.devices[j].key) {
             AsyncStorage.removeItem(flatListData[i].key)
-            temp['devices'].splice(j,1)
-            AsyncStorage.setItem('device',JSON.stringify(temp))
+            temp['devices'].splice(j, 1)
+            AsyncStorage.setItem('device', JSON.stringify(temp))
             break
           }
         }
 
         console.log(temp)
-        BluetoothManager.getBluetoothManager().onDeviceDisconnected(flatListData[i].key, ()=>{
-          console.log("강제로 장치 연결 끊음")
+        BluetoothManager.getBluetoothManager().onDeviceDisconnected(flatListData[i].key, () => {
+          console.log("사용자 선택에 의한 장치 연결 해제")
         })
         BluetoothManager.getBluetoothManager().cancelDeviceConnection(flatListData[i].key)
-        flatListData.splice(i,1)
+        flatListData.splice(i, 1)
         i = i - 1
       }
     }
@@ -112,7 +125,7 @@ export default class FirstTab extends Component {
             <View
               style={{
                 marginLeft: 8,
-                marginTop:3,
+                marginTop: 3,
                 marginBottom: 3,
                 paddingTop: 1,
                 paddingBottom: 1,
@@ -124,7 +137,7 @@ export default class FirstTab extends Component {
                 borderColor: "#fff"
               }}
             >
-              <Text style={{ color: "#3b3e4c", fontSize: 12,  fontFamily: "SpoqaHanSans-Bold" }}>
+              <Text style={{ color: "#3b3e4c", fontSize: 12, fontFamily: "SpoqaHanSans-Bold" }}>
                 {flatListData.length}
               </Text>
             </View>
@@ -180,7 +193,7 @@ export default class FirstTab extends Component {
 
 const titleStyles = StyleSheet.create({
   container: {
-    height:54,
+    height: 54,
     flexDirection: "row",
     alignItems: "center",
     paddingLeft: 16,
@@ -200,7 +213,7 @@ const titleStyles = StyleSheet.create({
   subTitleStyle: {
     fontSize: 14,
     color: "#3b3e4c",
-    fontFamily:'Spoqa Han Sans Bold'
+    fontFamily: 'Spoqa Han Sans Bold'
   },
   titleUserText: {
     fontSize: 14,

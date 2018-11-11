@@ -4,6 +4,7 @@ import { TouchableHighlight, ActivityIndicator, FlatList, StyleSheet, Text, View
 import flatListData from "../data/flatListData";
 import Student_FlatListItem from './Student_FlatListItem'
 import SoundPlayer from 'react-native-sound-player'
+import urgentStudents from '../data/urgentStudents'
 
 function updateState(refresh) {
     if (!this.state.unmount) {
@@ -12,7 +13,11 @@ function updateState(refresh) {
     }
 }
 
-export { updateState }
+function soundOff(){
+    this.state.urgent = false
+}
+
+export { updateState, soundOff }
 
 export default class Student_BasicFlatList extends Component {
 
@@ -25,25 +30,31 @@ export default class Student_BasicFlatList extends Component {
 
     constructor(props) {
         super(props)
-        updateState = updateState.bind(this) 
+        updateState = updateState.bind(this)
+        soundOff = soundOff.bind(this)
+    }
+
+    setUrgentFalse = () => {
+        this.state.urgent = false
     }
 
     playSiren = () => {
         if (!this.state.urgent) {
             this.state.urgent = true
             try {
-                // play the file tone.mp3
                 SoundPlayer.playSoundFile('urgent', 'mp3')
-                // or play from url
-                //SoundPlayer.playUrl('https://example.com/music.mp3')
+                //SoundPlayer.resume()
             } catch (e) {
                 console.log(`cannot play the sound file`, e)
             }
         }
     }
-    componentDidMount(){
+
+    componentDidMount() {
         SoundPlayer.onFinishedPlaying((success) => {
             this.state.urgent = false
+            if (urgentStudents.length > 0)
+                playSiren()
         })
     }
 
@@ -98,6 +109,7 @@ export default class Student_BasicFlatList extends Component {
                             item={item}
                             index={index}
                             playSiren={this.playSiren}
+                            setUrgentFalse={this.setUrgentFalse}
                             changeListLongPressedState={this.props.changeListLongPressedState}
                             isListLongPressed={this.state.isListLongPressed}
                             changeListCheckBoxSelectState={this.props.changeListCheckBoxSelectState} />;

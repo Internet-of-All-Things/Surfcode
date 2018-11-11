@@ -6,6 +6,8 @@ import ActionBar from "react-native-action-bar";
 import firebase from "react-native-firebase";
 import userInfo from "../data/userInfo"
 import moment from 'moment'
+import urgentStudents from '../data/urgentStudents'
+import SoundPlayer from 'react-native-sound-player'
 
 const options = {
     title: 'Input user data',
@@ -16,20 +18,20 @@ const options = {
     },
 };
 
-function updateStudentImage(userImageSource){
-    this.setState({userImageSource})
+function updateStudentImage(userImageSource) {
+    this.setState({ userImageSource })
     this.forceUpdate()
 }
-  
+
 export { updateStudentImage }
 
 export default class Student_FlatListItem extends Component {
     state = {
         isListLongPressed: false,
-        selected : false,
+        selected: false,
         userImageSource: '../images/personxhdpi.png',
         modalVisible: false,
-        itemUrgent : false,
+        itemUrgent: false,
     }
     constructor(props) {
         super(props);
@@ -38,8 +40,6 @@ export default class Student_FlatListItem extends Component {
         this.state.userImageSource = props.item.user_icon_url;
         updateStudentImage = updateStudentImage.bind(this)
     }
-
-    
 
     _onLongPressButton() {
         this.props.changeListLongPressedState();
@@ -59,69 +59,92 @@ export default class Student_FlatListItem extends Component {
         }
     }
     componentWillReceiveProps(props) {
-        if(!this.state.modalVisible){
+        if (!this.state.modalVisible) {
             this.state.email = this.props.item.email
             this.state.name = this.props.item.name
             this.state.tel = this.props.item.tel
         }
-        if(!this.state.isListLongPressed){
+        if (!this.state.isListLongPressed) {
             this.state.selected = false
         }
+        //if (this.props.item.isConnected)
         /* set urgent situation */
-        if(this.props.item.bpm > 127){
+        if (this.props.item.bpm > 127) {
+            if (!this.state.itemUrgent) {
+                urgentStudents.push({
+                    'name': this.state.name,
+                    'tel': this.state.tel,
+                })
+                this.props.item.state = "위험한 상태"
+            }
             this.state.itemUrgent = true
             this.props.playSiren()
-        }else{
+        } else {
+            if (this.state.itemUrgent) {
+                this.props.item.state = "양호한 상태"
+                for (let i = 0; i < urgentStudents.length; i++) {
+                    if (urgentStudents[i].tel == this.state.tel &&
+                        urgentStudents[i].name == this.state.name) {
+                        urgentStudents.splice(i, 1)
+                        if (urgentStudents.length == 0) {
+                            this.props.setUrgentFalse()
+                            SoundPlayer.stop()
+                            //SoundPlayer.pause();
+                        }
+                        break
+                    }
+                }
+            }
             this.state.itemUrgent = false
         }
         this.setState({ isListLongPressed: props.isListLongPressed });
-        
+
     }
 
     setUserImage() {
         ImagePicker.showImagePicker(options, response => {
-          console.log("Response = ", response);
-    
-          if (response.didCancel) {
-            console.log("User cancelled image picker");
-          } else if (response.error) {
-            console.log("ImagePicker Error: ", response.error);
-          } else if (response.customButton) {
-            console.log("User tapped custom button: ", response.customButton);
-          } else {
-            
-            this.setState({
-                userImageSource: response.uri
-            });
-          }
+            console.log("Response = ", response);
+
+            if (response.didCancel) {
+                console.log("User cancelled image picker");
+            } else if (response.error) {
+                console.log("ImagePicker Error: ", response.error);
+            } else if (response.customButton) {
+                console.log("User tapped custom button: ", response.customButton);
+            } else {
+
+                this.setState({
+                    userImageSource: response.uri
+                });
+            }
         });
-      }
+    }
     saveUserDate() {
         let firebaseID = userInfo.email
         let dbUrl = 'member/teacher/' + firebaseID
 
         this.props.item.email = this.state.email
         this.props.item.name = this.state.name
-        this.props.item.tel = this.state.tel 
+        this.props.item.tel = this.state.tel
         let dateObj = new Date();
         let date = moment(dateObj).format('YYYY-MM-DD')
-        var tempKey = firebase.database().ref(dbUrl+"/students/"+date).push().key
-        console.log(dbUrl+'/students/'+date+'/'+tempKey)
-        firebase.database().ref(dbUrl+'/students/'+date+'/'+tempKey).set(
+        var tempKey = firebase.database().ref(dbUrl + "/students/" + date).push().key
+        console.log(dbUrl + '/students/' + date + '/' + tempKey)
+        firebase.database().ref(dbUrl + '/students/' + date + '/' + tempKey).set(
             {
-                "email" : this.props.item.email,
-                "name" : this.props.item.name,
-                "tel" : this.props.item.tel,
+                "email": this.props.item.email,
+                "name": this.props.item.name,
+                "tel": this.props.item.tel,
             }
         )
 
-        var newDataRef = firebase.database().ref("data/"+firebaseID).push().child('user')
+        var newDataRef = firebase.database().ref("data/" + firebaseID).push().child('user')
         newDataRef.set({
-            "email" : this.props.item.email,
-            "name" : this.props.item.name,
-            "tel" : this.props.item.tel,
+            "email": this.props.item.email,
+            "name": this.props.item.name,
+            "tel": this.props.item.tel,
         })
-        
+
         /*firebase
               .storage()
               .ref("student/"+this.state.tel)
@@ -135,13 +158,13 @@ export default class Student_FlatListItem extends Component {
         try {
             console.log(this.props.item)
             console.log("##################")
-          await AsyncStorage.setItem(this.props.item.key, JSON.stringify({
-            key : this.props.item.key,
-            name : this.state.name,
-            email : this.state.email,
-            tel : this.state.tel,
-            userImageSource : this.state.userImageSource
-          }))
+            await AsyncStorage.setItem(this.props.item.key, JSON.stringify({
+                key: this.props.item.key,
+                name: this.state.name,
+                email: this.state.email,
+                tel: this.state.tel,
+                userImageSource: this.state.userImageSource
+            }))
         } catch (error) {
             console.log("$$$$$$$$$$$$$$$$$$$")
             console.log(error);
@@ -157,9 +180,9 @@ export default class Student_FlatListItem extends Component {
                         flex: 1,
                         flexDirection: "row",
                         padding: 10,
-                        alignItems : 'center',
+                        alignItems: 'center',
                         backgroundColor:
-                        this.state.itemUrgent?'#f33c17' : '#f9f9fa'
+                            this.state.itemUrgent ? '#f33c17' : '#f9f9fa'
                         //this.props.index % 2 == 0 ? "#ffffff" : "#65edea"
                     }}>
                         {this.state.isListLongPressed ? (
@@ -184,16 +207,16 @@ export default class Student_FlatListItem extends Component {
                         <View style={{
                             flexDirection: 'row',
                             justifyContent: 'center',
-                            alignItems : 'center'
+                            alignItems: 'center'
                         }}>
-                            <Image source={{uri:this.state.userImageSource}} style={{
+                            <Image source={{ uri: this.state.userImageSource }} style={{
                                 width: 50,
                                 height: 50,
                                 borderWidth: 1,
                                 borderColor: '#82889c',
                                 borderRadius: 100,
-                                backgroundColor:'#f9f9fa'
-                            }}  />
+                                backgroundColor: '#f9f9fa'
+                            }} />
                         </View>
 
                         {/*modal부분 start*/}
@@ -227,13 +250,13 @@ export default class Student_FlatListItem extends Component {
                                         console.log("dsfsdf");
                                         this.setUserImage();
                                     }}>
-                                    <Image source={{uri:this.state.userImageSource}} style={{
+                                    <Image source={{ uri: this.state.userImageSource }} style={{
                                         width: 120,
                                         height: 120,
                                         borderWidth: 1,
                                         borderColor: '#82889c',
                                         borderRadius: 100,
-                                        backgroundColor:'#f9f9fa'
+                                        backgroundColor: '#f9f9fa'
                                     }} />
                                 </TouchableHighlight>
                             </View>
@@ -290,24 +313,32 @@ export default class Student_FlatListItem extends Component {
                         {/*modal부분 end*/}
 
                         <View style={{ flex: 0.45, flexDirection: "column", marginLeft: 25 }}>
-                            <Text style={[styles.textStyle, { fontSize: 22, fontFamily: 'Spoqa Han Sans Bold' }]}>{this.props.item.name}</Text>
-                            <Text style={styles.smallText}>{this.props.item.state}</Text>
+                            <Text style={[styles.textStyle, 
+                                { fontSize: 22, 
+                                fontFamily: 'Spoqa Han Sans Bold',
+                                color: this.state.itemUrgent ? '#f9f9fa' : '#3b3e4c' }]}>
+                                {this.props.item.name}
+                            </Text>
+                            <Text style={[styles.smallText,
+                                { color: this.state.itemUrgent ? '#f9f9fa' : '#82889c'}]}>
+                                {this.props.item.state}
+                            </Text>
                         </View>
                         <View style={{ flex: 0.55, flexDirection: "row", paddingTop: 5 }}>
                             <View style={{ flex: 0.5, alignItems: 'center' }}>
-                                <Text style={[styles.textStyle, { flex: 0.5, marginBottom:2}]}>{this.props.item.bpm} BPM</Text>
-                                <View style={{ flexDirection: 'row', flex: 0.5,marginTop:2, alignItems:'center' }}>
-                                    <Image style={{ marginRight: 5, width: 12, height: 12, tintColor: "#82889c", resizeMode: 'contain' }} source={require('../images/empty-heartmdpi.png')} />
-                                    <Text style={styles.smallText}>심박</Text>
+                                <Text style={[styles.textStyle, { flex: 0.5, marginBottom: 2, color: this.state.itemUrgent ? '#f9f9fa' : '#3b3e4c' }]}>{this.props.item.bpm} BPM</Text>
+                                <View style={{ flexDirection: 'row', flex: 0.5, marginTop: 2, alignItems: 'center' }}>
+                                    <Image style={{ marginRight: 5, width: 12, height: 12, tintColor: this.state.itemUrgent ? '#f9f9fa' : "#82889c", resizeMode: 'contain' }} source={require('../images/empty-heartmdpi.png')} />
+                                    <Text style={[styles.smallText, { color: this.state.itemUrgent ? '#f9f9fa' : '#82889c' }]}>심박</Text>
                                 </View>
                             </View>
 
-                            <View style={{ width: 1, marginBottom: 15, backgroundColor: '#d0d2da', marginTop: 15, marginLeft:5, marginRight:5 }} />{/* 바 부분 */}
+                            <View style={{ width: 1, marginBottom: 15, backgroundColor: '#d0d2da', marginTop: 15, marginLeft: 5, marginRight: 5 }} />{/* 바 부분 */}
                             <View style={{ flex: 0.5, alignItems: 'center' }}>
-                                <Text style={[styles.textStyle, { flex: 0.5, marginBottom:2 }]}>{this.props.item.brethe}/Min</Text>
-                                <View style={{ flexDirection: 'row', flex: 0.5,marginTop:2, alignItems:'center' }}>
-                                    <Image style={{ marginRight: 5, width: 12, height: 12, tintColor: "#82889c", resizeMode: 'contain' }} source={require('../images/breathingmdpi.png')} />
-                                    <Text style={styles.smallText}>호흡</Text>
+                                <Text style={[styles.textStyle, { flex: 0.5, marginBottom: 2, color: this.state.itemUrgent ? '#f9f9fa' : '#3b3e4c' }]}>{this.props.item.brethe}/Min</Text>
+                                <View style={{ flexDirection: 'row', flex: 0.5, marginTop: 2, alignItems: 'center' }}>
+                                    <Image style={{ marginRight: 5, width: 12, height: 12, tintColor: this.state.itemUrgent ? '#f9f9fa' : "#82889c", resizeMode: 'contain' }} source={require('../images/breathingmdpi.png')} />
+                                    <Text style={[styles.smallText, { color: this.state.itemUrgent ? '#f9f9fa' : '#82889c' }]}>호흡</Text>
                                 </View>
                             </View>
                         </View>

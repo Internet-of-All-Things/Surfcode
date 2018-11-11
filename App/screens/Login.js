@@ -58,17 +58,18 @@ export default class Login extends Component {
                                     BluetoothManager.
                                         getBluetoothManager().
                                         onDeviceDisconnected(device.id, (error, device) => {
-                                            if (error !== null) {
-                                                for (let j = 0; j < connDeviceInfo.length; j++) {
-                                                    if (connDeviceInfo[j].key === device.id) {
-                                                        connDeviceInfo.splice(j, 1)
-                                                        break
-                                                    }
+                                            for (let j = 0; j < connDeviceInfo.length; j++) {
+                                                if (connDeviceInfo[j].key === device.id) {
+                                                    connDeviceInfo.splice(j, 1)
+                                                    break
                                                 }
-                                                console.log('ㅁㅁ마마먐ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ')
+                                            }
+                                            if (error !== null) {
+                                                console.log('비정상적인 연결 해제 ')
                                                 this.startScan()
                                             } else {
-                                                console.log('ㅁㅁ마마먐ㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁㅁ123123123123123')
+                                                console.log('conn length' + connDeviceInfo.length)
+                                                console.log('정상적인 연결 해제')
                                             }
                                         })
                                     return BluetoothManager.setupNotifications(device)
