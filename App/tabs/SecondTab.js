@@ -6,7 +6,7 @@ import {
     ScrollView,
     View,
     Modal,
-    Image,
+    Image,    
     TouchableHighlight,
     TouchableOpacity
 } from "react-native";
@@ -44,15 +44,25 @@ export default class SecondScreen extends Component {
                             Object.keys(dd['data'][day.dateString]).sort().forEach(function(key) {
                                 ordered[key] = dd['data'][day.dateString][key];
                             });
-                              
-                            //console.log("@@",ordered)
+
+                            
+                            let ddkeys = Object.keys(ordered);
+                            var orderedData = {}
+                            if(ddkeys.length > 10){
+                                for(var i= ddkeys.length-10; i<ddkeys.length; i++)
+                                    orderedData[ddkeys[i]] = ordered[ddkeys[i]]                                    
+                            }
+                            else
+                                orderedData = ordered
+                                
+                            
                             logArray.push({
                                 key: "[" + loadingCount + "]",
                                 name: dd['user']['name'],
                                 date: day.dateString,
                                 tel: dd['user']['tel'],
                                 email: dd['user']['email'],
-                                data: ordered
+                                data: orderedData
                             });
                             this.setState({
                                 userLogDataArray: logArray
@@ -71,7 +81,7 @@ export default class SecondScreen extends Component {
 
     readUserLogData = async (value) => {
         let url = 'member/teacher/' + userInfo.firebaseID + '/students';
-        console.log("!!!!!!", url)
+       // console.log("!!!!!!", url)
         firebase.database().ref(url).once('value', (snapshot) => {
 
             this.state.userLogData = snapshot.val();
@@ -84,8 +94,8 @@ export default class SecondScreen extends Component {
                         selected: true, selectedColor: '#2f52c4'
                     };
 
-                    console.log(this.state.userLogData[tt[i]])
-                    //console.log(this.state.userLogData[tt[i]][keys[0]].tel)
+                    //console.log(this.state.userLogData[tt[i]])
+                    
 
                 };
 
@@ -246,7 +256,7 @@ export default class SecondScreen extends Component {
                         maxDate={this.state.maxdate}
                         onDayPress={this.onDayPress}
                         markedDates={this.state.markedDates}
-                        onDayLongPress={(day) => { console.log('selected day', day) }}
+                        //onDayLongPress={(day) => { console.log('selected day', day) }}
                         // markedDates={{
                         //     [this.state.selected]: {
                         //         selected: true,

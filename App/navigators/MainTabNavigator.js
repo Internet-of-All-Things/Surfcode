@@ -4,7 +4,7 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
+  Image,  
   ViewPagerAndroid,
   TouchableHighlight
 } from "react-native";
@@ -116,7 +116,7 @@ const MainTabNavigator = createBottomTabNavigator(
       },
       tabStyle: {}
     },
-    lazy: true
+    lazy: false
   }
 );
 
