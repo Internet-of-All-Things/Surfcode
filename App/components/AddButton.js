@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Animated, Easing, TouchableHighlight, TouchableOpacity, View, Modal, Text, TextInput, StyleSheet, Platform, FlatList, Image, Alert } from "react-native";
+import { Animated, Easing, TouchableHighlight, TouchableOpacity, View, Text, TextInput, StyleSheet, Platform, FlatList, Image, Alert } from "react-native";
 import EasyBluetooth from 'easy-bluetooth-classic';
 import ActionBar from 'react-native-action-bar';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -73,8 +73,6 @@ class FlatListItem extends Component {
 
 class AddButton extends Component {
     state = {
-        modalVisible: false,
-        studentModalVisible: false,
         refreshing: false,
         deviceCount: 0,
         studentCount: 0,
@@ -89,11 +87,6 @@ class AddButton extends Component {
             duration: 300
         }).start();
     };
-
-
-    setStudentModalVisible(visible) {
-        this.setState({ studentModalVisible: visible });
-    }
 
     showActionSheet = () => {
         this.ActionSheet.show()
@@ -141,7 +134,6 @@ class AddButton extends Component {
                 position: 'absolute',
                 alignItems: 'center',
                 right: right, bottom: bottom, height: 30, width: 30
-
             }}>               
                 {/*ActionSheet 부분 Start*/}
                 <ActionSheet
@@ -214,55 +206,4 @@ AddButton.defaultProps = {
     bottom: 50,    
 };
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#F5FCFF',
-    },
-    welcome: {
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 10,
-    },
-    instructions: {
-        textAlign: 'center',
-        color: '#333333',
-        marginBottom: 20,
-    },
-    FlatList: {
-        height: 360,
-        marginTop: 24,
-        width: 320
-    },
-    bar: {
-        height: 55,
-        alignItems: 'center'
-    },
-    leftIconContainerStyle: {
-
-    },
-    titleContainerStyle: {
-        alignItems: 'center',
-        paddingRight: 40
-    },
-    titleStyle: {
-        fontSize: 16,
-        color: '#3b3e4c'
-    },
-    iconImageStyle: {
-        marginLeft: 24,
-        width: 14.5,
-        height: 30,
-        tintColor: '#82889c'
-    },
-    textInputStyle: {
-        marginLeft: 10,
-        backgroundColor: '#f2f3f6',
-        width: '90%',
-        height: 40,
-        overflow:"hidden"
-    }
-});
 export { AddButton };

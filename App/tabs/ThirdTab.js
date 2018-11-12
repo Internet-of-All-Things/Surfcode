@@ -112,14 +112,20 @@ export default class ThirdTab extends Component {
         // });
     }
     componentDidMount() {
+        console.log("thridtab didmount!!")
         navigator.geolocation.getCurrentPosition(
             position => {
+                
+                console.log("~~!@@@@ err")
+                console.log("@",position)
                 this._getWeather(position.coords.latitude, position.coords.longitude)
                 this._getFutureWeather(position.coords.latitude, position.coords.longitude)
                 this.setState({
                     isLoaded: true,
                 });
                 error => {
+                    console.log("~~!@@@@ ")
+                    console.log("@",error)
                     this.setState({
                         error: error
                     });
