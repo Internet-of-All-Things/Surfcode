@@ -26,7 +26,8 @@ export default class Main extends Component {
     constructor(props) {
         super(props);
         if (Platform.OS === 'android' && Platform.Version >= 23) {
-            PermissionManager.getPermissions(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION);
+            PermissionManager.getPermissions(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+            //PermissionManager.getPermissions(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION);
         }
     }
 
