@@ -34,6 +34,7 @@ export default class Student_FlatListItem extends Component {
         modalVisible: false,
         itemUrgent: false,
         isItemScan: false,
+        count: 0,
     }
     constructor(props) {
         super(props);
@@ -68,6 +69,9 @@ export default class Student_FlatListItem extends Component {
             this.state.name = this.props.item.name
             this.state.tel = this.props.item.tel
             this.state.age = this.props.item.age
+            this.state.highhr = this.props.item.highhr
+            this.state.lowhr = this.props.item.lowhr
+            this.state.slowhr = this.props.item.slowhr
         }
         if (!this.state.isListLongPressed) {
             this.state.selected = false
@@ -126,6 +130,7 @@ export default class Student_FlatListItem extends Component {
             }
         });
     }
+
     saveUserDate() {
         let firebaseID = userInfo.firebaseID
         let dbUrl = 'member/teacher/' + firebaseID
@@ -137,61 +142,82 @@ export default class Student_FlatListItem extends Component {
         this.props.item.highhr = false
         this.props.item.lowhr = false
         this.props.item.slowhr = false
-        if(this.state.highhr){
-            this.props.item.highhr = true  
-        }else if(this.state.lowhr){
+        if (this.state.highhr) {
+            this.props.item.highhr = true
+        } else if (this.state.lowhr) {
             this.props.item.lowhr = true
-        }else if(this.state.slowhr){
+        } else if (this.state.slowhr) {
             this.props.item.slowhr = true
         }
 
         let dateObj = new Date();
         let date = moment(dateObj).format('YYYY-MM-DD')
-        var tempKey = firebase.database().ref(dbUrl + "/students/" + date).push().key
-        console.log(dbUrl + '/students/' + date + '/' + tempKey)
-        firebase.database().ref(dbUrl + '/students/' + date + '/' + tempKey).set(
-            {
-                "email": this.props.item.email,
-                "name": this.props.item.name,
-                "tel": this.props.item.tel,
-                "age": this.props.item.age,
-                "highhr": this.props.item.highhr,
-                "lowhr" : this.props.item.lowhr,
-                "slowhr" : this.props.item.slowhr,
-            }
-        )
 
-        var newDataRef = firebase.database().ref("data/" + firebaseID).push().child('user')
-        newDataRef.set({
+        let key = {
             "email": this.props.item.email,
             "name": this.props.item.name,
             "tel": this.props.item.tel,
             "age": this.props.item.age,
             "highhr": this.props.item.highhr,
-            "lowhr" : this.props.item.lowhr,
-            "slowhr" : this.props.item.slowhr,
+            "lowhr": this.props.item.lowhr,
+            "slowhr": this.props.item.slowhr,
+        }
+        console.log(dbUrl + '/students/' + date)
+        firebase.database().ref(dbUrl + '/students/' + date).once('value', (snapshot) => {
+            console.log(snapshot.val())
+            if (snapshot.val() === null) {
+                console.log("!!!!!!!!!!!!!!!!!!!!")
+                var tempKey = firebase.database().ref(dbUrl + "/students/" + date).push().key
+                firebase.database().ref(dbUrl + '/students/' + date + '/' + tempKey).set(key)
+                var newDataRef = firebase.database().ref("data/" + firebaseID).push().child('user')
+                newDataRef.set(key)
+            } else {
+                console.log("!!!!!@@@@@@@@@@@@@@@@")
+                count = 0
+                snapshot.forEach((dataSnapShot) => {
+                    count = count + 1
+                    if (dataSnapShot.tel === this.props.item.tel) {
+                        firebase.database().ref(dbUrl +'/students/' + date + '/' + dataSnapShot.key).update(key)
+                        count = count - 1
+                        return
+                    }
+                    console.log(snapshot.numChildren() + " , " + count)
+                    if (count === snapshot.numChildren()) {
+                        var tempKey = firebase.database().ref(dbUrl + "/students/" + date).push().key
+                        console.log(dbUrl + '/students/' + date + '/' + tempKey)
+                        firebase.database().ref(dbUrl + '/students/' + date + '/' + tempKey).set(key)
+                        var newDataRef = firebase.database().ref("data/" + firebaseID).push().child('user')
+                        newDataRef.set(key)
+                    }
+                })
+            }
+            console.log('넘어간다~')
         })
 
-        if(this.state.userImageSource!=='../images/personxhdpi.png' )
+        if (this.state.userImageSource !== '../images/user/personxhdpi.png')
             firebase
-              .storage()
-              .ref("student/"+this.state.tel)
-              .child("profile.jpg")
-              .put(this.state.userImageSource, { contentType: "image/jpg" });
+                .storage()
+                .ref("student/" + this.state.tel)
+                .child("profile.jpg")
+                .put(this.state.userImageSource, { contentType: "image/jpg" });
         this._storeData()
         this.setUserImageModalVisible(!this.state.modalVisible);
     }
 
     _storeData = async () => {
         try {
-            console.log(this.props.item)
+            //console.log(this.props.item)
             console.log("##################")
             await AsyncStorage.setItem(this.props.item.key, JSON.stringify({
                 key: this.props.item.key,
                 name: this.state.name,
                 email: this.state.email,
                 tel: this.state.tel,
-                userImageSource: this.state.userImageSource
+                userImageSource: this.state.userImageSource,
+                age: this.state.age,
+                highhr: this.state.highhr,
+                lowhr: this.state.lowhr,
+                slowhr: this.state.slowhr,
             }))
         } catch (error) {
             console.log("$$$$$$$$$$$$$$$$$$$")
@@ -286,7 +312,6 @@ export default class Student_FlatListItem extends Component {
                             }}>
                                 <TouchableHighlight
                                     onPress={() => {
-                                        console.log("dsfsdf");
                                         this.setUserImage();
                                     }}>
                                     <Image source={{ uri: this.state.userImageSource }} style={{
@@ -362,96 +387,98 @@ export default class Student_FlatListItem extends Component {
                                     fontFamily: 'Spoqa Han Sans Bold'
                                 }}>병력</Text>
                             </View>
-                            <View style={[styles.info,{alignItems: 'center',
-                                    justifyContent: 'center', marginBottom : 10 }]}>
-                            <TouchableHighlight
-                                onPress={() => this.state.autoColor ? this.setState({ autoColor: 0 }) : this.setState({ autoColor: 1 })}
-                                style={{
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                }}
-                                underlayColor="#f9f9fa"
-                            ><View>
-                                    <CheckBox
-                                        title=''
-                                        containerStyle={
-                                            {
-                                                padding: 0,
-                                                borderColor: '#ff000000',
-                                                backgroundColor: '#ff000000'
+                            <View style={[styles.info, {
+                                alignItems: 'center',
+                                justifyContent: 'center', marginBottom: 10
+                            }]}>
+                                <TouchableHighlight
+                                    onPress={() => this.state.autoColor ? this.setState({ autoColor: 0 }) : this.setState({ autoColor: 1 })}
+                                    style={{
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                    underlayColor="#f9f9fa"
+                                ><View>
+                                        <CheckBox
+                                            title=''
+                                            containerStyle={
+                                                {
+                                                    padding: 0,
+                                                    borderColor: '#ff000000',
+                                                    backgroundColor: '#ff000000'
+                                                }
                                             }
-                                        }
-                                        checked={this.state.slowhr}
-                                        onPress={() => { this.setState({slowhr : !this.state.slowhr}) }}
-                                    />
-                                    <Text
-                                        style={{
-                                            fontSize: 15,
-                                        }}
-                                    >서맥</Text>
-                                </View>
-                            </TouchableHighlight>
-                            <TouchableHighlight
-                                onPress={() => this.state.autoColor ? this.setState({ autoColor: 0 }) : this.setState({ autoColor: 1 })}
-                                style={{
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                }}
-                                underlayColor="#f9f9fa"
-                            ><View>
-                                    <CheckBox
-                                        title=''
-                                        containerStyle={
-                                            {
-                                                padding: 0,
-                                                borderColor: '#ff000000',
-                                                backgroundColor: '#ff000000'
+                                            checked={this.state.slowhr}
+                                            onPress={() => { this.setState({ slowhr: !this.state.slowhr }) }}
+                                        />
+                                        <Text
+                                            style={{
+                                                fontSize: 15,
+                                            }}
+                                        >서맥</Text>
+                                    </View>
+                                </TouchableHighlight>
+                                <TouchableHighlight
+                                    onPress={() => this.state.autoColor ? this.setState({ autoColor: 0 }) : this.setState({ autoColor: 1 })}
+                                    style={{
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                    underlayColor="#f9f9fa"
+                                ><View>
+                                        <CheckBox
+                                            title=''
+                                            containerStyle={
+                                                {
+                                                    padding: 0,
+                                                    borderColor: '#ff000000',
+                                                    backgroundColor: '#ff000000'
+                                                }
                                             }
-                                        }
-                                        checked={this.state.highhr}
-                                        onPress={() => { this.setState({highhr : !this.state.highhr}) }}
-                                    />
-                                    <Text
-                                        style={{
-                                            fontSize: 15,
-                                        }}
-                                    >고혈압</Text>
-                                </View>
-                            </TouchableHighlight>
-                            <TouchableHighlight
-                                onPress={() => this.state.autoColor ? this.setState({ autoColor: 0 }) : this.setState({ autoColor: 1 })}
-                                style={{
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                }}
-                                underlayColor="#f9f9fa"
-                            ><View>
-                                    <CheckBox
-                                        title=''
-                                        containerStyle={
-                                            {
-                                                padding: 0,
-                                                borderColor: '#ff000000',
-                                                backgroundColor: '#ff000000'
+                                            checked={this.state.highhr}
+                                            onPress={() => { this.setState({ highhr: !this.state.highhr }) }}
+                                        />
+                                        <Text
+                                            style={{
+                                                fontSize: 15,
+                                            }}
+                                        >고혈압</Text>
+                                    </View>
+                                </TouchableHighlight>
+                                <TouchableHighlight
+                                    onPress={() => this.state.autoColor ? this.setState({ autoColor: 0 }) : this.setState({ autoColor: 1 })}
+                                    style={{
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                    underlayColor="#f9f9fa"
+                                ><View>
+                                        <CheckBox
+                                            title=''
+                                            containerStyle={
+                                                {
+                                                    padding: 0,
+                                                    borderColor: '#ff000000',
+                                                    backgroundColor: '#ff000000'
+                                                }
                                             }
-                                        }
-                                        checked={this.state.lowhr}
-                                        onPress={() => { this.setState({lowhr : !this.state.lowhr}) }}
-                                    />
-                                    <Text
-                                        style={{
-                                            fontSize: 15,
-                                        }}
-                                    >저혈압</Text>
-                                </View>
-                            </TouchableHighlight>
+                                            checked={this.state.lowhr}
+                                            onPress={() => { this.setState({ lowhr: !this.state.lowhr }) }}
+                                        />
+                                        <Text
+                                            style={{
+                                                fontSize: 15,
+                                            }}
+                                        >저혈압</Text>
+                                    </View>
+                                </TouchableHighlight>
                             </View>
-                            <View style={{flexDirection: 'row', flex : 1,}}>
+                            <View style={{ flexDirection: 'row', flex: 1, }}>
 
                                 <TouchableHighlight
                                     onPress={() => this.saveUserDate()}
                                     underlayColor="rgba(47,82,196,0.7)"
-                                    style={[styles.boxContainer, { flex : 1, backgroundColor: "#2f52c4", marginTop: 20, marginLeft : 15 }]}
+                                    style={[styles.boxContainer, { flex: 1, backgroundColor: "#2f52c4", marginTop: 20, marginLeft: 15 }]}
                                 >
                                     <Text
                                         style={{ color: '#f9f9fa' }}
@@ -460,7 +487,7 @@ export default class Student_FlatListItem extends Component {
                                 <TouchableHighlight
                                     onPress={() => this.setUserImageModalVisible(!this.state.modalVisible)}
                                     underlayColor="rgba(47,82,196,0.7)"
-                                    style={[styles.boxContainer, { flex : 1, backgroundColor: "#ffffff", marginTop: 20, borderColor: "#2f52c4", borderWidth : 1, marginRight : 15 }]}
+                                    style={[styles.boxContainer, { flex: 1, backgroundColor: "#ffffff", marginTop: 20, borderColor: "#2f52c4", borderWidth: 1, marginRight: 15 }]}
                                 >
                                     <Text
                                         style={{ color: '#2f52c4' }}

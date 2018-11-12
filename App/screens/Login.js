@@ -212,7 +212,7 @@ export default class Login extends Component {
                     }
 
                 }
-
+                //startCheckAndScan()
             } else {
                 console.log("로그인 되어 있지 않음.");
                 this.setState({ auth: 1 });

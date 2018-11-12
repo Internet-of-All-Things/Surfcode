@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Platform, StyleSheet, Alert, Text, View, TouchableOpacity, Image, Alert } from "react-native";
+import { Platform, StyleSheet, Alert, Text, View, TouchableOpacity, Image } from "react-native";
 import { NavigationEvents } from 'react-navigation';
 import LinearGradient from 'react-native-linear-gradient';
 import Weather_BasicFlatList from '../components/Weather_BasicFlatList'
