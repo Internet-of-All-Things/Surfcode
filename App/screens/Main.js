@@ -28,7 +28,6 @@ export default class Main extends Component {
             array.push(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
             array.push(PermissionsAndroid.PERMISSIONS.SEND_SMS)
             PermissionManager.getMultiplePermissions(array);
-            
         }
     }
 
