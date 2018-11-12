@@ -3,6 +3,7 @@ package com.surfcode;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.react.SmsPackage;
 import com.horcrux.svg.SvgPackage;
 import com.johnsonsu.rnsoundplayer.RNSoundPlayerPackage;
 import com.github.wumke.RNExitApp.RNExitAppPackage;
@@ -38,6 +39,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new SmsPackage(),
             new SvgPackage(),
             new RNSoundPlayerPackage(),
             new RNExitAppPackage(),

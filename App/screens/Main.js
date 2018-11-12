@@ -7,10 +7,8 @@ import {
     BackHandler,
 } from 'react-native';
 
-import MainTabNavigator from '../navigators/MainTabNavigator';
 import MainScreen from '../tabs/MainScreen';
 import PermissionManager from '../utils/PermissionManager';
-import {updateState} from '../components/Student_BasicFlatList';
 import RNExitApp from 'react-native-exit-app';
 
 export default class Main extends Component {
@@ -26,7 +24,11 @@ export default class Main extends Component {
     constructor(props) {
         super(props);
         if (Platform.OS === 'android' && Platform.Version >= 23) {
-            PermissionManager.getPermissions(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION);
+            let array = [];
+            array.push(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
+            array.push(PermissionsAndroid.PERMISSIONS.SEND_SMS)
+            PermissionManager.getMultiplePermissions(array);
+            
         }
     }
 
@@ -55,22 +57,9 @@ export default class Main extends Component {
             this.goBack();
             return true;
         });
-        //if(!this.state.first)
-            //updateState({ refresh : false });
-        //else
-            //this.setState({first : false});
-    }
-
-    componentWillReceiveProps(){
-        console.log("componentWillReceiveProps");
-        //if(!this.state.first)
-           // updateState({ refresh : this.props.navigation.getParam('changed', false) });
-        
     }
 
     render() {
-        console.log("!@#!@#??? 랜더 함수가 불렸다!~!")
-    
         return (
             <View style={styles.containers}>
                 <MainScreen/>

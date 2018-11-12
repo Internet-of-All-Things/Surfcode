@@ -3,9 +3,9 @@ import {
     PermissionsAndroid
 } from "react-native";
 
-function getPermissions(permission) {
+function getMultiplePermissions(permission) {
     return new Promise(async () => {
-        const granted = await PermissionsAndroid.request(
+        const granted = await PermissionsAndroid.requestMultiple(
             permission
         )
 
@@ -18,5 +18,5 @@ function getPermissions(permission) {
 }
 
 export default {
-    getPermissions,
+    getMultiplePermissions,
 };
