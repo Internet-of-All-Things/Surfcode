@@ -4,6 +4,7 @@ import userInfo from "../data/userInfo";
 import NavigationService from '../utils/NavigationService';
 import { updateLoginButton } from '../screens/Login';
 import BluetoothManager from '../utils/BluetoothManager';
+import SmsAndroid  from 'react-native-get-sms-android';
 
 export default class SecondScreen extends Component {
     static navigationOptions = {
@@ -100,7 +101,12 @@ export default class SecondScreen extends Component {
                     <Text style={[styles.subTitleStyle, { marginLeft: 16, marginTop: 15, marginBottom: 20, fontSize:16, }]}>긴급 상황 연결 연락처</Text>
                 </View>
                 <TouchableHighlight onPress={function () {
-                    
+                    //import SmsAndroid  from 'react-native-get-sms-android';
+                    SmsAndroid.autoSend('01077238280', '세호가 위험합니다.', (fail) => {
+                        console.log("Failed with this error: " + fail)
+                    }, (success) => {
+                        console.log("SMS sent successfully");
+                    });
                 }}
                 >
                     <Text style={{
