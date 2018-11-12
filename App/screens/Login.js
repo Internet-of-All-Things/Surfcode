@@ -184,6 +184,10 @@ export default class Login extends Component {
                                 "tel": null,
                                 "selected": false,
                                 "isConnected": false,
+                                "age" : 20,
+                                "highhr": false,
+                                "lowhr" : false,
+                                "slowhr" : false,
                             })
                         } else {
                             value = JSON.parse(value)
@@ -199,13 +203,14 @@ export default class Login extends Component {
                                 "tel": value.tel,
                                 "selected": false,
                                 "isConnected": false,
+                                "age" : value.age,
+                                "highhr": value.highhr,
+                                "lowhr" : value.lowhr,
+                                "slowhr" : value.slowhr,
                             })
                         }
                     }
 
-
-                    //this.startCheckAndScan()
-                    // setTimeout(() => { BluetoothManager.getBluetoothManager().stopDeviceScan(); this.state.scanning = false }, 3000)
                 }
 
             } else {

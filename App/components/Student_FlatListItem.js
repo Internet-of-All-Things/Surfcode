@@ -11,6 +11,7 @@ import SoundPlayer from 'react-native-sound-player'
 
 const options = {
     title: 'Input user data',
+    autoColor: 0,
     customButtons: [{ name: 'user_info', title: 'Input user information' }],
     storageOptions: {
         skipBackup: true,
@@ -60,14 +61,13 @@ export default class Student_FlatListItem extends Component {
             this.setUserImageModalVisible(true);
         }
     }
-    componentWillUnmount() {
-        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-    }
+
     componentWillReceiveProps(props) {
         if (!this.state.modalVisible) {
             this.state.email = this.props.item.email
             this.state.name = this.props.item.name
             this.state.tel = this.props.item.tel
+            this.state.age = this.props.item.age
         }
         if (!this.state.isListLongPressed) {
             this.state.selected = false
@@ -78,9 +78,10 @@ export default class Student_FlatListItem extends Component {
         if (this.props.item.bpm > 127) {
             if (!this.state.itemUrgent) {
                 urgentStudents.push({
-                    'id' : this.props.item.id,
+                    'id': this.props.item.id,
                     'name': this.state.name,
                     'tel': this.state.tel,
+                    'age': this.state.age,
                 })
                 this.props.item.state = "위험한 상태"
             }
@@ -132,6 +133,18 @@ export default class Student_FlatListItem extends Component {
         this.props.item.email = this.state.email
         this.props.item.name = this.state.name
         this.props.item.tel = this.state.tel
+        this.props.item.age = this.state.age
+        this.props.item.highhr = false
+        this.props.item.lowhr = false
+        this.props.item.slowhr = false
+        if(this.state.highhr){
+            this.props.item.highhr = true  
+        }else if(this.state.lowhr){
+            this.props.item.lowhr = true
+        }else if(this.state.slowhr){
+            this.props.item.slowhr = true
+        }
+
         let dateObj = new Date();
         let date = moment(dateObj).format('YYYY-MM-DD')
         var tempKey = firebase.database().ref(dbUrl + "/students/" + date).push().key
@@ -141,6 +154,10 @@ export default class Student_FlatListItem extends Component {
                 "email": this.props.item.email,
                 "name": this.props.item.name,
                 "tel": this.props.item.tel,
+                "age": this.props.item.age,
+                "highhr": this.props.item.highhr,
+                "lowhr" : this.props.item.lowhr,
+                "slowhr" : this.props.item.slowhr,
             }
         )
 
@@ -149,13 +166,18 @@ export default class Student_FlatListItem extends Component {
             "email": this.props.item.email,
             "name": this.props.item.name,
             "tel": this.props.item.tel,
+            "age": this.props.item.age,
+            "highhr": this.props.item.highhr,
+            "lowhr" : this.props.item.lowhr,
+            "slowhr" : this.props.item.slowhr,
         })
 
-        /*firebase
+        if(this.state.userImageSource!=='../images/personxhdpi.png' )
+            firebase
               .storage()
               .ref("student/"+this.state.tel)
               .child("profile.jpg")
-              .put(this.state.userImageSource, { contentType: "image/jpg" });*/
+              .put(this.state.userImageSource, { contentType: "image/jpg" });
         this._storeData()
         this.setUserImageModalVisible(!this.state.modalVisible);
     }
@@ -246,6 +268,17 @@ export default class Student_FlatListItem extends Component {
                                 onLeftPress={() => this.setUserImageModalVisible(!this.state.modalVisible)}
                                 leftIconContainerStyle={modalStyles.leftIconContainerStyle}
                             />
+                            <View stlye={{
+                                flex: 0.08,
+                            }}>
+                                <Text style={{
+                                    marginLeft: 16,
+                                    marginTop: 10,
+                                    fontSize: 18,
+                                    color: "#3b3e4c",
+                                    fontFamily: 'Spoqa Han Sans Bold'
+                                }}>수강생 프로필</Text>
+                            </View>
                             <View style={{
                                 flexDirection: 'row',
                                 justifyContent: 'center',
@@ -266,17 +299,24 @@ export default class Student_FlatListItem extends Component {
                                     }} />
                                 </TouchableHighlight>
                             </View>
-                            <View style={[styles.info, { marginTop: 20 }]}>
+                            <View style={[styles.info, { marginTop: 20, }]}>
                                 <Image
                                     style={{ height: 32, width: 32, marginRight: 10 }}
                                     source={require('../images/id.png')}
                                 />
                                 <TextInput
-                                    style={[styles.textInput, { flex: 0.8, height: 40, borderColor: '#d0d2da', borderWidth: 1 }]}
+                                    style={[styles.textInput, { flex: 0.45, height: 40, borderColor: '#d0d2da', borderWidth: 1, marginRight: 7, }]}
                                     placeholder="홍길동"
                                     placeholderTextColor="rgba(0,0,0,0.6)"
                                     onChangeText={(name) => this.setState({ name })}
                                     value={this.state.name}
+                                />
+                                <TextInput
+                                    style={[styles.textInput, { flex: 0.45, height: 40, borderColor: '#d0d2da', borderWidth: 1, marginLeft: 7, }]}
+                                    placeholder="나이"
+                                    placeholderTextColor="rgba(0,0,0,0.6)"
+                                    onChangeText={(age) => this.setState({ age })}
+                                    value={this.state.age}
                                 />
                             </View>
                             <View style={[styles.info, { marginTop: 15 }]}>
@@ -285,7 +325,7 @@ export default class Student_FlatListItem extends Component {
                                     source={require('../images/tel.png')}
                                 />
                                 <TextInput
-                                    style={[styles.textInput, { flex: 0.8, height: 40, borderColor: '#d0d2da', borderWidth: 1 }]}
+                                    style={[styles.textInput, { flex: 0.92, height: 40, borderColor: '#d0d2da', borderWidth: 1 }]}
                                     placeholder="010-1234-5678"
                                     placeholderTextColor="rgba(0,0,0,0.6)"
                                     onChangeText={(tel) => this.setState({ tel })}
@@ -298,23 +338,136 @@ export default class Student_FlatListItem extends Component {
                                     source={require('../images/email.png')}
                                 />
                                 <TextInput
-                                    style={[styles.textInput, { flex: 0.8, height: 40, borderColor: '#d0d2da', borderWidth: 1 }]}
+                                    style={[styles.textInput, { flex: 0.92, height: 40, borderColor: '#d0d2da', borderWidth: 1 }]}
                                     placeholder="email@surfcode.com"
                                     placeholderTextColor="rgba(0,0,0,0.6)"
                                     onChangeText={(email) => this.setState({ email })}
                                     value={this.state.email}
                                 />
                             </View>
-
+                            <View
+                                style={{
+                                    width: '100%',
+                                    borderBottomColor: '#d0d2da',
+                                    borderBottomWidth: 1,
+                                    marginTop: 20,
+                                    marginBottom: 10,
+                                }}
+                            />
+                            <View>
+                                <Text style={{
+                                    marginLeft: 16,
+                                    fontSize: 18,
+                                    color: "#3b3e4c",
+                                    fontFamily: 'Spoqa Han Sans Bold'
+                                }}>병력</Text>
+                            </View>
+                            <View style={[styles.info,{alignItems: 'center',
+                                    justifyContent: 'center', marginBottom : 10 }]}>
                             <TouchableHighlight
-                                onPress={() => this.saveUserDate()}
-                                underlayColor="rgba(47,82,196,0.7)"
-                                style={[styles.boxContainer, { backgroundColor: "#2f52c4", marginTop: 20 }]}
-                            >
-                                <Text
-                                    style={{ color: '#f9f9fa' }}
-                                >저장</Text>
+                                onPress={() => this.state.autoColor ? this.setState({ autoColor: 0 }) : this.setState({ autoColor: 1 })}
+                                style={{
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                                underlayColor="#f9f9fa"
+                            ><View>
+                                    <CheckBox
+                                        title=''
+                                        containerStyle={
+                                            {
+                                                padding: 0,
+                                                borderColor: '#ff000000',
+                                                backgroundColor: '#ff000000'
+                                            }
+                                        }
+                                        checked={this.state.slowhr}
+                                        onPress={() => { this.setState({slowhr : !this.state.slowhr}) }}
+                                    />
+                                    <Text
+                                        style={{
+                                            fontSize: 15,
+                                        }}
+                                    >서맥</Text>
+                                </View>
                             </TouchableHighlight>
+                            <TouchableHighlight
+                                onPress={() => this.state.autoColor ? this.setState({ autoColor: 0 }) : this.setState({ autoColor: 1 })}
+                                style={{
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                                underlayColor="#f9f9fa"
+                            ><View>
+                                    <CheckBox
+                                        title=''
+                                        containerStyle={
+                                            {
+                                                padding: 0,
+                                                borderColor: '#ff000000',
+                                                backgroundColor: '#ff000000'
+                                            }
+                                        }
+                                        checked={this.state.highhr}
+                                        onPress={() => { this.setState({highhr : !this.state.highhr}) }}
+                                    />
+                                    <Text
+                                        style={{
+                                            fontSize: 15,
+                                        }}
+                                    >고혈압</Text>
+                                </View>
+                            </TouchableHighlight>
+                            <TouchableHighlight
+                                onPress={() => this.state.autoColor ? this.setState({ autoColor: 0 }) : this.setState({ autoColor: 1 })}
+                                style={{
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                }}
+                                underlayColor="#f9f9fa"
+                            ><View>
+                                    <CheckBox
+                                        title=''
+                                        containerStyle={
+                                            {
+                                                padding: 0,
+                                                borderColor: '#ff000000',
+                                                backgroundColor: '#ff000000'
+                                            }
+                                        }
+                                        checked={this.state.lowhr}
+                                        onPress={() => { this.setState({lowhr : !this.state.lowhr}) }}
+                                    />
+                                    <Text
+                                        style={{
+                                            fontSize: 15,
+                                        }}
+                                    >저혈압</Text>
+                                </View>
+                            </TouchableHighlight>
+                            </View>
+                            <View style={{flexDirection: 'row', flex : 1,}}>
+
+                                <TouchableHighlight
+                                    onPress={() => this.saveUserDate()}
+                                    underlayColor="rgba(47,82,196,0.7)"
+                                    style={[styles.boxContainer, { flex : 1, backgroundColor: "#2f52c4", marginTop: 20, marginLeft : 15 }]}
+                                >
+                                    <Text
+                                        style={{ color: '#f9f9fa' }}
+                                    >저장</Text>
+                                </TouchableHighlight>
+                                <TouchableHighlight
+                                    onPress={() => this.setUserImageModalVisible(!this.state.modalVisible)}
+                                    underlayColor="rgba(47,82,196,0.7)"
+                                    style={[styles.boxContainer, { flex : 1, backgroundColor: "#ffffff", marginTop: 20, borderColor: "#2f52c4", borderWidth : 1, marginRight : 15 }]}
+                                >
+                                    <Text
+                                        style={{ color: '#2f52c4' }}
+                                    >취소</Text>
+                                </TouchableHighlight>
+                            </View>
+
                         </Modal>
                         {/*modal부분 end*/}
 
@@ -352,22 +505,24 @@ export default class Student_FlatListItem extends Component {
                                 </View>
                             </View> : <View style={{ flex: 0.55, flexDirection: "row", paddingTop: 5 }}>
                                 {userInfo.isScan ?
-                                    <Text style={{ 
-                                        flex : 1,
+                                    <Text style={{
+                                        flex: 1,
                                         alignItems: 'center',
                                         justifyContent: 'center',
-                                        color: this.state.itemUrgent ? '#f9f9fa' : '#3b3e4c' }}>
+                                        color: this.state.itemUrgent ? '#f9f9fa' : '#3b3e4c'
+                                    }}>
                                         스캔중 ...
                                     </Text>
                                     :
                                     <TouchableHighlight><View>
-                                        <Text style={{ 
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        color: this.state.itemUrgent ? '#f9f9fa' : '#3b3e4c' }}>
-                                        연결 재시도
+                                        <Text style={{
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            color: this.state.itemUrgent ? '#f9f9fa' : '#3b3e4c'
+                                        }}>
+                                            연결 재시도
                                         </Text>
-                                        </View>
+                                    </View>
                                     </TouchableHighlight>}
                             </View>}
                     </View>
@@ -410,8 +565,7 @@ const styles = StyleSheet.create({
     },
     info: {
         flexDirection: 'row',
-        alignItems: 'center', // 가운데 맞춤
-        justifyContent: 'center', // 위 아래로 중앙정렬
+        marginLeft: 20,
     },
     autologin: {
         alignItems: 'flex-end',
@@ -430,8 +584,8 @@ const styles = StyleSheet.create({
     },
     boxContainer: {
         height: 50,
-        marginLeft: 24,
-        marginRight: 24,
+        marginLeft: 10,
+        marginRight: 10,
         marginBottom: 16,
         borderRadius: 4,
         alignItems: 'center', // 가운데 맞춤
