@@ -65,9 +65,6 @@ export default class SignInStudent extends Component {
                 .signInWithEmailAndPassword(this.state.id, this.state.pw)
                 .then((data) => {
                     this._storeData(data);
-                    this.setState({
-                        loading: false
-                    });
                     firebase.database().ref('member/teacher/'+this.state.id
                     .replace(".","").replace("#","").replace("$",'').replace("@","").replace("!","").replace("%","")
                     .replace("^","").replace("&","").replace("*","").replace("(","").replace(")","").replace("-","")
@@ -84,12 +81,24 @@ export default class SignInStudent extends Component {
                         }
                     ).then(() => {
                         console.log("INSERTED !");
+                        firebase.auth().signInWithEmailAndPassword(this.state.id, this.state.pw).then((data) => {
+                            this._storeData(this.state.id);
+                            console.log(data);
+                            this.setState({
+                                loading: false
+                            });
+                            updateLoginButton({ auth : 0 })
+                            this.props.navigation.state.params._login()
+                            this.props.navigation.navigate('Login');
+                        }).catch((error) => {
+                            this.setState({
+                                loading: false
+                            });
+                            console.log(error.message);
+                        });
                     }).catch((error) => {
                         console.log(error);
                     });
-                    updateLoginButton({ auth : 0 })
-                    this.props.navigation.state.params._login()
-                    this.props.navigation.navigate('Login');
                 }).catch((error) => {
                     this.setState({
                         loading: false
@@ -117,20 +126,12 @@ export default class SignInStudent extends Component {
             this.state.cpw != "" &&
             this.state.name != "" &&
             this.state.nickname != "" &&
-            this.state.phone != "" &&
-            this.state.autoColor != 1 
-        ) {
-            if (this.state.toggleColor != 1) {
-                if (this.state.career != "" &&
-                    this.state.school != "") {
-                    this.createAccount();
-                }
-            } else {
+            this.state.phone != ""&&
+            this.state.school != ""){
                 this.createAccount();
-            }
-        }
+        } 
     }
-
+    
     render() {
 
         return (
@@ -181,38 +182,6 @@ export default class SignInStudent extends Component {
                     />
                 </View>
                 <View style={styles.account}><Text style={styles.indexText}>회원 정보</Text></View>
-                <View style={[styles.boxContainer, { borderColor: "#2f52c4", borderWidth: 1, flexDirection: 'row' }]}>
-                    <TouchableHighlight
-                        onPress={() => this.setState({ toggleColor: 1, autoColor: 1, })}
-                        underlayColor="#rgba(47,82,196,0.7)"
-                        style={[styles.toggle,
-                        {
-                            borderTopLeftRadius: 3,
-                            borderBottomLeftRadius: 3,
-                            backgroundColor: this.state.toggleColor ? '#2f52c4' : '#f9f9fa'
-                        }]}>
-                        <Text style={{
-                            fontSize: 15,
-                            fontWeight: 'bold',
-                            color: this.state.toggleColor ? '#f9f9fa' : '#2f52c4'
-                        }}>수강생</Text>
-                    </TouchableHighlight>
-                    <TouchableHighlight
-                        onPress={() => this.setState({ toggleColor: 0, autoColor: 1, })}
-                        underlayColor="#rgba(47,82,196,0.7)"
-                        style={[styles.toggle,
-                        {
-                            borderTopRightRadius: 3,
-                            borderBottomRightRadius: 3,
-                            backgroundColor: this.state.toggleColor ? '#f9f9fa' : '#2f52c4'
-                        }]}>
-                        <Text style={{
-                            fontSize: 15,
-                            fontWeight: 'bold',
-                            color: this.state.toggleColor ? '#2f52c4' : '#f9f9fa'
-                        }}>강사</Text>
-                    </TouchableHighlight>
-                </View>
 
                 <View style={[styles.boxContainer, { flexDirection: 'row' }]}>
                     <TextInput
@@ -234,14 +203,14 @@ export default class SignInStudent extends Component {
                 <View style={styles.boxContainer}>
                     <TextInput
                         style={[styles.textInput]}
-                        placeholder={this.state.toggleColor ? "전화번호" : "긴급 연락용 전화번호"}
+                        placeholder= "전화번호"
                         placeholderTextColor="rgba(0,0,0,0.4)"
                         onChangeText={(phone) => this.setState({ phone })}
                         value={this.state.phone}
                     />
                 </View>
 
-                {!this.state.toggleColor ? (
+                
                     <View style={styles.boxContainer}>
                         <TextInput
                             style={[styles.textInput]}
@@ -251,47 +220,8 @@ export default class SignInStudent extends Component {
                             value={this.state.school}
                         />
                     </View>
-                ) : (<View></View>)}
-                {!this.state.toggleColor ? (
-                    <View style={[styles.boxContainer, { flexDirection: 'row', marginBottom: 0, }]}>
-                        <TextInput
-                            style={[{
-                                flex: 0.8,
-                                borderTopLeftRadius: 3,
-                                borderBottomLeftRadius: 3,
-                                height: "100%",
-                                borderColor: '#d0d2da',
-                                borderWidth: 1,
-                                paddingLeft: 12,
-                                paddingRight: 12,
-                                borderRightWidth: 0,
-                            }]}
-                            placeholder="경력 추가"
-                            placeholderTextColor="rgba(0,0,0,0.4)"
-                            onChangeText={(career) => this.setState({ career })}
-                            value={this.state.career}
-                        />
-                        <TouchableHighlight
-                            onPress={() => { }}
-                            underlayColor="#rgba(47,82,196,0.2)"
-                            style={{
-                                flex: 0.2,
-                                backgroundColor: "#f9f9fa",
-                                borderColor: "#2f52c4",
-                                borderWidth: 1,
-                                height: '100%',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                borderTopRightRadius: 3,
-                                borderBottomRightRadius: 3,
-                            }}
-                        >
-                            <Text
-                                style={{ color: '#2f52c4', fontSize: 25 }}
-                            >+</Text>
-                        </TouchableHighlight>
-                    </View>
-                ) : (<View></View>)}
+               
+
 
 
                 <View style={styles.autologin}>

@@ -446,7 +446,12 @@ class FlatListItem extends Component {
                                 "user_icon_url": "../images/user/personxhdpi.png",
                                 "email": null,
                                 "tel": null,
-                                "selected": false
+                                "selected": false,
+                                "isConnected": false,
+                                "age" : 20,
+                                "highhr": false,
+                                "lowhr" : false,
+                                "slowhr" : false,
                             })
 
                             updateState({ refresh: true })
