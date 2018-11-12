@@ -4,7 +4,7 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
+  Image,  
   ViewPagerAndroid,
   TouchableHighlight
 } from "react-native";

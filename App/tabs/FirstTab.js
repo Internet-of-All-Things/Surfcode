@@ -43,11 +43,9 @@ export default class FirstTab extends Component {
   }
 
   componentWillMount(){
-    console.log("@@@@@@@@@@@@@@%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% will FirstTab Mount")
   }
 
   componentWillUnmount() {
-    console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     this.setState({ unmount: true })
   }
 
@@ -93,7 +91,6 @@ export default class FirstTab extends Component {
           }
         }
 
-        console.log(temp)
         BluetoothManager.getBluetoothManager().onDeviceDisconnected(flatListData[i].key, () => {
           console.log("사용자 선택에 의한 장치 연결 해제")
         })

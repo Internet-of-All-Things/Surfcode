@@ -6,7 +6,7 @@ import {
     ScrollView,
     View,
     Modal,
-    Image,
+    Image,    
     TouchableHighlight,
     TouchableOpacity
 } from "react-native";
@@ -81,7 +81,7 @@ export default class SecondScreen extends Component {
 
     readUserLogData = async (value) => {
         let url = 'member/teacher/' + userInfo.firebaseID + '/students';
-        console.log("!!!!!!", url)
+       // console.log("!!!!!!", url)
         firebase.database().ref(url).once('value', (snapshot) => {
 
             this.state.userLogData = snapshot.val();
@@ -94,8 +94,8 @@ export default class SecondScreen extends Component {
                         selected: true, selectedColor: '#2f52c4'
                     };
 
-                    console.log(this.state.userLogData[tt[i]])
-                    //console.log(this.state.userLogData[tt[i]][keys[0]].tel)
+                    //console.log(this.state.userLogData[tt[i]])
+                    
 
                 };
 
@@ -256,7 +256,7 @@ export default class SecondScreen extends Component {
                         maxDate={this.state.maxdate}
                         onDayPress={this.onDayPress}
                         markedDates={this.state.markedDates}
-                        onDayLongPress={(day) => { console.log('selected day', day) }}
+                        //onDayLongPress={(day) => { console.log('selected day', day) }}
                         // markedDates={{
                         //     [this.state.selected]: {
                         //         selected: true,

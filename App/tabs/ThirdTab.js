@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Platform, StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
+import { Platform, StyleSheet, Alert, Text, View, TouchableOpacity, Image } from "react-native";
 import { NavigationEvents } from 'react-navigation';
 import LinearGradient from 'react-native-linear-gradient';
 import Weather_BasicFlatList from '../components/Weather_BasicFlatList'
@@ -95,28 +95,11 @@ export default class ThirdTab extends Component {
 
     isFocused() {
 
-        // navigator.geolocation.getCurrentPosition(//페이지 들어올때마다 할까? 그러면 이거주석풀면 됨
-        //     position => {
-        //         this._getWeather(position.coords.latitude,position.coords.longitude)
-        //         this._getFutureWeather(position.coords.latitude,position.coords.longitude)
-        //         this.setState({
-        //             isLoaded : true,                                     
-        //         });
-        //     error => {
-        //         this.setState({
-        //             error : error
-        //         });
-        //     }
-        // });
     }
     componentDidMount() {
-        console.log("thridtab", navigator.geolocation)
         //navigator.geolocation.requestAuthorization();
         navigator.geolocation.getCurrentPosition(
             position => {
-
-                console.log("~~!@@@@ err")
-                console.log("@", position)
                 this._getWeather(position.coords.latitude, position.coords.longitude)
                 this._getFutureWeather(position.coords.latitude, position.coords.longitude)
                 this.setState({
@@ -128,64 +111,64 @@ export default class ThirdTab extends Component {
                     'GPS Error',
                     '내 위치를 확인 할 수 없습니다.',
                     [
-                      {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                      {text: 'OK', onPress: () => console.log('OK Pressed')},
+                        { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
                     ],
                     { cancelable: false }
-                  )
+                )
                 this.setState({
                     error: error
                 })
             },
-            {enableHighAccuracy: false, timeout: 20000}
-            );
-        }
-render() {
-    return (
-        <View style={styles.container}>
-            <NavigationEvents
-                onWillFocus={payload => this.isFocused()}
-            />
-            {/*title부분 start*/}
-            <View style={titleStyles.container}>
-                <View
-                    style={{ flex: 0.4, flexDirection: "column" }}
-                >
-                    {/*Location 부분 start*/}
-                    <TouchableOpacity style={{ flexDirection: "row" }}>
-                        <View style={{ flexDirection: "row" }}>
-                            <Image style={{ marginRight: 5, marginTop: 7, width: 16, height: 16, tintColor: "#82889c", resizeMode: 'contain' }} source={require('../images/location.png')} />
-                            <Text style={{ color: '#82889c', fontSize: 14, fontFamily: 'Spoqa Han Sans Bold' }}>현위치</Text>
-                            <Text style={{ color: '#3b3e4c', marginLeft: 5, fontSize: 14, fontFamily: 'Spoqa Han Sans Regular' }}>{this.state.currentLocation}</Text>
+            { enableHighAccuracy: false, timeout: 20000 }
+        );
+    }
+    render() {
+        return (
+            <View style={styles.container}>
+                <NavigationEvents
+                    onWillFocus={payload => this.isFocused()}
+                />
+                {/*title부분 start*/}
+                <View style={titleStyles.container}>
+                    <View
+                        style={{ flex: 0.4, flexDirection: "column" }}
+                    >
+                        {/*Location 부분 start*/}
+                        <TouchableOpacity style={{ flexDirection: "row" }}>
+                            <View style={{ flexDirection: "row" }}>
+                                <Image style={{ marginRight: 5, marginTop: 7, width: 16, height: 16, tintColor: "#82889c", resizeMode: 'contain' }} source={require('../images/location.png')} />
+                                <Text style={{ color: '#82889c', fontSize: 14, fontFamily: 'Spoqa Han Sans Bold' }}>현위치</Text>
+                                <Text style={{ color: '#3b3e4c', marginLeft: 5, fontSize: 14, fontFamily: 'Spoqa Han Sans Regular' }}>{this.state.currentLocation}</Text>
+                            </View>
+                        </TouchableOpacity>
+                        {/*Location 부분 end*/}
+                    </View>
+                </View>
+                {/*title부분 end*/}
+
+                {/*Gradient 부분 start*/}
+                <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={this.state.gradientColor} style={gradientStye.container}>
+                    <View style={{ flexDirection: "column" }}>
+                        <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: 'center' }}>
+                            <Text style={{ color: "#f9f9fa", marginTop: 30, fontFamily: 'Spoqa Han Sans Regular' }}>{this.state.gradientTitle}</Text>
                         </View>
-                    </TouchableOpacity>
-                    {/*Location 부분 end*/}
-                </View>
+                        <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: 'center' }}>
+                            <Image style={{ width: 32, height: 32, tintColor: "#f9f9fa", resizeMode: 'contain' }} source={this.state.weatherImage} />
+                            <Text style={{ color: '#f9f9fa', marginLeft: 5, fontSize: 47, fontFamily: 'Spoqa Han Sans Bold' }}>{this.state.currentTemperature}°C</Text>
+                        </View>
+                    </View>
+                </LinearGradient>
+                {/*Gradient 부분 end*/}
+
+                <Text style={{ color: '##3b3e4c', fontSize: 14, paddingLeft: 16, paddingRight: 16, paddingTop: 10, fontFamily: 'Spoqa Han Sans Bold' }}>다음 24시간</Text>
+                <Weather_BasicFlatList weatherData={this.state.weatherData} />
+
+                <Text style={{ color: '##3b3e4c', fontSize: 14, paddingLeft: 16, paddingRight: 16, paddingTop: 10, fontFamily: 'Spoqa Han Sans Bold' }}>풍속</Text>
+                <Wave_BasicFlatList weatherData={this.state.weatherData} />
             </View>
-            {/*title부분 end*/}
-
-            {/*Gradient 부분 start*/}
-            <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={this.state.gradientColor} style={gradientStye.container}>
-                <View style={{ flexDirection: "column" }}>
-                    <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: 'center' }}>
-                        <Text style={{ color: "#f9f9fa", marginTop: 30, fontFamily: 'Spoqa Han Sans Regular' }}>{this.state.gradientTitle}</Text>
-                    </View>
-                    <View style={{ flexDirection: "row", alignItems: 'center', justifyContent: 'center' }}>
-                        <Image style={{ width: 32, height: 32, tintColor: "#f9f9fa", resizeMode: 'contain' }} source={this.state.weatherImage} />
-                        <Text style={{ color: '#f9f9fa', marginLeft: 5, fontSize: 47, fontFamily: 'Spoqa Han Sans Bold' }}>{this.state.currentTemperature}°C</Text>
-                    </View>
-                </View>
-            </LinearGradient>
-            {/*Gradient 부분 end*/}
-
-            <Text style={{ color: '##3b3e4c', fontSize: 14, paddingLeft: 16, paddingRight: 16, paddingTop: 10, fontFamily: 'Spoqa Han Sans Bold' }}>다음 24시간</Text>
-            <Weather_BasicFlatList weatherData={this.state.weatherData} />
-
-            <Text style={{ color: '##3b3e4c', fontSize: 14, paddingLeft: 16, paddingRight: 16, paddingTop: 10, fontFamily: 'Spoqa Han Sans Bold' }}>풍속</Text>
-            <Wave_BasicFlatList weatherData={this.state.weatherData} />
-        </View>
-    );
-}
+        );
+    }
 }
 const titleStyles = StyleSheet.create({
     container: {

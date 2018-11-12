@@ -164,7 +164,6 @@ export default class MainScreen extends Component {
             >
               <TouchableHighlight
                 onPress={() => {
-                  console.log("dsfsdf");
                   this.setUserImage();
                 }}
               >

@@ -27,18 +27,15 @@ class Student_LogListItem extends Component {
 
     }
     componentDidMount() {
-        console.log("11111")
         this.loadData();
         firebase.storage().ref('student/' + this.props.item.tel + '/profile.jpg').getDownloadURL()
             .then((url) => {
                 this.setState({ imageUrl: url })
-                console.log("@@@ ", url)
             }).catch((error) => {
                 /* There is no match ref */
                 if (error.code === 'storage/object-not-found')
                     this.state.imageUrl = '../images/personxhdpi.png'
             })
-        console.log("3333")
     }
     loadData() {
         var keys = Object.keys(this.props.item.data);
@@ -70,7 +67,7 @@ class Student_LogListItem extends Component {
         for (var i = 0; i < keys.length; i++) {
             var heart = parseInt(this.props.item.data[keys[i]]['심박수'])
             var brethe = parseInt(this.props.item.data[keys[i]]['호흡수'])
-            //ttt.push(keys[i])
+            
             datas[0].data.push({
                 x: keys[i],
                 y: heart
@@ -79,8 +76,6 @@ class Student_LogListItem extends Component {
                 x: keys[i],
                 y: brethe
             })
-           // ddd.push(heart)
-            //hhh.push(brethe)
             
             if (maxBrethe < brethe)
                 maxBrethe = brethe;
@@ -92,15 +87,7 @@ class Student_LogListItem extends Component {
                 minHeart = heart;
 
         }
-        // datas2 = [
-        //     {
-        //     data:ddd,
-        //     },
-        //     {
-        //     data:hhh
-        //     }
-        // ]
-        //console.log("~~~~ ",datas2)
+       
         this.setState({
             //chartLabels : ttt,
             chartDatas: datas,
@@ -111,12 +98,9 @@ class Student_LogListItem extends Component {
         });
     }
     setChartModalVisible(visible) {
-        console.log("dddddddddd")
         this.setState({ chartModalVisible: visible });
-        console.log("=-------")
     }
     componentWillReceiveProps(props) {
-        console.log("Student_LogListItem Receive props!!!");
     }
     
 
@@ -272,15 +256,13 @@ export default class Student_LogFlatList extends Component {
         super(props);
     }
     componentWillReceiveProps(props) {
-        console.log("Student_LogFlatList Receive props!!!", props.userLogData.length);
+        //console.log("Student_LogFlatList Receive props!!!", props.userLogData.length);
         this.setState({ userLogData: props.userLogData })
         this.setState({ animating: false })
     }
     componentDidMount() {
-        console.log("mount!!!")
     }
     componentWillUnmount() {
-        console.log("unmount!!!")
         this.setState({ animating: true })
     }
     render() {        

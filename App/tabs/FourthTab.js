@@ -75,7 +75,6 @@ export default class SecondScreen extends Component {
                     AsyncStorage.clear();
                     BluetoothManager.destroyBluetoothManager();
                     updateLoginButton({ auth: 1 });
-                    console.log(NavigationService)
                     NavigationService.popToTop();
                     NavigationService.navigate('Login');
                 }}
