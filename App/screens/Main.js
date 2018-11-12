@@ -23,8 +23,9 @@ export default class Main extends Component {
 
     constructor(props) {
         super(props);
-        if (Platform.OS === 'android' && Platform.Version >= 23) {
+        if (Platform.OS === 'android' && Platform.Version >= 23) {            
             let array = [];
+            array.push(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
             array.push(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION)
             array.push(PermissionsAndroid.PERMISSIONS.SEND_SMS)
             PermissionManager.getMultiplePermissions(array);

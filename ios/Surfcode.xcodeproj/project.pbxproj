@@ -66,6 +66,7 @@
 		085764B8C5014792A0E9E0F7 /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A828264E39345B3843AF27E /* libRNSVG.a */; };
 		5F54A797FE8E4772B3D08E0D /* libRNSVG-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D502E29E7B0E4998875AD33D /* libRNSVG-tvOS.a */; };
 		82F2FD1F780C447D8ABE5CD6 /* libRNSoundPlayer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A91467D3F965471AB2497F9C /* libRNSoundPlayer.a */; };
+		4E6CEB6E87944EE2B6E125FD /* libRNReactNativeLocationSwitch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 32C4A5FFB33843EAA0A6A54C /* libRNReactNativeLocationSwitch.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -410,6 +411,8 @@
 		D502E29E7B0E4998875AD33D /* libRNSVG-tvOS.a */ = {isa = PBXFileReference; name = "libRNSVG-tvOS.a"; path = "libRNSVG-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		D725B75A7D444214878760EA /* RNSoundPlayer.xcodeproj */ = {isa = PBXFileReference; name = "RNSoundPlayer.xcodeproj"; path = "../node_modules/react-native-sound-player/ios/RNSoundPlayer.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		A91467D3F965471AB2497F9C /* libRNSoundPlayer.a */ = {isa = PBXFileReference; name = "libRNSoundPlayer.a"; path = "libRNSoundPlayer.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		F61093E7DBAD47389631B43F /* RNReactNativeLocationSwitch.xcodeproj */ = {isa = PBXFileReference; name = "RNReactNativeLocationSwitch.xcodeproj"; path = "../node_modules/react-native-location-switch/ios/RNReactNativeLocationSwitch.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		32C4A5FFB33843EAA0A6A54C /* libRNReactNativeLocationSwitch.a */ = {isa = PBXFileReference; name = "libRNReactNativeLocationSwitch.a"; path = "libRNReactNativeLocationSwitch.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -447,6 +450,7 @@
 				97A771D1F56D426F951E890B /* libRNExitApp.a in Frameworks */,
 				085764B8C5014792A0E9E0F7 /* libRNSVG.a in Frameworks */,
 				82F2FD1F780C447D8ABE5CD6 /* libRNSoundPlayer.a in Frameworks */,
+				4E6CEB6E87944EE2B6E125FD /* libRNReactNativeLocationSwitch.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -644,6 +648,7 @@
 				B106E66F0B1C4413B4E861B7 /* RNExitApp.xcodeproj */,
 				E77561D79039446D8982EA9C /* RNSVG.xcodeproj */,
 				D725B75A7D444214878760EA /* RNSoundPlayer.xcodeproj */,
+				F61093E7DBAD47389631B43F /* RNReactNativeLocationSwitch.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1326,6 +1331,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1338,6 +1344,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-fetch-blob\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-sound-player\ios",
+					"$(SRCROOT)\..\node_modules\react-native-location-switch\ios",
 				);
 			};
 			name = Debug;
@@ -1369,6 +1376,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1381,6 +1389,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-fetch-blob\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-sound-player\ios",
+					"$(SRCROOT)\..\node_modules\react-native-location-switch\ios",
 				);
 			};
 			name = Release;
@@ -1412,6 +1421,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-fetch-blob\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-sound-player\ios",
+					"$(SRCROOT)\..\node_modules\react-native-location-switch\ios",
 				);
 			};
 			name = Debug;
@@ -1442,6 +1452,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-fetch-blob\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-sound-player\ios",
+					"$(SRCROOT)\..\node_modules\react-native-location-switch\ios",
 				);
 			};
 			name = Release;
@@ -1481,6 +1492,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1493,6 +1505,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-fetch-blob\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-sound-player\ios",
+					"$(SRCROOT)\..\node_modules\react-native-location-switch\ios",
 				);
 			};
 			name = Debug;
@@ -1532,6 +1545,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1544,6 +1558,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-fetch-blob\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-sound-player\ios",
+					"$(SRCROOT)\..\node_modules\react-native-location-switch\ios",
 				);
 			};
 			name = Release;
@@ -1582,6 +1597,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1594,6 +1610,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-fetch-blob\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-sound-player\ios",
+					"$(SRCROOT)\..\node_modules\react-native-location-switch\ios",
 				);
 			};
 			name = Debug;
@@ -1632,6 +1649,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1644,6 +1662,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-fetch-blob\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-svg\ios/**",
 					"$(SRCROOT)\..\node_modules\react-native-sound-player\ios",
+					"$(SRCROOT)\..\node_modules\react-native-location-switch\ios",
 				);
 			};
 			name = Release;
