@@ -67,7 +67,7 @@ class Student_LogListItem extends Component {
         var minHeart = parseInt(this.props.item.data[keys[0]]['심박수'])
         var maxBrethe = parseInt(this.props.item.data[keys[0]]['호흡수'])
         var minBrethe = parseInt(this.props.item.data[keys[0]]['호흡수'])
-        for (var i = keys.length-11; i < keys.length; i++) {
+        for (var i = 0; i < keys.length; i++) {
             var heart = parseInt(this.props.item.data[keys[i]]['심박수'])
             var brethe = parseInt(this.props.item.data[keys[i]]['호흡수'])
             //ttt.push(keys[i])

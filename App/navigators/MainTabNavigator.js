@@ -116,7 +116,7 @@ const MainTabNavigator = createBottomTabNavigator(
       },
       tabStyle: {}
     },
-    lazy: true
+    lazy: false
   }
 );
 

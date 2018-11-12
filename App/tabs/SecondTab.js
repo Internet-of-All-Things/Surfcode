@@ -44,15 +44,25 @@ export default class SecondScreen extends Component {
                             Object.keys(dd['data'][day.dateString]).sort().forEach(function(key) {
                                 ordered[key] = dd['data'][day.dateString][key];
                             });
-                              
-                            //console.log("@@",ordered)
+
+                            
+                            let ddkeys = Object.keys(ordered);
+                            var orderedData = {}
+                            if(ddkeys.length > 10){
+                                for(var i= ddkeys.length-10; i<ddkeys.length; i++)
+                                    orderedData[ddkeys[i]] = ordered[ddkeys[i]]                                    
+                            }
+                            else
+                                orderedData = ordered
+                                
+                            
                             logArray.push({
                                 key: "[" + loadingCount + "]",
                                 name: dd['user']['name'],
                                 date: day.dateString,
                                 tel: dd['user']['tel'],
                                 email: dd['user']['email'],
-                                data: ordered
+                                data: orderedData
                             });
                             this.setState({
                                 userLogDataArray: logArray
