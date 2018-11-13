@@ -20,7 +20,8 @@ export default class ThirdTab extends Component {
         currentTemperature: '15',
         weatherData: [],
         gradientColor: [],
-        weatherImage: weather_imageData["Clouds"].line
+        weatherImage: weather_imageData["Clouds"].line,
+        focused: false
     }
     constructor(props) {
         super(props)
@@ -94,7 +95,10 @@ export default class ThirdTab extends Component {
     }
 
     isFocused() {
-
+        this.setState({ focused: true })
+    }
+    willBlur() {
+        this.setState({ focused: false })
     }
     componentDidMount() {
         //navigator.geolocation.requestAuthorization();
@@ -107,15 +111,17 @@ export default class ThirdTab extends Component {
                 })
             },
             error => {
-                // Alert.alert(
-                //     'GPS Error',
-                //     '내 위치를 확인 할 수 없습니다.',
-                //     [
-                //         { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
-                //         { text: 'OK', onPress: () => console.log('OK Pressed') },
-                //     ],
-                //     { cancelable: false }
-                // )
+                if (this.state.focused) {
+                    Alert.alert(
+                        'GPS Error',
+                        '내 위치를 확인 할 수 없습니다.',
+                        [
+                            { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ],
+                        { cancelable: false }
+                    )
+                }
                 this.setState({
                     error: error
                 })
@@ -128,6 +134,7 @@ export default class ThirdTab extends Component {
             <View style={styles.container}>
                 <NavigationEvents
                     onWillFocus={payload => this.isFocused()}
+                    onWillBlur={payload => this.willBlur()}
                 />
                 {/*title부분 start*/}
                 <View style={titleStyles.container}>
