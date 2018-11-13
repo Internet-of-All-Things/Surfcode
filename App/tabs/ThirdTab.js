@@ -107,15 +107,15 @@ export default class ThirdTab extends Component {
                 })
             },
             error => {
-                Alert.alert(
-                    'GPS Error',
-                    '내 위치를 확인 할 수 없습니다.',
-                    [
-                        { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
-                        { text: 'OK', onPress: () => console.log('OK Pressed') },
-                    ],
-                    { cancelable: false }
-                )
+                // Alert.alert(
+                //     'GPS Error',
+                //     '내 위치를 확인 할 수 없습니다.',
+                //     [
+                //         { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+                //         { text: 'OK', onPress: () => console.log('OK Pressed') },
+                //     ],
+                //     { cancelable: false }
+                // )
                 this.setState({
                     error: error
                 })

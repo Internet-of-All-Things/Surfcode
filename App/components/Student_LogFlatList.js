@@ -261,6 +261,7 @@ export default class Student_LogFlatList extends Component {
         this.setState({ animating: false })
     }
     componentDidMount() {
+        this.setState({ animating: false })
     }
     componentWillUnmount() {
         this.setState({ animating: true })

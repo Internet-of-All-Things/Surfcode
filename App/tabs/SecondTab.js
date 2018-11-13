@@ -6,7 +6,7 @@ import {
     ScrollView,
     View,
     Modal,
-    Image,    
+    Image,
     TouchableHighlight,
     TouchableOpacity
 } from "react-native";
@@ -26,7 +26,7 @@ import Student_LogFlatList from '../components/Student_LogFlatList'
 var data = {};
 export default class SecondScreen extends Component {
 
-    onDayPress(day) {        
+    onDayPress(day) {
         if (typeof (data[day.dateString]) !== 'undefined' && data[day.dateString].marked == true) {
             var tt = Object.keys(this.state.userLogData);
             for (var i = 0; i < tt.length; i++) {
@@ -41,21 +41,21 @@ export default class SecondScreen extends Component {
                             let dd = dataSnapShot.val();
                             /* User Image Info */
                             const ordered = {};
-                            Object.keys(dd['data'][day.dateString]).sort().forEach(function(key) {
+                            Object.keys(dd['data'][day.dateString]).sort().forEach(function (key) {
                                 ordered[key] = dd['data'][day.dateString][key];
                             });
 
-                            
+
                             let ddkeys = Object.keys(ordered);
                             var orderedData = {}
-                            if(ddkeys.length > 10){
-                                for(var i= ddkeys.length-10; i<ddkeys.length; i++)
-                                    orderedData[ddkeys[i]] = ordered[ddkeys[i]]                                    
+                            if (ddkeys.length > 10) {
+                                for (var i = ddkeys.length - 10; i < ddkeys.length; i++)
+                                    orderedData[ddkeys[i]] = ordered[ddkeys[i]]
                             }
                             else
                                 orderedData = ordered
-                                
-                            
+
+
                             logArray.push({
                                 key: "[" + loadingCount + "]",
                                 name: dd['user']['name'],
@@ -81,7 +81,7 @@ export default class SecondScreen extends Component {
 
     readUserLogData = async (value) => {
         let url = 'member/teacher/' + userInfo.firebaseID + '/students';
-       // console.log("!!!!!!", url)
+        // console.log("!!!!!!", url)
         firebase.database().ref(url).once('value', (snapshot) => {
 
             this.state.userLogData = snapshot.val();
@@ -95,7 +95,7 @@ export default class SecondScreen extends Component {
                     };
 
                     //console.log(this.state.userLogData[tt[i]])
-                    
+
 
                 };
 
@@ -132,12 +132,38 @@ export default class SecondScreen extends Component {
             loadingCount: 0
         };
         this.onDayPress = this.onDayPress.bind(this);
-        this.readUserLogData();
+
     }
 
-    // componentDidMount() {
-    //     //this.props.screenProps.setTitle("사용 기록");
-    // }
+    componentDidMount() {
+        //this.props.screenProps.setTitle("사용 기록");
+        console.log("second tab didmount!!")
+        data = {};
+        console.log(data,this.state.markedDates)
+        let dateObj = new Date();
+        var value;
+        var month = dateObj.getMonth() + 1;
+        if (month < 10) {
+            value = "0" + month;
+        }
+        else {
+            value = month;
+        }
+        this.setState({
+            maxdate: moment(dateObj).format('YYYY-MM-DD'),
+            pickedDate: moment(dateObj).format('YYYY-MM-DD'),
+            selectedYear: dateObj.getFullYear(),
+            selectedMonth: dateObj.getMonth(),
+            displayDate: dateObj.getFullYear() + "년 " + value + "월",
+            modalVisible: false,
+            userLogData: {},
+            userLogDataArray: [],
+            loadedMarkedData: {},
+            markedDates: {},
+            loadingCount: 0
+        })
+        this.readUserLogData();
+    }
 
     _showDatePicker() {
         let date = new Date();
