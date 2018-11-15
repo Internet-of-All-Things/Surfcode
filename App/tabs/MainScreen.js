@@ -16,6 +16,12 @@ import firebase from "react-native-firebase";
 import ImagePicker from "react-native-image-picker";
 import userInfo from "../data/userInfo"
 
+function setTitleName(title) {
+  this.state.titleName = title;
+  console.log("!!!! " + this.state.titleName, title);
+  this.forceUpdate();
+}
+export { setTitleName }
 export default class MainScreen extends Component {
   state = {
     modalVisible: false,
@@ -43,6 +49,8 @@ export default class MainScreen extends Component {
     this.state.userCareer = userInfo.career,
     this.state.firebaseId = userInfo.firebaseID,
     this.state.userImage = userInfo.userImage
+
+    setTitleName = setTitleName.bind(this)
   }
 
   _retrieveData = async () => {
