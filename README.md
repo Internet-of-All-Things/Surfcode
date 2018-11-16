@@ -14,13 +14,19 @@ Surfcode Application
     <li> 수영을 잘하는 사람이라도, ‘수중 패닉상태’에 빠지면 구조요청이 불가능 </li>
     <li> 해양 안전관리자들이 수상 레저인들의 위치를 파악하기 어려움 </li>
   </ul>
-  <center>
+  <p align="center">
     <img src="https://user-images.githubusercontent.com/19161231/48620017-d5e0e800-e9e1-11e8-9a74-5b23c8fd5e2c.png">
-  </center>
+  </p>
  </p>
+  
+## Surfcode Service Scenario
+
+<p align="center">
+    <img src="https://user-images.githubusercontent.com/19161231/48620122-42f47d80-e9e2-11e8-96b4-0a48c49bdda7.png">
+</p>
 
 ## Application Images
-<p>
+<p align="center">
 
 <img src="https://user-images.githubusercontent.com/19161231/48619499-15a6d000-e9e0-11e8-8281-9fddd0804734.jpg" width="30%" height="30%">
 <img src="https://user-images.githubusercontent.com/19161231/48619507-1ccdde00-e9e0-11e8-8481-37f0c37dcbf9.jpg" width="30%" height="30%">
