@@ -1,6 +1,4 @@
-# Surfcode
-Surfcode Application
-
+# Surfcode Application
 
 ## Purpose
 <p>
