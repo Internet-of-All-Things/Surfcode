@@ -32,9 +32,41 @@ setupNotifications = async (device) => {
         const temp = NativeModules.BleManager;
         console.log("시작한다잉");
 
-        device.readCharacteristicForService("0000180F-0000-1000-8000-00805F9B34FB", "00002A19-0000-1000-8000-00805F9B34FB" ).
-        then((characteristic) => {
-            //console.log(characteristic);
+        device.monitorCharacteristicForService("0000180F-0000-1000-8000-00805F9B34FB", "00002A19-0000-1000-8000-00805F9B34FB",(error, characteristic) => {
+            if (error) {
+                console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
+                console.log(error.message)
+                return
+            }
+            var i = 0;
+            for (; i < flatListData.length; i++) {
+                if (characteristic.deviceID === flatListData[i].key) {
+                    flatListData[i].isConnected = true
+                    break;
+                }
+            }
+
+            console.log(characteristic.value);
+
+            if (i != flatListData.length) {
+                if(flatListData[i].tel !== null){
+                    let dateObj = new Date();
+                    let key = {}
+                    let date = moment(dateObj).format('YYYY-MM-DD/HH:mm:ss')
+                    //key[new String('data/' + date + '/심박수')] = characteristic.bpm
+                    key[new String('data/' + date + '/호흡수')] = characteristic.bpm
+                    
+                    firebase.database().ref('data/'+userInfo.firebaseID).orderByChild('user/tel').equalTo(flatListData[i].tel).on('value',(snapshot) => {
+                        snapshot.forEach((dataSnapShot)=> { 
+                            firebase.database().ref('data/'+userInfo.firebaseID+'/'+dataSnapShot.key).update(key)
+                        })
+                    })
+                }
+                flatListData[i].brethe = characteristic.bpm;
+                //console.log(characteristic.deviceID + " heartrate :" + characteristic.value + "bpm")
+            }
+            
+            renderForUpdateItem()
         })
 
         device.monitorCharacteristicForService("0000180D-0000-1000-8000-00805F9B34FB", "00002A37-0000-1000-8000-00805F9B34FB", (error, characteristic) => {
@@ -51,13 +83,15 @@ setupNotifications = async (device) => {
                 }
             }
 
+            console.log(characteristic.value);
             if (i != flatListData.length) {
                 if(flatListData[i].tel !== null){
                     let dateObj = new Date();
                     let key = {}
                     let date = moment(dateObj).format('YYYY-MM-DD/HH:mm:ss')
                     key[new String('data/' + date + '/심박수')] = characteristic.bpm
-                    key[new String('data/' + date + '/호흡수')] = characteristic.bpm
+                    //key[new String('data/' + date + '/호흡수')] = characteristic.bpm
+                    
                     firebase.database().ref('data/'+userInfo.firebaseID).orderByChild('user/tel').equalTo(flatListData[i].tel).on('value',(snapshot) => {
                         snapshot.forEach((dataSnapShot)=> { 
                             firebase.database().ref('data/'+userInfo.firebaseID+'/'+dataSnapShot.key).update(key)
@@ -65,6 +99,7 @@ setupNotifications = async (device) => {
                     })
                 }
                 flatListData[i].bpm = characteristic.bpm;
+                //flatListData[i].brethe = characteristic.brethe;
                 //console.log(characteristic.deviceID + " heartrate :" + characteristic.value + "bpm")
             }
             

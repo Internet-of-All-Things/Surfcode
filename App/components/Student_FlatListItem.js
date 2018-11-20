@@ -501,7 +501,7 @@ export default class Student_FlatListItem extends Component {
                         <View style={{ flex: 0.45, flexDirection: "column", marginLeft: 25 }}>
                             <Text style={[styles.textStyle,
                             {
-                                fontSize: 22,
+                                fontSize: 20,
                                 fontFamily: 'Spoqa Han Sans Bold',
                                 color: this.state.itemUrgent ? '#f9f9fa' : '#3b3e4c'
                             }]}>
@@ -524,10 +524,10 @@ export default class Student_FlatListItem extends Component {
 
                                 <View style={{ width: 1, marginBottom: 15, backgroundColor: '#d0d2da', marginTop: 15, marginLeft: 5, marginRight: 5 }} />{/* 바 부분 */}
                                 <View style={{ flex: 0.5, alignItems: 'center' }}>
-                                    <Text style={[styles.textStyle, { flex: 0.5, marginBottom: 2, color: this.state.itemUrgent ? '#f9f9fa' : '#3b3e4c' }]}>{this.props.item.brethe}/Min</Text>
+                                    <Text style={[styles.textStyle, { flex: 0.5, marginBottom: 2, color: this.state.itemUrgent ? '#f9f9fa' : '#3b3e4c' }]}>{this.props.item.brethe}%</Text>
                                     <View style={{ flexDirection: 'row', flex: 0.5, marginTop: 2, alignItems: 'center' }}>
                                         <Image style={{ marginRight: 5, width: 12, height: 12, tintColor: this.state.itemUrgent ? '#f9f9fa' : "#82889c", resizeMode: 'contain' }} source={require('../images/breathingmdpi.png')} />
-                                        <Text style={[styles.smallText, { color: this.state.itemUrgent ? '#f9f9fa' : '#82889c' }]}>호흡</Text>
+                                        <Text style={[styles.smallText, { color: this.state.itemUrgent ? '#f9f9fa' : '#82889c' }]}>SpO2</Text>
                                     </View>
                                 </View>
                             </View> : <View style={{ flex: 0.55, flexDirection: "row", paddingTop: 5 }}>

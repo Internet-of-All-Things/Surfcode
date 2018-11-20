@@ -84,8 +84,8 @@ export default class FindDevice extends Component {
                 //console.log(device);
                 if (device != null && device.id != null) {
                     for (var i = 0; i < bluetoothDevices.length; i++) {
-                        console.log(bluetoothDevices[i].device.id + " bluetooth");
-                        console.log(device.id + "??!@#")
+                        //console.log(bluetoothDevices[i].device.id + " bluetooth");
+                        //console.log(device.id + "??!@#")
                         if (bluetoothDevices[i].device.id === device.id)
                             return
                     }
