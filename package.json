@@ -15,7 +15,7 @@
     "prop-types": "^15.6.1",
     "random-string": "^0.2.0",
     "react": "16.3.1",
-    "react-native": "^0.57.0",
+    "react-native": "^0.57.8",
     "react-native-action-bar": "^2.0.5",
     "react-native-actionsheet": "^2.4.2",
     "react-native-ble-plx": "^1.0.0",
@@ -46,7 +46,7 @@
   "devDependencies": {
     "babel-jest": "23.4.2",
     "babel-preset-react-native": "5.0.1",
-    "jest": "23.5.0",
+    "jest": "29.3.1",
     "react-test-renderer": "16.4.1",
     "schedule": "^0.4.0"
   },
